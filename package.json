@@ -4,8 +4,11 @@
   "description": "CECS491 Senior Project",
   "main": "index.js",
   "scripts": {
+    "client-install": "npm install --prefix client",
     "start": "node server/index.js",
-    "dev": "nodemon server/index.js"
+    "server": "nodemon server/index.js",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Dinh Luong",
   "license": "ISC",
