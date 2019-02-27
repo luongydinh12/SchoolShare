@@ -6,23 +6,26 @@ class Landing extends Component {
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">
           <div className="col s12 center-align">
-            <h4>
-              <b>Build</b> a login/auth app with the{" "}
-              <span style={{ fontFamily: "monospace" }}>MERN</span> stack from
-              scratch
-            </h4>
-            <p className="flow-text grey-text text-darken-1">
-              Create a (minimal) full-stack app with user authentication via
-              passport and JWTs
-            </p>
+            <div>
+              <span style={{ fontFamily: "Urbana",
+                             color: "#ffffff",
+                             fontSize: "125px" }}>School Share.</span>
+            </div>
+            <h3>
+              <span style={{
+                fontFamily: "Urbana",
+                color: "#fffff0"
+                }}>Collaborate with Classmates online.</span>
+            </h3>
             <br />
             <a href="/register"
               style={{
                 width: "150px",
                 borderRadius: "3px",
-                letterSpacing: "1.5px"
+                letterSpacing: "1.5px",
+                fontFamily: "Urbana",
               }}
-              className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+              className="btn btn-large waves-effect white hoverable black-text"
             >
               Register
             </a>
@@ -31,7 +34,8 @@ class Landing extends Component {
                 marginLeft: "2rem",
                 width: "150px",
                 borderRadius: "3px",
-                letterSpacing: "1.5px"
+                letterSpacing: "1.5px",
+                fontFamily: "Urbana",
               }}
               className="btn btn-large waves-effect white hoverable black-text"
             >
