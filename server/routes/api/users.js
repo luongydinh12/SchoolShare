@@ -89,7 +89,7 @@ const email = req.body.email;
 // Sign token
         jwt.sign(
           payload,
-          keys.secretOrKey,
+          keys.db.secretOrKey,
           {
             expiresIn: 31556926 // 1 year in seconds
           },
