@@ -16,9 +16,6 @@ router.get('/', (req, res)=>{
     res.send('Users');
 });
 
-router.get("/logout",(req,res)=>{
-  res.send("TO DO");
-})
 // @route POST api/users/register
 // @desc Register user
 // @access Public
@@ -56,8 +53,35 @@ router.post("/test",(req,res)=>
 {
   console.log("test");
 });
-router.get("/login/google",
-passport.authenticate('google',{scope: 'https://www.googleapis.com/auth/plus.login'}));
+router.get("/google",
+passport.authenticate('google',{ scope: ["profile", "email"] }));
+
+router.get(
+  "/googlecallback",
+  passport.authenticate("google", { failureRedirect: "/", session: false }),
+  function(req, res) {
+      console.log("in users.js");
+      console.log(req.user);
+      user=req.user;
+      const payload = {
+        id: user.id,
+        name: user.name
+      };
+      jwt.sign(
+        payload,
+        keys.db.secretOrKey,
+        {
+          expiresIn: 31556926 // 1 year in seconds
+        },
+        (err, token) => {
+          res.json({
+            success: true,
+            token: "Bearer " + token
+          });
+        }
+      );
+  }
+);
 
 // @route POST api/users/login
 // @desc Login user and return JWT token

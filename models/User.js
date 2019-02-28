@@ -12,11 +12,15 @@ const UserSchema = new Schema({
   },
   password: {
     type: String,
-    required: true
+    required: false
   },
   date: {
     type: Date,
     default: Date.now
+  },
+  googleId:{
+    type:String,
+    required:false
   }
 });
 module.exports = User = mongoose.model("users", UserSchema);
