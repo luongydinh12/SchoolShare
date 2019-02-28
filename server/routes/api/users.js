@@ -8,13 +8,17 @@ const validateRegisterInput = require("../../../validation/register");
 const validateLoginInput = require("../../../validation/login");
 // Load User model
 const User = require("../../../models/User");
-
+const passport=require("passport");
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 //Get (test)
 router.get('/', (req, res)=>{
     res.send('Users');
 });
 
+router.get("/logout",(req,res)=>{
+  res.send("TO DO");
+})
 // @route POST api/users/register
 // @desc Register user
 // @access Public
@@ -48,7 +52,12 @@ router.post("/register", (req, res) => {
       }
     });
   });
-
+router.post("/test",(req,res)=>
+{
+  console.log("test");
+});
+router.get("/login/google",
+passport.authenticate('google',{scope: 'https://www.googleapis.com/auth/plus.login'}));
 
 // @route POST api/users/login
 // @desc Login user and return JWT token

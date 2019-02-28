@@ -9,7 +9,7 @@ const users = require("../server/routes/api/users");
 
 const app = express();
 
-
+const keys=require("../config/keys");
 
 //Middleware
 app.use(
@@ -21,7 +21,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 //DB Config
-const db = require("../config/keys").mongoURI;
+// const db = require("../config/keys").mongoURI;
+const db = keys.mongoURI;
 
 //Connect to MongoDB
 mongoose
@@ -38,11 +39,13 @@ app.use('/api/posts',posts);
 
 
 passport.use(new GoogleStrategy({
-  clientID: '325287579178-odij1v2heo92ift036qn6kaacu1l9nh7.apps.googleusercontent.com',
-  clientSecret: process.env['dZSrudv7U6dHz4Zm5VwRynej'],
-  callbackURL: "http://localhost:3000/"
+  clientID: keys.googleClientId,
+  clientSecret: keys.googleClientSecret,
+  callbackURL: "http://localhost:3000"
 },
 function(accessToken, refreshToken, profile, cb){
+  console.log("passport callback function fired");
+
   users.findOrCreate({googleId:profile.id},function(err,user){
     return cb(err, user);
   })
@@ -56,8 +59,7 @@ require("../config/passport")(passport);
 
 app.use("/api/users", users);
 
-app.get("/login/google",
-passport.authenticate('google',{scope: 'https://www.googleapis.com/auth/plus.login'}));
+
 
 //Heroku, might need to change this
 const port = process.env.PORT || 5000;
