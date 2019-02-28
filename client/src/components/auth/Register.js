@@ -42,8 +42,15 @@ const newUser = {
       password: this.state.password,
       password2: this.state.password2
     };
-    this.props.registerUser(newUser, this.props.history); 
+    this.props.registerUser(newUser, this.props.history);
   };
+
+
+  componentDidMount() {
+    document.body.classList.add("background-white");
+}
+
+
 render() {
     const { errors } = this.state;
 return (
@@ -128,7 +135,7 @@ return (
                     marginTop: "1rem"
                   }}
                   type="submit"
-                  className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+                  className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 >
                   Sign up
                 </button>

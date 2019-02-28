@@ -5,6 +5,9 @@ import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
 class Login extends Component {
+
+
+
   constructor() {
     super();
     this.state = {
@@ -13,12 +16,15 @@ class Login extends Component {
       errors: {}
     };
   }
+
   componentDidMount() {
     // If logged in and user navigates to Login page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
     }
   }
+
+
 componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       this.props.history.push("/dashboard"); // push user to dashboard when they login
@@ -40,9 +46,17 @@ const userData = {
     };
 this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
   };
+
+
+  componentDidMount() {
+    document.body.classList.add("background-white");
+}
+
+
 render() {
     const { errors } = this.state;
 return (
+
       <div className="container">
         <div style={{ marginTop: "4rem" }} className="row">
           <div className="col s8 offset-s2">
@@ -59,7 +73,7 @@ return (
               </p>
             </div>
             <form noValidate onSubmit={this.onSubmit}>
-              <div className="input-field col s12">
+              <div className="input-field col s12 g ">
                 <input
                   onChange={this.onChange}
                   value={this.state.email}
@@ -99,10 +113,10 @@ return (
                     width: "150px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "1rem"
+                    marginTop: "1rem",
                   }}
                   type="submit"
-                  className="btn btn-large waves-effect waves-light hoverable blue accent-3"
+                  className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 >
                   Login
                 </button>
