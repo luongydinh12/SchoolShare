@@ -22,7 +22,7 @@ app.use(cors());
 
 //DB Config
 // const db = require("../config/keys").mongoURI;
-const db = keys.mongoURI;
+const db = keys.db.mongoURI;
 
 //Connect to MongoDB
 mongoose
@@ -39,8 +39,8 @@ app.use('/api/posts',posts);
 
 
 passport.use(new GoogleStrategy({
-  clientID: keys.googleClientId,
-  clientSecret: keys.googleClientSecret,
+  clientID: keys.google.googleClientId,
+  clientSecret: keys.google.googleClientSecret,
   callbackURL: "http://localhost:3000"
 },
 function(accessToken, refreshToken, profile, cb){
