@@ -7,6 +7,11 @@ class Dashboard extends Component {
     e.preventDefault();
     this.props.logoutUser();
   };
+
+componentDidMount() {
+    document.body.classList.add("background-white");
+  }
+
 render() {
     const { user } = this.props.auth;
 return (
@@ -15,9 +20,10 @@ return (
           <div className="col s12 center-align">
             <h4>
               <b>Hey there,</b> {user.name.split(" ")[0]}
-              <p className="flow-text grey-text text-darken-1">
-                You are logged into a full-stack{" "}
-                <span style={{ fontFamily: "monospace" }}>School Share</span> app 🎉
+              <p className="flow-text grey-text text-darken-3">
+                This is your user profile. Updates are coming soon! </p>
+                <p className="flow-text grey-text text-darken-3"> {" "}
+                <span style={{ fontFamily: "Urbana" }}>Welcome to School Share</span> 🎉
               </p>
             </h4>
             <button
