@@ -44,9 +44,9 @@ class Landing extends Component {
             >
               Log In
             </a>
-
             <a href="http://localhost:5000/api/users/google"
               style={{
+                marginLeft: "2rem",
                 width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
