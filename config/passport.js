@@ -28,12 +28,16 @@ module.exports = passport => {
   passport.use(new GoogleStrategy({
     clientID: keys.google.googleClientId,
     clientSecret: keys.google.googleClientSecret,
-    callbackURL: "/api/users/googlecallback"
+    callbackURL: "api/users/googlecallback"
   },
     (accessToken, refreshToken, profile, done) => {
       User.findOne({ googleId: profile.id }).then((user) => {
         if (user) {
             console.log("current user"+user);
+            var user={
+              user: user,
+              token:accessToken
+            }
             return done(null, user);
         }
         else {

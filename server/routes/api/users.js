@@ -61,8 +61,8 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/", session: false }),
   function(req, res) {
       console.log("in users.js");
-      console.log(req.user);
-      user=req.user;
+      console.log(req);
+      user=req.user.user;
       const payload = {
         id: user.id,
         name: user.name
@@ -76,10 +76,13 @@ router.get(
         (err, token) => {
           res.json({
             success: true,
-            token: "Bearer " + token
+            token: "Bearer " + req.user.token
           });
         }
       );
+      var token=req.user.token;
+      res.redirect("http://localhost:3000?token="+token);
+
   }
 );
 
