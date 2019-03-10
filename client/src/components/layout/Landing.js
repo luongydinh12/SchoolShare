@@ -44,7 +44,7 @@ class Landing extends Component {
             >
               Log In
             </a>
-            <a href="http://localhost:5000/api/users/google"
+            <a href="/oauth"
               style={{
                 marginLeft: "2rem",
                 width: "150px",

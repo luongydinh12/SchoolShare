@@ -10,6 +10,19 @@ const app = express();
 
 const keys=require("../config/keys");
 
+const http=require('http').Server(app);
+const io=require('socket.io')(http);
+io.on('connection',function(socket){
+  console.log("socekt.io connected");
+  socket.on('disconnect',function(){
+    console.log("socket.io disconnected");
+  });
+  socket.on('example_message',function(msg){
+    console.log('message:\t'+msg);
+  })
+})
+io.listen(5050);
+
 //Middleware
 app.use(
     bodyParser.urlencoded({
