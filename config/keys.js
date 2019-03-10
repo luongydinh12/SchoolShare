@@ -6,5 +6,9 @@ module.exports = {
    google:{
     googleClientId: "325287579178-odij1v2heo92ift036qn6kaacu1l9nh7.apps.googleusercontent.com",
     googleClientSecret: "dZSrudv7U6dHz4Zm5VwRynej"
+   },
+   facebook:{
+    facebookClientId: "338247343489325",
+    facebookClientSecret: "cc537a13574a071a3ea718328c2e0963"  
    }
   };

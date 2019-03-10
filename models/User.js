@@ -8,6 +8,7 @@ const UserSchema = new Schema({
   },
   email: {
     type: String,
+    unique: true,
     required: true
   },
   password: {
@@ -21,6 +22,18 @@ const UserSchema = new Schema({
   googleId:{
     type:String,
     required:false
-  }
+  },
+  facebookId:{
+    type:String,
+    required:false
+  },
+  avatar:{
+    type: String,
+    required: false
+  },
+  description:{
+    type: String,
+    required: false
+  },
 });
 module.exports = User = mongoose.model("users", UserSchema);
