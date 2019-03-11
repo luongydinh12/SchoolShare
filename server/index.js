@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require("mongoose");
 const passport = require("passport");
-
+const profile = require('./routes/api/profile');
 const users = require("../server/routes/api/users");
 
 const app = express();
@@ -67,7 +67,7 @@ require("../config/passport")(passport);
 // Routes
 
 app.use("/api/users", users);
-
+app.use("/api/profile", profile);
 
 
 //Heroku, might need to change this
