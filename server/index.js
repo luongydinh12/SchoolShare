@@ -13,6 +13,7 @@ const keys=require("../config/keys");
 const http=require('http').Server(app);
 const io=require('socket.io')(http);
 io.on('connection',function(socket){
+ 
   console.log("socekt.io connected");
   socket.on('disconnect',function(){
     console.log("socket.io disconnected");
@@ -21,6 +22,15 @@ io.on('connection',function(socket){
     console.log('message:\t'+msg);
   })
 })
+// io.on('connection',(client)=>{
+// console.log("connection)");
+// client.on('subscribe',(interval)=>{
+//   console.log("client is subscribing with interval ",interval);
+//   setInterval(()=>{
+//     client.emit('timer',new Date());
+//   },interval);
+// });
+// });
 io.listen(5050);
 
 //Middleware
