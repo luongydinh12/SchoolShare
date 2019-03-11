@@ -12,6 +12,28 @@ const User = require("../../../models/User");
 const passport = require("passport");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
+const app = express();
+const http=require('http').Server(app);
+const io=require('socket.io')(http);
+
+const addSocketIdtoSession = (req, res, next) => {
+  console.log(req.session);
+  req.session.socketId = req.query.socketId;
+  next();
+}
+
+io.on('connection',function(socket){
+  console.log("socket.io connected",socket.id);
+  socket.on('disconnect',function(){
+    console.log("socket.io disconnected",socket.id);
+  });
+  socket.on('example_message',function(msg){
+    console.log('message:\t'+msg+"\t id:\t"+socket.id);
+    socket.emit('example_response','response msg');
+  })
+})
+io.listen(5050);
+
 //Get (test)
 router.get('/', (req, res) => {
   res.send('Users');
@@ -59,19 +81,24 @@ router.post("/register", (req, res) => {
 router.post("/test", (req, res) => {
   console.log("test");
 });
-router.get("/google",
-  passport.authenticate('google', { scope: ["profile", "email"] }));
+router.get("/google", addSocketIdtoSession,
+  passport.authenticate('google', { scope: ["profile", "email"] })
+  );
 
 router.get(
   "/googlecallback",
   passport.authenticate("google", { failureRedirect: "/", session: false }),
   function (req, res) {
     console.log("in users.js");
-    console.log(req);
+    // console.log(req);
     user = req.user.user;
     const payload = {
       id: user.id,
-      name: user.name
+      name: user.name,
+      email: user.email,
+      date: user.date,
+      avatar: user.avatar,
+      description: user.description
     };
     jwt.sign(
       payload,
@@ -86,9 +113,9 @@ router.get(
         });
       }
     );
-    var token = req.user.token;
-    res.redirect("http://localhost:3000?token=" + token);
-
+  //  var token = req.user.token;
+  //  res.redirect("http://localhost:3000?token=" + token);
+    // socket.emit('example_message',"google signin");
   }
 );
 
