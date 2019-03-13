@@ -17,6 +17,7 @@ class Register extends Component {
     };
   }
   componentDidMount() {
+    document.body.classList.add("background-white");
     // If logged in and user navigates to Register page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
@@ -44,11 +45,6 @@ const newUser = {
     };
     this.props.registerUser(newUser, this.props.history);
   };
-
-
-  componentDidMount() {
-    document.body.classList.add("background-white");
-}
 
 
 render() {

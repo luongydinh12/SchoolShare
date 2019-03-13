@@ -18,10 +18,13 @@ class Login extends Component {
   }
 
   componentDidMount() {
+    document.body.classList.add("background-white");
+    console.log(this.props.history)
     // If logged in and user navigates to Login page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
     }
+    
   }
 
 
@@ -48,9 +51,6 @@ this.props.loginUser(userData); // since we handle the redirect within our compo
   };
 
 
-  componentDidMount() {
-    document.body.classList.add("background-white");
-}
 
 
 render() {

@@ -5,8 +5,8 @@ import { connect } from "react-redux";
 import io from 'socket.io-client'
 const socket = io("http://localhost:5050")
 export class OAuth extends Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.sendSocketIO = this.sendSocketIO.bind(this);
     this.receiveSocketIo = this.receiveSocketIo.bind(this);
     this.startAuth = this.startAuth.bind(this);
@@ -14,7 +14,7 @@ export class OAuth extends Component {
     this.oAuthLogin=oAuthLogin;
   }
   componentDidMount() {
-
+    //console.log("oauth.js props: ",this.props.history.test)
   }
 
   sendSocketIO() {
@@ -23,7 +23,6 @@ export class OAuth extends Component {
   }
   receiveSocketIo() {
     socket.on('google', (response) => {
-      console.log("jwt token:", response)
       oAuthLogin(response);
     });
   }
