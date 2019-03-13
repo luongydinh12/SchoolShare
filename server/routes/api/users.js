@@ -107,7 +107,7 @@ router.get(
       }    );
     const io=app.get('io');
     //console.log("token: ",token);
-    io.in(req.session.socketId).emit('google',token);
+    io.in(req.session.socketId).emit('google',"Bearer "+token);
   }
 );
 

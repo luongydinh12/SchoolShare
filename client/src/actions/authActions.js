@@ -18,6 +18,18 @@ export const registerUser = (userData, history) => dispatch => {
       })
     );
 };
+export const oAuthLogin= token => {
+  console.log("in authactions.js",token);
+  console.log(token);
+  localStorage.setItem("jwtToken", token);
+  // Set token to Auth header
+  setAuthToken(token);
+  // Decode token to get user data
+  const decoded = jwt_decode(token);
+  // Set current user
+  console.log(decoded);
+ // dispatch(setCurrentUser(decoded));
+};
 // Login - get user token
 export const loginUser = userData => dispatch => {
   axios
@@ -26,7 +38,7 @@ export const loginUser = userData => dispatch => {
       // Save to localStorage
 // Set token to localStorage
       const { token } = res.data;
-      console.log(res.data);
+      console.log(token);
       localStorage.setItem("jwtToken", token);
       // Set token to Auth header
       setAuthToken(token);

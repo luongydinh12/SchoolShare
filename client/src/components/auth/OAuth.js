@@ -1,8 +1,8 @@
-
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
+import {oAuthLogin} from "../../actions/authActions"
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import io from 'socket.io-client'
-import { timingSafeEqual } from 'crypto';
 const socket = io("http://localhost:5050")
 export class OAuth extends Component {
   constructor(props) {
@@ -11,6 +11,7 @@ export class OAuth extends Component {
     this.receiveSocketIo = this.receiveSocketIo.bind(this);
     this.startAuth = this.startAuth.bind(this);
     this.openPopup = this.openPopup.bind(this);
+    this.oAuthLogin=oAuthLogin;
   }
   componentDidMount() {
 
@@ -23,6 +24,7 @@ export class OAuth extends Component {
   receiveSocketIo() {
     socket.on('google', (response) => {
       console.log("jwt token:", response)
+      oAuthLogin(response);
     });
   }
   startAuth() {
@@ -66,4 +68,7 @@ export class OAuth extends Component {
     )
   }
 }
-export default OAuth;
+OAuth.propTypes={
+}
+export default connect(
+)(OAuth);
