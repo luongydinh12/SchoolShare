@@ -9,12 +9,18 @@ const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = keys.db.secretOrKey;
 
-// passport.serializeUser((user,done)=>
-// done(null, user.googleId));
+passport.serializeUser((user, done) =>
+  done(null, user.googleId));
+  passport.deserializeUser(function(id, done) {
+    User.findById(id, function(err, user) {
+        done(err, user);
+    });
+});
 
 module.exports = passport => {
   passport.use(
     new JwtStrategy(opts, (jwt_payload, done) => {
+      console.log(jwt_payload);
       User.findById(jwt_payload.id)
         .then(user => {
           if (user) {
@@ -31,14 +37,15 @@ module.exports = passport => {
     callbackURL: "api/users/googlecallback"
   },
     (accessToken, refreshToken, profile, done) => {
-      User.findOne({ googleId: profile.id }).then((user) => {
-        if (user) {
-            console.log("current user"+user);
-            var user={
-              user: user,
-              token:accessToken
-            }
-            return done(null, user);
+      User.findOne({ googleId: profile.id }).then((u) => {
+        if (u) {
+          //console.log("current user" + u);
+          // var user = {
+          //   name: u.name,
+          //   googleId: u.googleId,
+          // }
+          //console.log("in passport.js"+accessToken);
+          return done(null, u);
         }
         else {
           new User({
@@ -46,11 +53,10 @@ module.exports = passport => {
             email: profile.emails[0].value,
             googleId: profile.id
           }).save().then((newUser) => {
-            console.log("new user created " + newUser);
+           // console.log("new user created " + newUser);
           });
         }
       })
-
     }
   ));
 };

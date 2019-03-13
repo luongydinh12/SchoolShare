@@ -19,8 +19,8 @@ export default class OAuth extends Component {
     this.openPopup=this.openPopup.bind(this);
   }
   componentDidMount() {
-    socket.on('example_response', (response) => { console.log('componentdidmount',response) });    
-    console.log(this);
+  //  socket.on('example_response', (response) => { console.log("in componentdidmount",response) });    
+   // console.log(this);
   }
 
   // checkPopup() {
@@ -34,7 +34,6 @@ export default class OAuth extends Component {
   // }
 
   sendSocketIO() {
-    console.log(this);
     socket.emit('example_message', 'demo');
     this.receiveSocketIo();
   }
@@ -49,11 +48,12 @@ export default class OAuth extends Component {
   }
   openPopup(){
     console.log("open");
-    const { socket } = this.props
+    //const { socket } = this.props
       const width = 600, height = 600
       const left = (window.innerWidth / 2) - (width / 2)
       const top = (window.innerHeight / 2) - (height / 2)
-      const url = `http://localhost:5000/api/users/google`
+      console.log(socket.id);
+      const url = `http://localhost:5000/api/users/google?socketId=${socket.id}`;
   
       return window.open(url, '',       
         `toolbar=no, location=no, directories=no, status=no, menubar=no, 

@@ -13,11 +13,12 @@ const passport = require("passport");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const app = express();
+
 const http=require('http').Server(app);
 const io=require('socket.io')(http);
+app.set('io',io);
 
 const addSocketIdtoSession = (req, res, next) => {
-  console.log(req.session);
   req.session.socketId = req.query.socketId;
   next();
 }
@@ -87,32 +88,41 @@ router.get("/google", addSocketIdtoSession,
 
 router.get(
   "/googlecallback",
-  passport.authenticate("google", { failureRedirect: "/", session: false }),
-  function (req, res) {
+  passport.authenticate("google", { scope: ["profile", "email"] }),
+  function (req, res) { 
     console.log("in users.js");
-    // console.log(req);
-    user = req.user.user;
+    const u = req.user;
+    console.log(u);
     const payload = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      date: user.date,
-      avatar: user.avatar,
-      description: user.description
+      id: u.id,
+      name: u.name,
+      email: u.email,
+      date: u.date,
+      avatar: u.avatar,
+      description: u.description
     };
+    console.log(req);
     jwt.sign(
-      payload,
-      keys.db.secretOrKey,
-      {
-        expiresIn: 31556926 // 1 year in seconds
-      },
-      (err, token) => {
-        res.json({
-          success: true,
-          token: "Bearer " + req.user.token
-        });
-      }
-    );
+        payload,
+        keys.db.secretOrKey,
+        {
+          expiresIn: 31556926 // 1 year in seconds
+        },
+        (err, token) => {
+          res.json({
+            success: true,
+            token: "Bearer " + req.user.token
+          });
+        }
+      );
+    const io=app.get('io');
+    const user={
+      test:req.user.token
+    }
+    console.log(user);
+    io.in(req.session.socketId).emit('example_response',"abcdefg")
+
+    
   //  var token = req.user.token;
   //  res.redirect("http://localhost:3000?token=" + token);
     // socket.emit('example_message',"google signin");

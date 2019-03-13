@@ -6,8 +6,9 @@ const passport = require("passport");
 const profile = require('./routes/api/profile');
 const users = require("./routes/api/users");
 const groups = require("./routes/api/groups");
-
+const session=require('express-session');
 const app = express();
+require('dotenv').config();
 
 const keys=require("../config/keys");
 
@@ -19,6 +20,13 @@ app.use(
   );
 app.use(bodyParser.json());
 app.use(cors());
+
+app.use(session({
+  secret:process.env.SESSION_SECRET,
+  resave:true,
+  saveUninitialized:true
+}));
+
 
 //DB Config
 // const db = require("../config/keys").mongoURI;
@@ -40,6 +48,7 @@ app.use('/api/posts',posts);
 
 // Passport middleware
 app.use(passport.initialize());
+app.use(passport.session());
 // Passport config
 require("../config/passport")(passport);
 // Routes
