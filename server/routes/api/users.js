@@ -30,7 +30,7 @@ io.on('connection',function(socket){
   });
   socket.on('example_message',function(msg){
     console.log('message:\t'+msg+"\t id:\t"+socket.id);
-    socket.emit('example_response','response msg');
+    // socket.emit('example_response','response msg');
   })
 })
 io.listen(5050);
@@ -90,9 +90,7 @@ router.get(
   "/googlecallback",
   passport.authenticate("google", { scope: ["profile", "email"] }),
   function (req, res) { 
-    console.log("in users.js");
     const u = req.user;
-    console.log(u);
     const payload = {
       id: u.id,
       name: u.name,
@@ -101,31 +99,15 @@ router.get(
       avatar: u.avatar,
       description: u.description
     };
-    console.log(req);
-    jwt.sign(
-        payload,
-        keys.db.secretOrKey,
-        {
-          expiresIn: 31556926 // 1 year in seconds
-        },
-        (err, token) => {
-          res.json({
-            success: true,
-            token: "Bearer " + req.user.token
-          });
-        }
-      );
+    const token= jwt.sign(
+      payload,
+      keys.db.secretOrKey,
+      {
+        expiresIn: 31556926 // 1 year in seconds
+      }    );
     const io=app.get('io');
-    const user={
-      test:req.user.token
-    }
-    console.log(user);
-    io.in(req.session.socketId).emit('example_response',"abcdefg")
-
-    
-  //  var token = req.user.token;
-  //  res.redirect("http://localhost:3000?token=" + token);
-    // socket.emit('example_message',"google signin");
+    //console.log("token: ",token);
+    io.in(req.session.socketId).emit('google',token);
   }
 );
 

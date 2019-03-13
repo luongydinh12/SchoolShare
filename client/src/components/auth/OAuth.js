@@ -38,8 +38,9 @@ export default class OAuth extends Component {
     this.receiveSocketIo();
   }
   receiveSocketIo(){
-    console.log(this);
-    socket.on('example_response', (response) => { console.log(response) });    
+    //console.log(this);
+    //socket.on('example_response', (response) => { console.log(response) });   
+    socket.on('google',(response)=>{console.log("jwt token:",response)});
   }
   startAuth(){
     console.log(this);
@@ -48,11 +49,11 @@ export default class OAuth extends Component {
   }
   openPopup(){
     console.log("open");
-    //const { socket } = this.props
       const width = 600, height = 600
       const left = (window.innerWidth / 2) - (width / 2)
       const top = (window.innerHeight / 2) - (height / 2)
       console.log(socket.id);
+      this.sendSocketIO();
       const url = `http://localhost:5000/api/users/google?socketId=${socket.id}`;
   
       return window.open(url, '',       

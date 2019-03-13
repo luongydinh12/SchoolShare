@@ -20,7 +20,6 @@ passport.serializeUser((user, done) =>
 module.exports = passport => {
   passport.use(
     new JwtStrategy(opts, (jwt_payload, done) => {
-      console.log(jwt_payload);
       User.findById(jwt_payload.id)
         .then(user => {
           if (user) {
@@ -39,12 +38,6 @@ module.exports = passport => {
     (accessToken, refreshToken, profile, done) => {
       User.findOne({ googleId: profile.id }).then((u) => {
         if (u) {
-          //console.log("current user" + u);
-          // var user = {
-          //   name: u.name,
-          //   googleId: u.googleId,
-          // }
-          //console.log("in passport.js"+accessToken);
           return done(null, u);
         }
         else {
