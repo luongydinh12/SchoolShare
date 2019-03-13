@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import OAuth from "../auth/OAuth";
 class Landing extends Component {
   componentDidMount() {
     document.body.classList.remove("background-white");
@@ -44,7 +45,8 @@ class Landing extends Component {
             >
               Log In
             </a>
-            <a href="/oauth"
+            <OAuth />
+            {/* <a href="/oauth"
               style={{
                 marginLeft: "2rem",
                 width: "150px",
@@ -55,7 +57,7 @@ class Landing extends Component {
               className="btn btn-large waves-effect white hoverable black-text"
             >
               Google
-            </a>
+            </a> */}
           </div>
         </div>
       </div>
