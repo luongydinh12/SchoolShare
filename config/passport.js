@@ -45,8 +45,9 @@ module.exports = passport => {
             name: profile.name.givenName + " " + profile.name.familyName,
             email: profile.emails[0].value,
             googleId: profile.id
-          }).save().then((newUser) => {
-           // console.log("new user created " + newUser);
+          }).save().then((u) => {
+            //console.log("new user created " + newUser);
+            return done(null, u);
           });
         }
       })

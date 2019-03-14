@@ -78,12 +78,10 @@ export const logoutUser = () => dispatch => {
 };
 
 export const deleteUser = () => dispatch => {
-  console.log("delete user");
   axios.post("api/users/delete")
-    .then(res => {
-      console.log("axios posted")
-      console.log(res.data)
-    })
+    // .then(res => {
+    //   //console.log(res.data)
+    // })
   localStorage.removeItem("jwtToken");
   setAuthToken(false);
   dispatch(setCurrentUser({}));
