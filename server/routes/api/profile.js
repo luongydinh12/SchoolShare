@@ -145,8 +145,8 @@ router.post(
   }
 );
 
-// @route   POST api/profile/experience
-// @desc    Add experience to profile
+// @route   POST api/profile/class
+// @desc    Add class to profile
 // @access  Private
 router.post(
   '/class',
@@ -169,16 +169,16 @@ router.post(
         description: req.body.description
       };
 
-      // Add to exp array
-      profile.experience.unshift(newExp);
+      // Add to class array
+      profile.class.unshift(newExp);
 
       profile.save().then(profile => res.json(profile));
     });
   }
 );
   
-// @route   DELETE api/profile/experience/:exp_id
-// @desc    Delete experience from profile
+// @route   DELETE api/profile/class/:exp_id
+// @desc    Delete class from profile
 // @access  Private
 router.delete(
   '/class/:exp_id',
@@ -187,12 +187,12 @@ router.delete(
     Profile.findOne({ user: req.user.id })
       .then(profile => {
         // Get remove index
-        const removeIndex = profile.experience
+        const removeIndex = profile.class
           .map(item => item.id)
           .indexOf(req.params.exp_id);
 
         // Splice out of array
-        profile.experience.splice(removeIndex, 1);
+        profile.class.splice(removeIndex, 1);
 
         // Save
         profile.save().then(profile => res.json(profile));
