@@ -20,26 +20,28 @@ render() {
     const { user } = this.props.auth;
 return (
 	<div>
-	<aside id="groupList" style={{cssFloat: "left",
+	<div style={{cssFloat: "left", display: "flex",
+	flexDirection: "column"}}>
+	<aside id="groupList" style={{
 	display: "flex",
 	flexDirection: "column",
 	backgroundColor: "gray",
-	height: "75vh",
-	width: "70px"}}>
+	height: "55vh",
+	width: "200px"}}>
 		<img id="groupIcon" src="" alt="A"/>
 		<img id="groupIcon" src="" alt="B"/>
 		<img id="groupIcon" src="" alt="C"/>
 		<img id="groupIcon" src="" alt="D"/>
 	</aside>
 	
-	<aside style={{cssFloat: "right",
+	<aside style={{
 	display: "flex",
 	flexDirection: "column",
 	overflow: "auto",
-	backgroundColor: "#2BB673",
+	backgroundColor: "#5BB6A3",
 	paddingLeft: "50px",
 	paddingRight: "50px",
-	height: "75vh"}} id="userinfo">
+	height: "25vh"}} id="userinfo">
 		<img id="userAvatar" style={{verticalAlign: "middle",
 			borderRadius: "50%",
 			width: "100px",
@@ -48,21 +50,7 @@ return (
 			marginTop: "25px"}}src={user.avatar}/>
 		<span class="userName" style={{fontWeight: "bold",
 	fontSize: "150%"}}>{user.name}</span>
-		<span class="description">{user.description}</span>
-	</aside>
-	
-    <div style={{ height: "75vh" }} className="container valign-wrapper">
-        <div className="row">
-          <div className="col s12 center-align">
-            <h4>
-              <b>Hey there,</b> {user.name.split(" ")[0]}
-              <p className="flow-text grey-text text-darken-3">
-                This is your user profile. Updates are coming soon! </p>
-                <p className="flow-text grey-text text-darken-3"> {" "}
-                <span style={{ fontFamily: "Urbana" }}>Welcome to School Share</span> 🎉
-              </p>
-            </h4>
-            <button
+		<button
               style={{
                 width: "150px",
                 borderRadius: "3px",
@@ -86,6 +74,20 @@ return (
             >
               Delete Account
             </button>
+	</aside>
+	</div>
+	
+    <div style={{ height: "75vh" }} className="container valign-wrapper">
+        <div className="row">
+          <div className="col s12 center-align">
+            <h4>
+              <b>Hey there,</b> {user.name.split(" ")[0]}
+              <p className="flow-text grey-text text-darken-3">
+                This is your user profile. Updates are coming soon! </p>
+                <p className="flow-text grey-text text-darken-3"> {" "}
+                <span style={{ fontFamily: "Urbana" }}>Welcome to School Share</span> 🎉
+              </p>
+            </h4>
           </div>
         </div>
       </div>
