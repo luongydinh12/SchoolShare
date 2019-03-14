@@ -81,6 +81,7 @@ router.post("/register", (req, res) => {
 });
 router.post("/test", (req, res) => {
   console.log("test");
+  return res.json({ test: true })
 });
 router.get("/google", addSocketIdtoSession,
   passport.authenticate('google', { scope: ["profile", "email"] })
@@ -112,7 +113,7 @@ router.get(
     window.close();
 </script>`)
   }
-); 
+);
 
 // @route POST api/users/login
 // @desc Login user and return JWT token
@@ -169,6 +170,18 @@ router.post("/login", (req, res) => {
     });
   });
 });
+
+router.post('/delete', passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    console.log(req.user._id);
+    User.findByIdAndDelete(req.user._id, (err, u) => {
+      console.log(u)
+    })
+    res.json({
+      deleted: true,
+      msg: 'authorized'
+    })
+  });
 
 
 module.exports = router;
