@@ -8,8 +8,10 @@ class Dashboard extends Component {
     this.props.logoutUser();
   };
   onDeleteClick=e=>{
+	  if(window.confirm("Do you want to delete your account?")){
     e.preventDefault();
     this.props.deleteUser();
+	  }
   }
 
 componentDidMount() {
