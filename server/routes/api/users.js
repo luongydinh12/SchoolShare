@@ -14,22 +14,22 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const app = express();
 
-const http=require('http').Server(app);
-const io=require('socket.io')(http);
-app.set('io',io);
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+app.set('io', io);
 
 const addSocketIdtoSession = (req, res, next) => {
   req.session.socketId = req.query.socketId;
   next();
 }
 
-io.on('connection',function(socket){
-  console.log("socket.io connected",socket.id);
-  socket.on('disconnect',function(){
-    console.log("socket.io disconnected",socket.id);
+io.on('connection', function (socket) {
+  console.log("socket.io connected", socket.id);
+  socket.on('disconnect', function () {
+    console.log("socket.io disconnected", socket.id);
   });
-  socket.on('example_message',function(msg){
-    console.log('message:\t'+msg+"\t id:\t"+socket.id);
+  socket.on('example_message', function (msg) {
+    console.log('message:\t' + msg + "\t id:\t" + socket.id);
     // socket.emit('example_response','response msg');
   })
 })
@@ -84,12 +84,12 @@ router.post("/test", (req, res) => {
 });
 router.get("/google", addSocketIdtoSession,
   passport.authenticate('google', { scope: ["profile", "email"] })
-  );
+);
 
 router.get(
   "/googlecallback",
   passport.authenticate("google", { scope: ["profile", "email"] }),
-  function (req, res) { 
+  function (req, res) {
     const u = req.user;
     const payload = {
       id: u.id,
@@ -99,18 +99,20 @@ router.get(
       avatar: u.avatar,
       description: u.description
     };
-    const token= jwt.sign(
+    const token = jwt.sign(
       payload,
       keys.db.secretOrKey,
       {
         expiresIn: 31556926 // 1 year in seconds
-      }    );
-    const io=app.get('io');
+      });
+    const io = app.get('io');
     //console.log("token: ",token);
-    io.in(req.session.socketId).emit('google',"Bearer "+token);
-    return res.status(200).json({success:true});
+    io.in(req.session.socketId).emit('google', "Bearer " + token);
+    return res.end(`<script>
+    window.close();
+</script>`)
   }
-);
+); 
 
 // @route POST api/users/login
 // @desc Login user and return JWT token
