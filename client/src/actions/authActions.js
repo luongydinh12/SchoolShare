@@ -28,6 +28,7 @@ export const oAuthLogin= token => {
   console.log("local storage: ",localStorage.getItem("jwtToken"));
   // Set current user
  // dispatch(setCurrentUser(decoded));
+ //user dispatched in app.js
 };
 // Login - get user token
 export const loginUser = userData => dispatch => {

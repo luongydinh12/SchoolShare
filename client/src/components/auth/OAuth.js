@@ -24,10 +24,10 @@ export class OAuth extends Component {
   receiveSocketIo() {
     socket.on('google', (response) => {
       oAuthLogin(response);
+      window.location.reload();
     });
   }
   startAuth() {
-    console.log(this);
     this.setState({ popup: true })
     this.openPopup();
   }

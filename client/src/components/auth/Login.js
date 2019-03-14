@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
+import OAuth from "./OAuth"
 class Login extends Component {
 
 
@@ -120,6 +121,7 @@ return (
                 >
                   Login
                 </button>
+                <OAuth />
               </div>
             </form>
           </div>

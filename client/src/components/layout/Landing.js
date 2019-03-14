@@ -45,19 +45,6 @@ class Landing extends Component {
             >
               Log In
             </a>
-            <OAuth />
-            {/* <a href="/oauth"
-              style={{
-                marginLeft: "2rem",
-                width: "150px",
-                borderRadius: "3px",
-                letterSpacing: "1.5px",
-                fontFamily: "Urbana",
-              }}
-              className="btn btn-large waves-effect white hoverable black-text"
-            >
-              Google
-            </a> */}
           </div>
         </div>
       </div>
