@@ -28,6 +28,10 @@ export class OAuth extends Component {
       oAuthLogin(response);
       window.location.reload();
     });
+	socket.on('facebook', (response) => {
+      oAuthLogin(response);
+      window.location.reload();
+    });
   }
   startAuthGoogle() {
     this.setState({ popup: true })
