@@ -58,6 +58,7 @@ module.exports = passport => {
     clientID: keys.facebook.facebookClientId,
     clientSecret: keys.facebook.facebookClientSecret,
     callbackURL: "api/users/facebookcallback",
+	profileFields: ['id', 'name', 'emails']
   },
     (accessToken, refreshToken, profile, done) => {
       User.findOne({ facebookId: profile.id }).then((u) => {
@@ -66,8 +67,8 @@ module.exports = passport => {
         }
         else {
           new User({
-            name: profile.first_name + " " + profile.last_name,
-            email: profile.email,
+            name: profile.name.givenName + " " + profile.name.familyName,
+            email: profile.emails[0].value,
             facebookId: profile.id,
 			avatar: profile.profile_pic
           }).save().then((u) => {
@@ -78,4 +79,14 @@ module.exports = passport => {
       })
     }
   ));
+  
+  passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
 };

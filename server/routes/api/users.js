@@ -88,7 +88,7 @@ router.get("/google", addSocketIdtoSession,
 );
 
 router.get("/facebook", addSocketIdtoSession,
-  passport.authenticate('facebook')
+  passport.authenticate('facebook', { scope: ["email"]})
 );
 
 router.get(
@@ -121,7 +121,7 @@ router.get(
 
 router.get(
   "/facebookcallback",
-  passport.authenticate("facebook"),
+  passport.authenticate("facebook", { scope: ["email"] }),
   function (req, res) {
     const u = req.user;
     const payload = {
