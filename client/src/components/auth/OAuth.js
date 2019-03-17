@@ -9,8 +9,10 @@ export class OAuth extends Component {
     super();
     this.sendSocketIO = this.sendSocketIO.bind(this);
     this.receiveSocketIo = this.receiveSocketIo.bind(this);
-    this.startAuth = this.startAuth.bind(this);
-    this.openPopup = this.openPopup.bind(this);
+    this.startAuthGoogle = this.startAuthGoogle.bind(this);
+    this.openPopupGoogle = this.openPopupGoogle.bind(this);
+	this.startAuthFacebook = this.startAuthFacebook.bind(this);
+    this.openPopupFacebook = this.openPopupFacebook.bind(this);
     this.oAuthLogin=oAuthLogin;
   }
   componentDidMount() {
@@ -27,11 +29,15 @@ export class OAuth extends Component {
       window.location.reload();
     });
   }
-  startAuth() {
+  startAuthGoogle() {
     this.setState({ popup: true })
-    this.openPopup();
+    this.openPopupGoogle();
   }
-  openPopup() {
+  startAuthFacebook() {
+    this.setState({ popup: true })
+    this.openPopupFacebook();
+  }
+  openPopupGoogle() {
     const width = 600, height = 600
     const left = (window.innerWidth / 2) - (width / 2)
     const top = (window.innerHeight / 2) - (height / 2)
@@ -45,13 +51,28 @@ export class OAuth extends Component {
         height=${height}, top=${top}, left=${left}`
     )
   }
+  openPopupFacebook() {
+    const width = 600, height = 600
+    const left = (window.innerWidth / 2) - (width / 2)
+    const top = (window.innerHeight / 2) - (height / 2)
+    console.log(socket.id);
+    this.sendSocketIO();
+    const url = `http://localhost:5000/api/users/facebook?socketId=${socket.id}`;
+
+    return window.open(url, '',
+      `toolbar=no, location=no, directories=no, status=no, menubar=no, 
+        scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
+        height=${height}, top=${top}, left=${left}`
+    )
+  }
 
 
 
 
   render() {
     return (
-        <a onClick={this.startAuth}
+	<div>
+        <a onClick={this.startAuthGoogle}
           style={{
             marginLeft: "2rem",
             width: "150px",
@@ -63,7 +84,19 @@ export class OAuth extends Component {
         >
           Google
     </a>
-
+		<a onClick={this.startAuthFacebook}
+          style={{
+            marginLeft: "2rem",
+            width: "150px",
+            borderRadius: "3px",
+            letterSpacing: "1.5px",
+            fontFamily: "Urbana",
+          }}
+          className="btn btn-large waves-effect white hoverable black-text"
+        >
+          Facebook
+    </a>
+	</div>
     )
   }
 }
