@@ -1,9 +1,13 @@
 import React, { Component } from 'react'
-import {oAuthLogin} from "../../actions/authActions"
+import { oAuthLogin } from "../../actions/authActions"
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import io from 'socket.io-client'
+
 const socket = io("http://localhost:5050")
+
+
+
 export class OAuth extends Component {
   constructor() {
     super();
@@ -11,9 +15,9 @@ export class OAuth extends Component {
     this.receiveSocketIo = this.receiveSocketIo.bind(this);
     this.startAuthGoogle = this.startAuthGoogle.bind(this);
     this.openPopupGoogle = this.openPopupGoogle.bind(this);
-	this.startAuthFacebook = this.startAuthFacebook.bind(this);
+    this.startAuthFacebook = this.startAuthFacebook.bind(this);
     this.openPopupFacebook = this.openPopupFacebook.bind(this);
-    this.oAuthLogin=oAuthLogin;
+    this.oAuthLogin = oAuthLogin;
   }
   componentDidMount() {
     //console.log("oauth.js props: ",this.props.history.test)
@@ -28,7 +32,7 @@ export class OAuth extends Component {
       oAuthLogin(response);
       window.location.reload();
     });
-	socket.on('facebook', (response) => {
+    socket.on('facebook', (response) => {
       oAuthLogin(response);
       window.location.reload();
     });
@@ -75,36 +79,38 @@ export class OAuth extends Component {
 
   render() {
     return (
-	<div>
+      <div>
         <a onClick={this.startAuthGoogle}
           style={{
-            marginLeft: "2rem",
+            marginLeft: "0rem",
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             fontFamily: "Urbana",
+            marginTop: "2rem"
           }}
           className="btn btn-large waves-effect white hoverable black-text"
         >
           Google
     </a>
-		<a onClick={this.startAuthFacebook}
+        <a onClick={this.startAuthFacebook}
           style={{
             marginLeft: "2rem",
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             fontFamily: "Urbana",
+            marginTop: "2rem"
           }}
           className="btn btn-large waves-effect white hoverable black-text"
         >
           Facebook
     </a>
-	</div>
+      </div>
     )
   }
 }
-OAuth.propTypes={
+OAuth.propTypes = {
 }
 export default connect(
 )(OAuth);

@@ -120,11 +120,17 @@ return (
                   className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 >
                   Login
-                </button>
-                <OAuth />
+                </button>            
+              </div>
+
+              <div className="col s12" style={{ paddingLeft: "11.250px" }}> 
+              <OAuth />
+
+              
               </div>
             </form>
           </div>
+          
         </div>
       </div>
     );

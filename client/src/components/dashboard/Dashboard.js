@@ -32,7 +32,7 @@ class Dashboard extends Component {
             display: "flex",
             flexDirection: "column",
             backgroundColor: "gray",
-            height: "55vh",
+            height: "100vh",
             width: "200px"
           }}>
             <img id="groupIcon" src="" alt="A" />
@@ -117,8 +117,6 @@ class Dashboard extends Component {
             </button>
             </div>
         </div>
-
-
 
 
 
