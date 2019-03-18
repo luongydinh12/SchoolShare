@@ -45,7 +45,8 @@ module.exports = passport => {
           new User({
             name: profile.name.givenName + " " + profile.name.familyName,
             email: profile.emails[0].value,
-            googleId: profile.id
+            googleId: profile.id,
+			avatar: profile._json.image.url.replace("?sz=50", "")
           }).save().then((u) => {
             //console.log("new user created " + newUser);
             return done(null, u);
@@ -58,7 +59,7 @@ module.exports = passport => {
     clientID: keys.facebook.facebookClientId,
     clientSecret: keys.facebook.facebookClientSecret,
     callbackURL: "api/users/facebookcallback",
-	profileFields: ['id', 'name', 'emails']
+	profileFields: ['id', 'name', 'emails', 'photos']
   },
     (accessToken, refreshToken, profile, done) => {
       User.findOne({ facebookId: profile.id }).then((u) => {
@@ -70,7 +71,7 @@ module.exports = passport => {
             name: profile.name.givenName + " " + profile.name.familyName,
             email: profile.emails[0].value,
             facebookId: profile.id,
-			avatar: profile.profile_pic
+			avatar: profile.photos ? profile.photos[0].value : '/img/faces/unknown-user-pic.jpg'
           }).save().then((u) => {
             //console.log("new user created " + newUser);
             return done(null, u);
