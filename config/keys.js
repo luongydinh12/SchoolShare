@@ -11,6 +11,7 @@ module.exports = {
     //facebookClientId: "338247343489325",
     //facebookClientSecret: "cc537a13574a071a3ea718328c2e0963" 
 	facebookClientId: "615013348911732",
-    facebookClientSecret: "d4bfab917bbcc7688b396d1408465001" 
+    facebookClientSecret: "d4bfab917bbcc7688b396d1408465001",
+	facebookAccessToken: "a6d5b5571eb2c8507168dac63bc2e146"
    }
   };
