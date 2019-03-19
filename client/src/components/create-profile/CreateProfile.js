@@ -37,9 +37,9 @@ class CreateProfile extends Component {
     const profileData = {
       handle: this.state.handle,
       description: this.state.description,
-      avatar: this.state.user.avatar,
-      name: this.state.user.name,
-      email: this.state.user.email
+      avatar:  '',
+      name: '',
+      email: '',
 
     };
 

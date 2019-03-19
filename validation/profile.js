@@ -10,7 +10,7 @@ module.exports = function validateProfileInput(data) {
   }
 
   if (Validator.isEmpty(data.handle)) {
-    errors.handle = 'Profile handle is required';
+    errors.handle = '*** Profile handle is required';
   }
   return {
     errors,

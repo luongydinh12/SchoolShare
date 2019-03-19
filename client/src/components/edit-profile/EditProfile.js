@@ -58,7 +58,7 @@ class CreateProfile extends Component {
       description: this.state.description,
       avatar: this.state.avatar,// ADD THIS
       name: this.state.name,
-      email: this.state.email
+      email: this.state.email,
 
     };
 
