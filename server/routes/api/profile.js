@@ -121,6 +121,18 @@ router.post(
     if (req.body.description) profileFields.description = req.body.description;
 
 
+    /*if (req.body.avatar) avatarhere = req.body.avatar; // ADD THIS
+    if (req.body.name) namehere = req.body.name;
+    if (req.body.email) {emailhere = req.body.email}
+    else {emailhere=  req.user.email};*/
+    const userFields = {};
+    if (req.body.avatar) userFields.avatar = req.body.avatar; // ADD THIS
+    if (req.body.name) userFields.name = req.body.name;
+    if (req.body.email) userFields.email = req.body.email;
+
+    /*console.log(req.user.id);
+    console.log("AVATAR HERE: ");
+    console.log(req.user.email);*/
     Profile.findOne({ user: req.user.id }).then(profile => {
       if (profile) {
         // Update
@@ -129,6 +141,17 @@ router.post(
           { $set: profileFields },
           { new: true }
         ).then(profile => res.json(profile));
+        User.findOneAndUpdate(
+          { _id: req.user.id },
+          { $set: userFields },
+          { new: true }
+        ).then(user => res.json(user));
+       /* User.findOneAndUpdate(
+          { _id: req.user.id },
+          { avatar: avatarhere, name: namehere, email: emailhere },
+          { new: true }
+        ).then(user => res.json(user));*/
+
       } else {
         // Create
         // Check if handle exists
@@ -176,7 +199,7 @@ router.post(
     });
   }
 );
-  
+
 // @route   DELETE api/profile/class/:exp_id
 // @desc    Delete class from profile
 // @access  Private

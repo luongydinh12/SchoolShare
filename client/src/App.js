@@ -16,6 +16,15 @@ import OAuth from "./components/auth/OAuth";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 
+
+import { clearCurrentProfile } from './actions/profileActions'
+import CreateProfile from './components/create-profile/CreateProfile'
+import EditProfile from './components/edit-profile/EditProfile'
+//import Profiles from './components/profiles/Profiles'
+import Profile from './components/profile/Profile'
+import NotFound from './components/not-found/NotFound'
+
+
 // import io from 'socket.io-client'
 // const keys = require("../package.json");
 // const socket=io("https://localhost:5050")
@@ -28,7 +37,7 @@ if (localStorage.jwtToken) {
   const decoded = jwt_decode(token);
   // Set user and isAuthenticated
   store.dispatch(setCurrentUser(decoded));
-// Check for expired token
+  // Check for expired token
   const currentTime = Date.now() / 1000; // to get in milliseconds
   if (decoded.exp < currentTime) {
     // Logout user
@@ -49,9 +58,23 @@ class App extends Component {
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/oauth" component={OAuth} />
+
+
+            <Route exact path="/profile/:handle" component={Profile} />
+
+
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
             </Switch>
+
+            <Switch>
+              <PrivateRoute exact path="/create-profile" component={CreateProfile} />
+            </Switch>
+            <Switch>
+              <PrivateRoute exact path="/edit-profile" component={EditProfile} />
+            </Switch>
+            <Route exact path="/not-found" component={NotFound} />
+
           </div>
         </Router>
       </Provider>
