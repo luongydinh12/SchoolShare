@@ -16,7 +16,7 @@ class CreateProfile extends Component {
       description: '',
       avatar: '',
       name: '',
-      email: '',
+      //email: '',
       errors: {}
     };
 
@@ -39,7 +39,7 @@ class CreateProfile extends Component {
       description: this.state.description,
       avatar:  '',
       name: '',
-      email: '',
+      //email: '',
 
     };
 
@@ -77,14 +77,14 @@ class CreateProfile extends Component {
                   error={errors.name}
                   info="Your Name"
                 />
-                <TextFieldGroup
+{/*                 <TextFieldGroup
                   placeholder="* Your Email"
                   name="email"
                   value={this.state.email}
                   onChange={this.onChange}
                   error={errors.email}
                   info="Your Email"
-                />
+                /> */}
                 <TextFieldGroup
                   placeholder="* Profile Username"
                   name="handle"

@@ -120,15 +120,10 @@ router.post(
     if (req.body.handle) profileFields.handle = req.body.handle;
     if (req.body.description) profileFields.description = req.body.description;
 
-
-    /*if (req.body.avatar) avatarhere = req.body.avatar; // ADD THIS
-    if (req.body.name) namehere = req.body.name;
-    if (req.body.email) {emailhere = req.body.email}
-    else {emailhere=  req.user.email};*/
     const userFields = {};
     if (req.body.avatar) userFields.avatar = req.body.avatar; // ADD THIS
     if (req.body.name) userFields.name = req.body.name;
-    if (req.body.email) userFields.email = req.body.email;
+    //if (req.body.email) userFields.email = req.body.email;
 
     /*console.log(req.user.id);
     console.log("AVATAR HERE: ");

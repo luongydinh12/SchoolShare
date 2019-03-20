@@ -17,7 +17,7 @@ class CreateProfile extends Component {
       description: '',
       avatar: '', // ADD THIS
       name: '',
-      email: '',
+      //email: '',
       errors: {}
     };
 
@@ -45,7 +45,7 @@ class CreateProfile extends Component {
         description: profile.description,
         avatar: profile.user.avatar,// ADD THIS
         name: profile.user.name,
-        email: profile.user.email,
+        //email: profile.user.email,
       });
     }
   }
@@ -58,7 +58,7 @@ class CreateProfile extends Component {
       description: this.state.description,
       avatar: this.state.avatar,// ADD THIS
       name: this.state.name,
-      email: this.state.email,
+      //email: this.state.email,
 
     };
 
@@ -92,14 +92,14 @@ class CreateProfile extends Component {
                   error={errors.name}
                   info="Your Name"
                 />
-                <TextFieldGroup
+{/*                 <TextFieldGroup
                   placeholder="* Your Email"
                   name="email"
                   value={this.state.email}
                   onChange={this.onChange}
                   error={errors.email}
                   info="Your Email"
-                />
+                /> */}
                 <TextFieldGroup
                   placeholder="* Profile Username"
                   name="handle"
