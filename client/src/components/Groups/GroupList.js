@@ -27,7 +27,13 @@ class GroupList extends Component {
             groupList = groups.map(group => {
                 return (
                     <Fragment key={group._id}>
-                        <Link to={'/groups/chat/'+group._id} style={{ fontSize: 16, border: '1px solid #1b5e20', padding: 5, borderRadius: 5 }} >{group.name}</Link>
+                        <Link to={'/groups/chat/'+group._id} 
+                        style={{ fontSize: 18, 
+                        fontFamily:"Urbana",
+                        letterSpacing: "1px",
+                        border: '1px solid #2BB673', 
+                        padding: 10, 
+                        borderRadius: "10px" }} >{group.name}</Link>
                         <br />
                         <p>{group.desc}</p>
                         <br />
@@ -41,7 +47,7 @@ class GroupList extends Component {
             <div className="container">
                 <div className="card white" style={{ padding: 5 }}>
                 <Link to="/groups/create" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
+                    width: "170px",
                     borderRadius: "1px",
                     marginTop: "3rem",
                     marginLeft: "1rem",
@@ -58,12 +64,13 @@ class GroupList extends Component {
                     <h4 className="center-text" 
                     style= {{marginLeft: "10px",
                     fontFamily: "Urbana",
-                    marginLeft: "15px"}}>List of Groups</h4>
+                    marginLeft: "15px",
+                    }}>List of Groups</h4>
                     <div className="row">
-                        <div className="col l9">
+                        <div className="col l9" style= {{marginTop: "2rem"}}>
                             {groupList}
                         </div>
-                        <ProfileSideNav />
+                        {/* <ProfileSideNav /> */}
                     </div>
                 </div>
             </div>

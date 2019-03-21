@@ -60,7 +60,7 @@ class Groups extends Component {
                         <div className="col l9">
                             {cat}
                         </div>
-                        <ProfileSideNav />
+                       {/*  <ProfileSideNav /> */}
                     </div>
                 </div>
             </div>

@@ -14,7 +14,7 @@ class ProfileSideNav extends Component{
         }
         return (
             <div className="col l3">
-                <h5>Member(s)</h5>
+                <h5>Profile</h5>
                 <hr/>
                 {userProfile}
             </div>

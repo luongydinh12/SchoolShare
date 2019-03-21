@@ -37,24 +37,24 @@ class CreateCategory extends Component {
         }
         return (
             <div className="container">
-                <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                     width: "250px",
                     borderRadius: "1px",
                     marginTop: "3rem",
-                    marginLeft: "0px",
                     marginBottom: "2rem",
                 }}>
-                    Back to Dashboard
-              </Link>
-                <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                    List of Categories
+                    </Link>
+                <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                     width: "250px",
                     borderRadius: "1px",
                     marginTop: "3rem",
                     marginLeft: "2rem",
                     marginBottom: "2rem",
                 }}>
-                    List of Categories
-                    </Link>
+                    Back to Dashboard
+              </Link>
+
                 <div className="card white" style={{ padding: 5 }}>
                 
                     <h4 className="center-text" style={{marginLeft: "20px", fontFamily: "Urbana"}}>Create Category</h4>

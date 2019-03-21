@@ -2,7 +2,8 @@ import React, { Component, Fragment } from 'react';
 import axios from 'axios';
 import ProfileSideNav from './ProfileSideNav';
 import { connect } from 'react-redux';
-
+import { Link } from "react-router-dom";
+import { withRouter } from 'react-router-dom';
 class GroupChat extends Component {
     state = {
         messages: null,
@@ -70,7 +71,11 @@ class GroupChat extends Component {
             })
             const userName = this.props.auth.user.name
             if (!members.includes(userName)) {
-                joinButton = <button className="btn btn-waves green" onClick={this.joinGroup} >JOIN GROUP</button>
+                joinButton = <button className="btn btn-large waves-effect waves-light hoverable green accent-3" 
+                onClick={this.joinGroup}
+                style ={{marginTop: "3rem",
+                marginLeft: "1rem", 
+                width: "150px"}} >JOIN GROUP</button>
             } else {
                 messageForm = (
                     <form onSubmit={this.createMessage}>
@@ -78,7 +83,8 @@ class GroupChat extends Component {
                             <input value={this.state.text} id="text" onChange={(e) => this.setState({ text: e.target.value })} required type="text" />
                             <label htmlFor="text">Type a message</label>
                         </div>
-                        <button type="submit" className="btn btn-waves blue">SEND</button>
+                        <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3"
+                        style={{width: "150px"}}>SEND</button>
                     </form>
                 )
             }
@@ -89,8 +95,24 @@ class GroupChat extends Component {
         return (
             <div className="container">
                 <div className="card white" style={{ padding: 5 }}>
+{/*                 <Link to="/" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                    width: "250px",
+                    borderRadius: "1px",
+                    marginTop: "3rem",
+                    marginLeft: "1rem",
+                    marginBottom: "2rem",
+                }}>Go Back </Link> */}
+
+                <button onClick={this.props.history.goBack} className="btn btn-large waves-effect waves-light hoverable green accent-3"
+                style={{marginLeft: "25px",
+                marginTop: "3rem",
+                width: "150px"}}>Go Back</button>
+
+
                     {joinButton}
-                    <h4 className="center-text">Group Messages</h4>
+                    <h4 className="center-text" 
+                    style ={{fontFamily: "Urbana",
+                    marginLeft: "23px"}}>Group Messages</h4>
                     <div className="row">
                         <div className="col l9">
                             {messageList}
@@ -99,7 +121,7 @@ class GroupChat extends Component {
                             </div>
                         </div>
                         <div className="col l3">
-                            <h6>Members</h6>
+                            <h6 style= {{fontFamily: "Urbana", fontSize: "20px"}}>Members</h6>
                             <hr />
                             {membersList}
                         </div>
