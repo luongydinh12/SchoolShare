@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
 import Spinner from '../common/Spinner'
 import ProfileActions from './ProfileActions'
+import GroupActions from './GroupActions'
 
 class Dashboard extends Component {
   onLogoutClick = e => {
@@ -47,7 +48,7 @@ class Dashboard extends Component {
             <Link to={`/profile/${profile.handle}`}>My Profile Page</Link>
           </p>
           <ProfileActions />
-          <div style={{ marginBottom: '60px' }} />
+          <div style={{ marginBottom: '15px' }} />
           {/*           <button  style={{
               width: "150px",
               borderRadius: "3px",
@@ -132,6 +133,17 @@ class Dashboard extends Component {
           }}>Bio: {user.description}</p> */}
 
               {dashboardContent}
+
+              <div>
+              <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                  width: "150px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "2rem",
+                  marginBottom: "1.4rem"
+                }}>
+                Groups
+              </Link></div>
               <button
                 style={{
                   width: "150px",
@@ -144,19 +156,20 @@ class Dashboard extends Component {
               >
                 Logout
             </button>
-              {/*             <button
-            style={{
-              width: "150px",
-              borderRadius: "3px",
-              letterSpacing: "1.5px",
-              marginTop: "2rem",
-              marginLeft: "1rem"
-            }}
-            //onClick={this.onProfileClick}
-            className="btn btn-large waves-effect waves-light hoverable green accent-3"
-          >
-            Edit Profile
-            </button> */}
+
+
+{/*               <button
+                style={{
+                  width: "150px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "2rem",
+                  marginLeft: "1rem"
+                }}
+                className="btn btn-large waves-effect waves-light hoverable green accent-3"
+              >
+                <Link to="/groups" > Groups</Link>
+              </button> */}
 
               <button
                 style={{

@@ -25,6 +25,9 @@ import Profile from './components/profile/Profile'
 import NotFound from './components/not-found/NotFound'
 
 
+import Groups from './components/Groups/Groups';
+import CreateCategory from './components/Groups/CreateCategory';
+
 // import io from 'socket.io-client'
 // const keys = require("../package.json");
 // const socket=io("https://localhost:5050")
@@ -61,8 +64,8 @@ class App extends Component {
 
 
             <Route exact path="/profile/:handle" component={Profile} />
-
-
+            <Route path="/groups" component={Groups} />
+            <Route path="/create-category" exact component={CreateCategory} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
             </Switch>
@@ -73,6 +76,7 @@ class App extends Component {
             <Switch>
               <PrivateRoute exact path="/edit-profile" component={EditProfile} />
             </Switch>
+
             <Route exact path="/not-found" component={NotFound} />
 
           </div>

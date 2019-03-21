@@ -10,9 +10,14 @@ const session=require('express-session');
 const app = express();
 require('dotenv').config();
 
+const logger = require('morgan')// ADD
+
 const keys=require("../config/keys");
 
 //Middleware
+//Middleware
+// logger to log requests on console
+app.use(logger('dev'))
 app.use(
     bodyParser.urlencoded({
       extended: false
