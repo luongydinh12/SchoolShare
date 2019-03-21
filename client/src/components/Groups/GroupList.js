@@ -40,22 +40,25 @@ class GroupList extends Component {
         return (
             <div className="container">
                 <div className="card white" style={{ padding: 5 }}>
-                <Link to="/" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                <Link to="/groups/create" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                     width: "250px",
                     borderRadius: "1px",
                     marginTop: "3rem",
                     marginLeft: "1rem",
                     marginBottom: "2rem",
                 }}>Create Group </Link>
-                <Link to="/" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+{/*                 <Link to="/" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                     width: "250px",
                     borderRadius: "1px",
                     marginTop: "3rem",
                     marginLeft: "2rem",
                     marginBottom: "2rem",
-                }}>List All Groups </Link>
-
-                    <h4 className="center-text" style= {{marginLeft: "10px"}}>List of Groups</h4>
+                }}>List All Groups </Link> */}
+                {/* List All Groups after user selects a category so this button is not needed */}
+                    <h4 className="center-text" 
+                    style= {{marginLeft: "10px",
+                    fontFamily: "Urbana",
+                    marginLeft: "15px"}}>List of Groups</h4>
                     <div className="row">
                         <div className="col l9">
                             {groupList}

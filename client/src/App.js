@@ -62,7 +62,6 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/oauth" component={OAuth} />
 
-
             <Route exact path="/profile/:handle" component={Profile} />
             <Route path="/groups" component={Groups} />
             <Route path="/create-category" exact component={CreateCategory} />

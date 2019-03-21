@@ -8,13 +8,14 @@ class GroupChat extends Component {
         messages: null,
         loading: true,
         error: false,
-        text: ''
+        text: '',
+        members: null,
     }
     fetchChats = () => {
         const id = this.props.location.pathname.split('/')[3]
         axios.get('/api/posts/getgroup?id=' + id)
             .then(result => {
-                this.setState({ messages: result.data.data.messageId, error: false, loading: false })
+                this.setState({ messages: result.data.data.messageId, members: result.data.data.membersName, error: false, loading: false })
             })
             .catch(err => {
                 this.setState({ error: true, loading: false })
@@ -33,15 +34,28 @@ class GroupChat extends Component {
             groupId: id,
         }
         axios.post('/api/posts/createmsg', data)
-        .then(result => {
-            this.fetchChats();
-            this.setState({text: ''})
-        })
+            .then(result => {
+                this.fetchChats();
+                this.setState({ text: '' })
+            })
+    }
+    joinGroup = e => {
+        const id = this.props.location.pathname.split('/')[3]
+        axios.get('/api/posts/joingroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
+            .then(result => {
+                this.fetchChats();
+            })
+            .catch(err => {
+                console.log('Something went wrong')
+            })
     }
 
     render() {
         let messageList = <h4>Loading...</h4>
-        const { messages, loading, error } = this.state;
+        let membersList = <p>Loading...</p>
+        let joinButton = null;
+        let messageForm = null;
+        const { messages, loading, error, members } = this.state;
         if (messages) {
             messageList = messages.map(message => {
                 return (
@@ -51,6 +65,23 @@ class GroupChat extends Component {
                     </div>
                 )
             })
+            membersList = members.map(member => {
+                return <p key={member}>{member}</p>
+            })
+            const userName = this.props.auth.user.name
+            if (!members.includes(userName)) {
+                joinButton = <button className="btn btn-waves green" onClick={this.joinGroup} >JOIN GROUP</button>
+            } else {
+                messageForm = (
+                    <form onSubmit={this.createMessage}>
+                        <div className="input-field">
+                            <input value={this.state.text} id="text" onChange={(e) => this.setState({ text: e.target.value })} required type="text" />
+                            <label htmlFor="text">Type a message</label>
+                        </div>
+                        <button type="submit" className="btn btn-waves blue">SEND</button>
+                    </form>
+                )
+            }
         }
         if (error) {
             messageList = <h4>an error occured...</h4>
@@ -58,21 +89,20 @@ class GroupChat extends Component {
         return (
             <div className="container">
                 <div className="card white" style={{ padding: 5 }}>
+                    {joinButton}
                     <h4 className="center-text">Group Messages</h4>
                     <div className="row">
                         <div className="col l9">
                             {messageList}
                             <div style={{}} className="col l11">
-                                <form onSubmit={this.createMessage}>
-                                    <div className="input-field">
-                                        <input value={this.state.text} id="text" onChange={(e) => this.setState({ text: e.target.value })} required type="text" />
-                                        <label htmlFor="text">Type a message</label>
-                                    </div>
-                                    <button type="submit" className="btn btn-waves blue">SEND</button>
-                                </form>
+                                {messageForm}
                             </div>
                         </div>
-                        <ProfileSideNav />
+                        <div className="col l3">
+                            <h6>Members</h6>
+                            <hr />
+                            {membersList}
+                        </div>
                     </div>
                 </div>
             </div>

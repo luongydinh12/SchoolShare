@@ -146,7 +146,7 @@ class Dashboard extends Component {
               </Link></div>
               <button
                 style={{
-                  width: "150px",
+                  width: "200px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
                   marginTop: "2rem"
@@ -173,7 +173,7 @@ class Dashboard extends Component {
 
               <button
                 style={{
-                  width: "150px",
+                  width: "200px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
                   marginTop: "2rem",

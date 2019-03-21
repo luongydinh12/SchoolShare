@@ -57,16 +57,16 @@ class CreateCategory extends Component {
                     </Link>
                 <div className="card white" style={{ padding: 5 }}>
                 
-                    <h4 className="center-text" style={{marginLeft: "20px"}}>Create Category</h4>
+                    <h4 className="center-text" style={{marginLeft: "20px", fontFamily: "Urbana"}}>Create Category</h4>
                     <div className="row">
                         <div className="col l9" style={{marginLeft: "20px"}}>
                             <form onSubmit={this.createCategory}>
                                 {msg}
                                 <div className="input-field">
                                     <input value={this.state.name} id="name" onChange={(e) => this.setState({name: e.target.value})} required type="text" className="validate" />
-                                        <label htmlFor="name">Name</label>
+                                        <label htmlFor="name">Category Name</label>
                                 </div>
-                                <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3">SUBMIT</button>
+                                <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3">Create</button>
                             </form>
                         </div>
                         </div>

@@ -155,6 +155,31 @@ router.get('/getgroup', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route GET api/posts/joingroup
+// @desc get group and add new member to it
+// @access Users
+// @returns Array of Object(s)
+router.get('/joingroup', (req, res) => {
+  const groupId  = req.query.id
+  const user  = req.query.user
+  const name  = req.query.name
+  Group.findById(groupId)
+  
+  .then(data => {
+      data.members.push(user)
+      data.membersName.push(name)
+      data.save()
+      .then(data => {
+        res.send({
+          success: 'User successfully joined',
+          data: data
+        })
+      })
+      .catch(err =>  console.log(err))
+  })
+  .catch(err =>  console.log(err))
+})
+
 
 // @route POST api/posts/createmsg
 // @desc Create  message
