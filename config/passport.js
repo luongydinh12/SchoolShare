@@ -58,7 +58,7 @@ module.exports = passport => {
   passport.use(new FacebookStrategy({
     clientID: keys.facebook.facebookClientId,
     clientSecret: keys.facebook.facebookClientSecret,
-    callbackURL: "api/users/facebookcallback",
+    callbackURL: "https://schoolshare.me/api/users/facebookcallback",
 	profileFields: ['id', 'name', 'emails', 'photos']
   },
     (accessToken, refreshToken, profile, done) => {

@@ -4,8 +4,10 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import io from 'socket.io-client'
 
-const socket = io("http://localhost:5050")
-
+const local="http://localhost"
+const remote="https://schoolshare.me"
+const socket = io("https://schoolshare.me")
+//const socket=io(remote+":5050")
 
 
 export class OAuth extends Component {
@@ -51,8 +53,8 @@ export class OAuth extends Component {
     const top = (window.innerHeight / 2) - (height / 2)
     console.log(socket.id);
     this.sendSocketIO();
-    const url = `http://localhost:5000/api/users/google?socketId=${socket.id}`;
-
+    const url = `http://SchoolShare.me:5000/api/users/google?socketId=${socket.id}`;
+  //  const url=remote+`:5000/api/users/google?socketId=${socket.id}`;
     return window.open(url, '',
       `toolbar=no, location=no, directories=no, status=no, menubar=no, 
         scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
@@ -65,8 +67,8 @@ export class OAuth extends Component {
     const top = (window.innerHeight / 2) - (height / 2)
     console.log(socket.id);
     this.sendSocketIO();
-    const url = `http://localhost:5000/api/users/facebook?socketId=${socket.id}`;
-
+    const url = `https://schoolshare.me/api/users/facebook?socketId=${socket.id}`;
+   // const url=remote+`:5000/api//users/facebook?socketId=${socket.id}`;
     return window.open(url, '',
       `toolbar=no, location=no, directories=no, status=no, menubar=no, 
         scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
