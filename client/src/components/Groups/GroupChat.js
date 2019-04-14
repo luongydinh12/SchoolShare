@@ -1,9 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
-import ProfileSideNav from './ProfileSideNav';
 import { connect } from 'react-redux';
-import { Link } from "react-router-dom";
-import { withRouter } from 'react-router-dom';
+import {Button, Modal} from 'react-materialize';
+
 class GroupChat extends Component {
     state = {
         messages: null,
@@ -50,11 +49,20 @@ class GroupChat extends Component {
                 console.log('Something went wrong')
             })
     }
-
+    leaveGroup = e => {
+        const id = this.props.location.pathname.split('/')[3]
+        axios.get('/api/posts/leaveGroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
+            .then(result => {
+                this.fetchChats();
+            })
+            .catch(err => {
+                console.log('Something went wrong')
+            })
+    }
     render() {
         let messageList = <h4>Loading...</h4>
         let membersList = <p>Loading...</p>
-        let joinButton = null;
+        let joinButton = null, leaveButton = null, leaveModal = null;
         let messageForm = null;
         const { messages, loading, error, members } = this.state;
         if (messages) {
@@ -77,6 +85,13 @@ class GroupChat extends Component {
                 marginLeft: "1rem", 
                 width: "150px"}} >JOIN GROUP</button>
             } else {
+                leaveButton = <button className="btn btn-large waves-effect waves-light hoverable green accent-3" 
+                style ={{marginTop: "3rem",
+                marginLeft: "1rem", 
+                width: "150px"}} >LEAVE GROUP</button>;
+                leaveModal = (<Modal trigger={leaveButton} header="Confirmation" actions={[<Button  waves="green" modal="close" flat onClick={()=>this.leaveGroup()}>Yes</Button>, <Button  waves="green" modal="close" flat>No</Button>]}>
+                Are you sure you want to leave this group?
+                </Modal>);
                 messageForm = (
                     <form onSubmit={this.createMessage}>
                         <div className="input-field">
@@ -94,22 +109,15 @@ class GroupChat extends Component {
         }
         return (
             <div className="container">
-                <div className="card white" style={{ padding: 5 }}>
-{/*                 <Link to="/" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
-                    borderRadius: "1px",
-                    marginTop: "3rem",
-                    marginLeft: "1rem",
-                    marginBottom: "2rem",
-                }}>Go Back </Link> */}
+                <div className="card white custom-modal-btn" style={{ padding: 5 }}>
 
                 <button onClick={this.props.history.goBack} className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 style={{marginLeft: "25px",
                 marginTop: "3rem",
                 width: "150px"}}>Go Back</button>
 
-
                     {joinButton}
+                    {leaveModal}
                     <h4 className="center-text" 
                     style ={{fontFamily: "Urbana",
                     marginLeft: "23px"}}>Group Messages</h4>

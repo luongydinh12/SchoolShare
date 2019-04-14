@@ -77,27 +77,6 @@ class Dashboard extends Component {
 
     return (
       <div>
-
-        {/*         <div style={{
-          cssFloat: "left", display: "flex",
-          flexDirection: "column"
-        }}>
-          <aside id="groupList" style={{
-            display: "flex",
-            flexDirection: "column",
-            backgroundColor: "gray",
-            height: "100vh",
-            width: "200px"
-          }}>
-            <img id="groupIcon" src="" alt="A" />
-            <img id="groupIcon" src="" alt="B" />
-            <img id="groupIcon" src="" alt="C" />
-            <img id="groupIcon" src="" alt="D" />
-          </aside>
-
-        </div> */}
-
-
         <div style={{ height: "75vh" }} className="container valign-wrapper">
           <div className="row">
             <div className="col s12 center-align ">
@@ -127,11 +106,6 @@ class Dashboard extends Component {
                 fontSize: "150%"
               }}>Joined Date: {moment(user.date).format('MM/DD/YYYY')}</p>
 
-              {/*           <p class="userDesc" style={{
-            // fontWeight: "bold",
-            fontSize: "150%"
-          }}>Bio: {user.description}</p> */}
-
               {dashboardContent}
 
               <div>
@@ -140,10 +114,22 @@ class Dashboard extends Component {
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
                   marginTop: "2rem",
-                  marginBottom: "1.4rem"
+                  marginBottom: "1.4rem",
                 }}>
                 Groups
-              </Link></div>
+              </Link>
+
+{/*               <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                  width: "150px",
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "2rem",
+                  marginBottom: "1.4rem",
+                  marginLeft: 16,
+                }}>
+                FORUM
+              </Link> */}</div>
+
               <button
                 style={{
                   width: "200px",
@@ -156,20 +142,6 @@ class Dashboard extends Component {
               >
                 Logout
             </button>
-
-
-{/*               <button
-                style={{
-                  width: "150px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "2rem",
-                  marginLeft: "1rem"
-                }}
-                className="btn btn-large waves-effect waves-light hoverable green accent-3"
-              >
-                <Link to="/groups" > Groups</Link>
-              </button> */}
 
               <button
                 style={{

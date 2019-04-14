@@ -13,33 +13,35 @@ class Groups extends Component {
         console.log(this.props.auth)
         return (
             <div >
+            <div  className="container" style={{ }}>
                 <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
+                    width: "220px",
                     borderRadius: "1px",
                     marginTop: "3rem",
-                    marginLeft: "192px",
+                    //marginLeft: "192px",
                     marginBottom: "2rem",
                 }}>
                     List of Categories
                     </Link>
                 <Link to="/create-category" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
+                    width: "220px",
                     borderRadius: "1px",
                     marginTop: "3rem",
-                    marginLeft: "2rem",
+                    marginLeft: "1rem",
                     marginBottom: "2rem",
                 }}>
                     Create A Category
                     </Link>
                 <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
+                    width: "220px",
                     borderRadius: "1px",
                     marginTop: "3rem",
-                    marginLeft: "2rem",
+                    marginLeft: "1rem",
                     marginBottom: "2rem",
                 }}>
                     Back to Dashboard
               </Link>
+              </div>
                 <p style={{ padding: "1px" }}></p>
                 <Fragment>
                     <Switch>
@@ -50,6 +52,7 @@ class Groups extends Component {
                     </Switch>
                 </Fragment>
             </div>
+            
         )
     }
 }

@@ -137,6 +137,31 @@ router.get('/getallgroup', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route GET api/posts/getmygroups 
+// @desc list group that a user is subscribed to
+// @access Users
+// @returns Array of Object(s)
+router.get('/getmygroups', (req, res) => {
+  const user = req.query.user || undefined;
+  if(!user) return console.error('No user specified');
+
+  let myGroups = [];
+  Group.find()
+  .then(data => {
+    data.map(g=>{
+      // console.log({g})
+      if(g.members.indexOf(user) != -1) {
+        myGroups.push(g._id);
+      }
+    });
+    Group.find({ _id: { $in: myGroups }}).then(data => {
+      res.send({data});
+    }).catch(err =>  console.log(err))
+
+  })
+  .catch(err =>  console.log(err))
+})  
+
 // @route GET api/posts/getgroup
 // @desc get group categoriy and popilate all the groups in them in details from latest to the oldest
 // @access Users
@@ -180,6 +205,30 @@ router.get('/joingroup', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route GET api/posts/leaveGroup
+// @desc get group and remove a memeber from it
+// @access Users
+// @returns Array of Object(s)
+router.get('/leaveGroup', (req, res) => {
+  const groupId  = req.query.id
+  const user  = req.query.user
+  const name  = req.query.name
+  Group.findById(groupId)
+  
+  .then(data => {
+      data.members = data.members.filter(u => u != user);
+      data.membersName = data.membersName.filter(n => n != name);
+      data.save()
+      .then(data => {
+        res.send({
+          success: 'User successfully left',
+          data: data
+        })
+      })
+      .catch(err =>  console.log(err))
+  })
+  .catch(err =>  console.log(err))
+})
 
 // @route POST api/posts/createmsg
 // @desc Create  message
