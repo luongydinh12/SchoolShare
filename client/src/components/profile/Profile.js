@@ -1,38 +1,41 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
-import { getProfileByHandle } from '../../actions/profileActions'
-import ProfileHeader from './ProfileHeader'
-import ProfileAbout from './ProfileAbout'
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
+import { getProfileByHandle } from "../../actions/profileActions";
+import ProfileHeader from "./ProfileHeader";
+import ProfileAbout from "./ProfileAbout";
 
-import Spinner from '../common/Spinner'
+import Spinner from "../common/Spinner";
 
 class Profile extends Component {
   componentDidMount() {
     if (this.props.match.params.handle) {
-      this.props.getProfileByHandle(this.props.match.params.handle)
+      this.props.getProfileByHandle(this.props.match.params.handle);
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.profile.profile === null && this.props.profile.loading) {
-      this.props.history.push('/not-found')
+      this.props.history.push("/not-found");
     }
   }
 
   render() {
-    const { profile, loading } = this.props.profile
-    let profileContent
+    const { profile, loading } = this.props.profile;
+    let profileContent;
 
     if (profile === null || loading) {
-      profileContent = <Spinner />
+      profileContent = <Spinner />;
     } else {
       profileContent = (
         <div>
           <div className="row">
             <div className="col-md-6">
-              <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3">
+              <Link
+                to="/dashboard"
+                className="btn btn-large waves-effect waves-light hoverable green accent-3"
+              >
                 Back to Dashboard
               </Link>
             </div>
@@ -41,7 +44,7 @@ class Profile extends Component {
           <ProfileHeader profile={profile} />
           <ProfileAbout profile={profile} />
         </div>
-      )
+      );
     }
 
     return (
@@ -52,20 +55,20 @@ class Profile extends Component {
           </div>
         </div>
       </div>
-    )
+    );
   }
 }
 
 Profile.propTypes = {
   profile: PropTypes.object.isRequired,
-  getProfileByHandle: PropTypes.func.isRequired,
-}
+  getProfileByHandle: PropTypes.func.isRequired
+};
 
 const mapStateToProps = state => ({
-  profile: state.profile,
-})
+  profile: state.profile
+});
 
 export default connect(
   mapStateToProps,
-  { getProfileByHandle },
-)(Profile)
+  { getProfileByHandle }
+)(Profile);

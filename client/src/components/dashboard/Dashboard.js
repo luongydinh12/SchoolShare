@@ -77,7 +77,7 @@ class Dashboard extends Component {
 
     return (
       <div>
-        <div style={{ height: "75vh" }} className="container valign-wrapper">
+        <div style={{ height: "75vh" }} className="container">
           <div className="row">
             <div className="col s12 center-align ">
               <h1 style={{ fontFamily: "Urbana" }}>Welcome to School Share 🎉</h1>
@@ -159,22 +159,6 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
-
-        {/* 
-        <div style={{ height: "75vh" }} className="container valign-wrapper">
-          <div className="row">
-            <div className="col s12 center-align">
-              <h4>
-                <b>Hey there,</b> {user.name.split(" ")[0]}
-                <p className="flow-text grey-text text-darken-3">
-                  This is your user profile. Updates are coming soon! </p>
-                <p className="flow-text grey-text text-darken-3"> {" "}
-                  <span style={{ fontFamily: "Urbana" }}>Welcome to School Share</span> 🎉
-              </p>
-              </h4>
-            </div>
-          </div>
-        </div> */}
       </div>
     );
   }

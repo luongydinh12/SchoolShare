@@ -38,21 +38,21 @@ class CreateCategory extends Component {
         return (
             <div className="container">
                 <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
+                    width: "150px",
                     borderRadius: "1px",
                     marginTop: "3rem",
                     marginBottom: "2rem",
                 }}>
-                    List of Categories
+                    Categories
                     </Link>
                 <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
+                    width: "150px",
                     borderRadius: "1px",
                     marginTop: "3rem",
                     marginLeft: "2rem",
                     marginBottom: "2rem",
                 }}>
-                    Back to Dashboard
+                    Dashboard
               </Link>
 
                 <div className="card white" style={{ padding: 5 }}>

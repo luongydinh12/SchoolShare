@@ -92,7 +92,7 @@ class CreateProfile extends Component {
                   error={errors.name}
                   info="Your Name"
                 />
-{/*                 <TextFieldGroup
+                {/*                 <TextFieldGroup
                   placeholder="* Your Email"
                   name="email"
                   value={this.state.email}

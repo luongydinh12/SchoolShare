@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import logo from './logo.png';
 class Navbar extends Component {
 
   render() {
@@ -14,8 +15,10 @@ class Navbar extends Component {
               }}
               className="col s5 brand-logo center black-text"
             >
-              <i className="material-icons">code</i>
+{/*               <i className="material-icons">code</i> */}
 
+              <img src={logo} width="30" height="30" alt="logo " 
+              style={{marginRight: "10px",}}/>
               School Share
             </Link>
           </div>

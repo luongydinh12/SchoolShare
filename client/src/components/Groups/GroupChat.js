@@ -60,8 +60,8 @@ class GroupChat extends Component {
             })
     }
     render() {
-        let messageList = <h4>Loading...</h4>
-        let membersList = <p>Loading...</p>
+        let messageList = <h4 style={{fontFamily: "Urbana",}}>Loading...</h4>
+        let membersList = <p style={{fontFamily: "Urbana",}}>Loading...</p>
         let joinButton = null, leaveButton = null, leaveModal = null;
         let messageForm = null;
         const { messages, loading, error, members } = this.state;
@@ -92,6 +92,7 @@ class GroupChat extends Component {
                 leaveModal = (<Modal trigger={leaveButton} header="Confirmation" actions={[<Button  waves="green" modal="close" flat onClick={()=>this.leaveGroup()}>Yes</Button>, <Button  waves="green" modal="close" flat>No</Button>]}>
                 Are you sure you want to leave this group?
                 </Modal>);
+                
                 messageForm = (
                     <form onSubmit={this.createMessage}>
                         <div className="input-field">
@@ -115,8 +116,7 @@ class GroupChat extends Component {
                 style={{marginLeft: "25px",
                 marginTop: "3rem",
                 width: "150px"}}>Go Back</button>
-
-                    {joinButton}
+                    {joinButton}           
                     {leaveModal}
                     <h4 className="center-text" 
                     style ={{fontFamily: "Urbana",

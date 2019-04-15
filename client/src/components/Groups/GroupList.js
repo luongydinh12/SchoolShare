@@ -21,7 +21,7 @@ class GroupList extends Component {
     }
 
     render() {
-        let groupList = <h4>Loading...</h4>
+        let groupList = <h4 style={{fontFamily: "Urbana",}}>Loading...</h4>
         const {groups, loading, error} = this.state;
         if(groups){
             groupList = groups.map(group => {
@@ -53,14 +53,7 @@ class GroupList extends Component {
                     marginLeft: "1rem",
                     marginBottom: "2rem",
                 }}>Create Group </Link>
-{/*                 <Link to="/" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
-                    borderRadius: "1px",
-                    marginTop: "3rem",
-                    marginLeft: "2rem",
-                    marginBottom: "2rem",
-                }}>List All Groups </Link> */}
-                {/* List All Groups after user selects a category so this button is not needed */}
+
                     <h4 className="center-text" 
                     style= {{marginLeft: "10px",
                     fontFamily: "Urbana",

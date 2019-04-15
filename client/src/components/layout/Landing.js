@@ -4,22 +4,24 @@ import OAuth from "../auth/OAuth";
 class Landing extends Component {
   componentDidMount() {
     document.body.classList.remove("background-white");
-}
+  }
   render() {
     return (
       <div style={{ height: "75vh" }} className="container valign-wrapper">
         <div className="row">
           <div className="col s12 center-align">
             <div>
-              <span style={{ fontFamily: "Urbana",
-                             color: "#ffffff",
-                             fontSize: "125px" }}>School Share.</span>
+              <span style={{
+                fontFamily: "Urbana",
+                color: "#ffffff",
+                fontSize: "125px"
+              }}>School Share.</span>
             </div>
             <h3>
               <span style={{
                 fontFamily: "Urbana",
                 color: "#fffff0"
-                }}>Collaborate with Classmates online.</span>
+              }}>Collaborate with Classmates online.</span>
             </h3>
             <br />
             <a href="/register"

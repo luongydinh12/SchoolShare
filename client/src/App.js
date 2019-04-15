@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
 //import './App.css';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import jwt_decode from "jwt-decode";
@@ -16,17 +16,16 @@ import OAuth from "./components/auth/OAuth";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 
-
-import { clearCurrentProfile } from './actions/profileActions'
-import CreateProfile from './components/create-profile/CreateProfile'
-import EditProfile from './components/edit-profile/EditProfile'
+import { clearCurrentProfile } from "./actions/profileActions";
+import CreateProfile from "./components/create-profile/CreateProfile";
+import EditProfile from "./components/edit-profile/EditProfile";
 //import Profiles from './components/profiles/Profiles'
-import Profile from './components/profile/Profile'
-import NotFound from './components/not-found/NotFound'
+import Profile from "./components/profile/Profile";
+import NotFound from "./components/not-found/NotFound";
 
-
-import Groups from './components/Groups/Groups';
-import CreateCategory from './components/Groups/CreateCategory';
+import Groups from "./components/Groups/Groups";
+import MyGroups from "./components/Groups/MyGroups";
+import CreateCategory from "./components/Groups/CreateCategory";
 
 // import io from 'socket.io-client'
 // const keys = require("../package.json");
@@ -64,20 +63,28 @@ class App extends Component {
 
             <Route exact path="/profile/:handle" component={Profile} />
             <Route path="/groups" component={Groups} />
+            <Route path="/mygroups" component={MyGroups} />
             <Route path="/create-category" exact component={CreateCategory} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
             </Switch>
 
             <Switch>
-              <PrivateRoute exact path="/create-profile" component={CreateProfile} />
+              <PrivateRoute
+                exact
+                path="/create-profile"
+                component={CreateProfile}
+              />
             </Switch>
             <Switch>
-              <PrivateRoute exact path="/edit-profile" component={EditProfile} />
+              <PrivateRoute
+                exact
+                path="/edit-profile"
+                component={EditProfile}
+              />
             </Switch>
 
             <Route exact path="/not-found" component={NotFound} />
-
           </div>
         </Router>
       </Provider>

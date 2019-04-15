@@ -25,7 +25,7 @@ class Groups extends Component {
         let cat = null;
         const { categories, loading, error } = this.state;
         if (loading) {
-            cat = <h4>Loading...</h4>
+            cat = <h4 style={{fontFamily: "Urbana"}}>Loading...</h4>
         }
         if (categories !== null) {
             cat = categories.data.map(category => {

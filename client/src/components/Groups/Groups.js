@@ -13,35 +13,48 @@ class Groups extends Component {
         console.log(this.props.auth)
         return (
             <div >
-            <div  className="container" style={{ }}>
-                <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "220px",
-                    borderRadius: "1px",
-                    marginTop: "3rem",
-                    //marginLeft: "192px",
-                    marginBottom: "2rem",
+                <div class="container" style={{
+                    marginLeft: "auto",
+                    marginRight: "auto"
                 }}>
-                    List of Categories
+                    <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                        width: "150px",
+                        borderRadius: "1px",
+                        marginTop: "3rem",
+                        //marginLeft: "192px",
+                        marginBottom: "2rem",
+                    }}>
+                        Categories
                     </Link>
-                <Link to="/create-category" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "220px",
-                    borderRadius: "1px",
-                    marginTop: "3rem",
-                    marginLeft: "1rem",
-                    marginBottom: "2rem",
-                }}>
-                    Create A Category
+                    <Link to="/create-category" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                        width: "210px",
+                        borderRadius: "1px",
+                        marginTop: "3rem",
+                        marginLeft: "1rem",
+                        marginBottom: "2rem",
+                    }}>
+                        Create A Category
                     </Link>
-                <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "220px",
-                    borderRadius: "1px",
-                    marginTop: "3rem",
-                    marginLeft: "1rem",
-                    marginBottom: "2rem",
-                }}>
-                    Back to Dashboard
+                    <Link to="/mygroups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                        width: "150px",
+                        borderRadius: "1px",
+                        marginTop: "3rem",
+                        marginLeft: "1rem",
+                        marginBottom: "2rem",
+                    }}>
+                        My Groups
               </Link>
-              </div>
+                    <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                        width: "150px",
+                        borderRadius: "1px",
+                        marginTop: "3rem",
+                        marginLeft: "1rem",
+                        marginBottom: "2rem",
+                    }}>
+                        Dashboard
+              </Link>
+
+                </div>
                 <p style={{ padding: "1px" }}></p>
                 <Fragment>
                     <Switch>
@@ -52,7 +65,7 @@ class Groups extends Component {
                     </Switch>
                 </Fragment>
             </div>
-            
+
         )
     }
 }
