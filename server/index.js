@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const passport = require("passport");
 const profile = require('./routes/api/profile');
 const users = require("./routes/api/users");
-const groups = require("./routes/api/groups");
 const session=require('express-session');
 const app = express();
 require('dotenv').config();
@@ -60,7 +59,6 @@ require("../config/passport")(passport);
 
 app.use("/api/users", users);
 app.use("/api/profile", profile);
-app.use("/api/groups",groups);
 
 
 //Heroku, might need to change this

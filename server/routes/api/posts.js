@@ -137,6 +137,54 @@ router.get('/getallgroup', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route GET api/posts/getGroupsByCat
+// @desc list groups from latest to the oldest, by category name
+// @access Users
+// @returns Array of Object(s)
+router.get('/getGroupsByCategoryName', (req, res) => {
+  const limit = req.query.limit || 0
+  //const _catId=GroupCategory.findOne({name:req.query.cat})
+  GroupCategory.findOne({name:req.query.cat}).then(cat=>{
+    Group.find({catId : cat._id})
+    .sort({ _id: -1})
+    .limit(Number(limit))
+    .then(data => {
+      res.send({
+        data: data
+      })
+    })
+    .catch(err =>  console.log(err))
+  })
+  // Group.find({catId: _catId})
+  // .sort({ _id: -1})
+  // .limit(Number(limit))
+  // .then(data => {
+  //   res.send({
+  //     data: data
+  //   })
+  // })
+  // .catch(err =>  console.log(err))
+
+})
+
+// @route GET api/posts/searchgroups
+// @desc list matching groups from newest to oldest
+// @access Users
+// @returns Array of Object(s)
+router.get('/searchgroups', (req, res) => {
+  const limit = req.query.limit || 0
+  Group.find({catId : req.query.catId},
+    {query:req.query.query})
+  .sort({ _id: -1})
+  .limit(Number(limit))
+  .then(data => {
+    res.send({
+      data: data
+    })
+  })
+  .catch(err =>  console.log(err))
+})
+
 // @route GET api/posts/getmygroups 
 // @desc list group that a user is subscribed to
 // @access Users
