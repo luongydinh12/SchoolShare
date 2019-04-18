@@ -17,7 +17,7 @@ class CreateCategory extends Component {
         const data = {
             name: this.state.name,
         }
-        axios.post('api/posts/creategroupcat', data)
+        axios.post('api/posts/createcategory', data)
         .then(result => {
             this.setState({success: true, loading: false, name: ''})
         })

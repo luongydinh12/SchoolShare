@@ -16,7 +16,7 @@ class CreateGroup extends Component {
         categories: null,
     }
     componentDidMount = () => {
-        axios.get('/api/posts/getallgroupcat')
+        axios.get('/api/posts/getallcategories')
             .then(result => {
                 this.setState({ error: false, categories: result.data.data })
             })

@@ -11,7 +11,7 @@ class GroupList extends Component {
     }
     componentDidMount = () => {
         const id = this.props.location.pathname.split('/')[3]
-        axios.get('/api/posts/getallgroup?catId='+id)
+        axios.get('/api/posts/getallgroups?catId='+id)
         .then(result => {
             this.setState({groups: result.data.data, loading: false, error: false})
         })

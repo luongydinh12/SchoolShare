@@ -12,7 +12,7 @@ class Groups extends Component {
         error: false,
     }
     componentDidMount = () => {
-        axios.get('api/posts/getallgroupcat')
+        axios.get('api/posts/getallcategories')
             .then(result => {
                 this.setState({ categories: result.data, loading: false, error: false })
             })
