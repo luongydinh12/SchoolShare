@@ -16,7 +16,7 @@ class CreateGroup extends Component {
         categories: null,
     }
     componentDidMount = () => {
-        axios.get('/api/posts/getallcategories')
+        axios.get('/api/groups/getallcategories')
             .then(result => {
                 this.setState({ error: false, categories: result.data.data })
             })
@@ -35,7 +35,7 @@ class CreateGroup extends Component {
             createdBy: createdBy,
             catId: category
         }
-        axios.post('/api/posts/creategroup', data)
+        axios.post('/api/groups/creategroup', data)
             .then(result => {
                 this.setState({ success: true, name: '', desc: '', error: false })
             })

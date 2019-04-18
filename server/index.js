@@ -46,8 +46,8 @@ mongoose
   .catch(err => console.log(err));
 
 // Post
-const posts = require('./routes/api/posts');
-app.use('/api/posts',posts);
+const groups = require('./routes/api/groups');
+app.use('/api/groups',groups);
 
 
 // Passport middleware

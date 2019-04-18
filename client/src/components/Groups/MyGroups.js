@@ -11,7 +11,7 @@ class MyGroups extends Component {
     }
     componentDidMount = () => {
         const id = this.props.location.pathname.split('/')[3]
-        axios.get('/api/posts/getmygroups?user=' + this.props.auth.user.id)
+        axios.get('/api/groups/getmygroups?user=' + this.props.auth.user.id)
             .then(result => {
                 this.setState({ groups: result.data.data, loading: false, error: false })
             })

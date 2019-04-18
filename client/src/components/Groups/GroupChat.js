@@ -13,7 +13,7 @@ class GroupChat extends Component {
     }
     fetchChats = () => {
         const id = this.props.location.pathname.split('/')[3]
-        axios.get('/api/posts/getgroup?id=' + id)
+        axios.get('/api/groups/getgroup?id=' + id)
             .then(result => {
                 this.setState({ messages: result.data.data.messageId, members: result.data.data.membersName, error: false, loading: false })
             })
@@ -33,7 +33,7 @@ class GroupChat extends Component {
             createdBy: this.props.auth.user.id,
             groupId: id,
         }
-        axios.post('/api/posts/createmsg', data)
+        axios.post('/api/groups/createmsg', data)
             .then(result => {
                 this.fetchChats();
                 this.setState({ text: '' })
@@ -41,7 +41,7 @@ class GroupChat extends Component {
     }
     joinGroup = e => {
         const id = this.props.location.pathname.split('/')[3]
-        axios.get('/api/posts/joingroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
+        axios.get('/api/groups/joingroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
             .then(result => {
                 this.fetchChats();
             })
@@ -51,7 +51,7 @@ class GroupChat extends Component {
     }
     leaveGroup = e => {
         const id = this.props.location.pathname.split('/')[3]
-        axios.get('/api/posts/leaveGroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
+        axios.get('/api/groups/leaveGroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
             .then(result => {
                 this.fetchChats();
             })
