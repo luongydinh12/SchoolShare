@@ -9,12 +9,17 @@ import CreateGroup from './CreateGroup';
 import SearchGroups from './SearchGroups';
 
 class Groups extends Component {
-
+    state={
+        groupSearchResults:0
+    }
+    groupSearchCb=(data)=>{
+        this.setState({groupSearchResults:data})
+    }
     render() {
         console.log(this.props.auth)
         return (
             <div >
-                <div class="container" style={{
+                <div className="container" style={{
                     marginLeft: "auto",
                     marginRight: "auto"
                 }}>
@@ -55,14 +60,15 @@ class Groups extends Component {
                         Dashboard
               </Link>
 
-              <SearchGroups/>
+              <SearchGroups groupSearchCb={this.groupSearchCb} />
 
                 </div>
                 <p style={{ padding: "1px" }}></p>
                 <Fragment>
                     <Switch>
                         <Route path={this.props.match.path + '/create'} component={CreateGroup} />
-                        <Route path={this.props.match.path + '/category/:id'} component={GroupList} />
+                        {/* <Route path={this.props.match.path + '/category/:id'} component={GroupList} /> */}
+                        <Route path={this.props.match.path + '/category/:id'} render={(props)=> <GroupList {...props} groupListFromSearch={false} groupSearchResults={this.state.groupSearchResults}/>} />
                         <Route path={this.props.match.path + '/chat/:id'} component={GroupChat} />
                         <Route path='/' component={Categories} />
                     </Switch>

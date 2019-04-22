@@ -10,14 +10,21 @@ class GroupList extends Component {
         error: false
     }
     componentDidMount = () => {
-        const id = this.props.location.pathname.split('/')[3]
-        axios.get('/api/groups/getallgroups?catId='+id)
-        .then(result => {
-            this.setState({groups: result.data.data, loading: false, error: false})
-        })
-        .catch(err => {
-            this.setState({loading: false, error: true})
-        })
+        console.log("testp:\t"+this.props.groupSearchResults);
+
+        if(this.props.groupSearchResults==0){
+            const id = this.props.location.pathname.split('/')[3]
+            axios.get('/api/groups/getallgroups?catId=' + id)
+                .then(result => {
+                    this.setState({ groups: result.data.data, loading: false, error: false })
+                })
+                .catch(err => {
+                    this.setState({ loading: false, error: true })
+                })
+        }
+        else{
+            this.setState({groups:this.props.groupSearchResults, loading:false,error:false})
+        }
     }
 
     render() {

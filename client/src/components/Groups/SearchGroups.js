@@ -8,6 +8,8 @@ class SearchGroups extends Component {
         query:'',
         results:-1
     }
+    componentDidMount=e=>{
+    }
     search= e => { 
         e.preventDefault();
         this.setState({loading: true, error: false})
@@ -19,6 +21,7 @@ class SearchGroups extends Component {
         }).then(res=>{
             console.log(res.data);
             this.setState({results:res.data.length});
+            this.props.groupSearchCb(res.data)
         });
     }
     render() {
@@ -44,6 +47,7 @@ class SearchGroups extends Component {
             return(
                 <div>
                     {this.state.results} results!
+                    this.props
                 </div>
             )
         }
