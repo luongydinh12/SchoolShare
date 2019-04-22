@@ -6,6 +6,7 @@ import GroupList from './GroupList';
 import GroupChat from './GroupChat';
 import { Link } from 'react-router-dom';
 import CreateGroup from './CreateGroup';
+import SearchGroups from './SearchGroups';
 
 class Groups extends Component {
 
@@ -53,6 +54,8 @@ class Groups extends Component {
                     }}>
                         Dashboard
               </Link>
+
+              <SearchGroups/>
 
                 </div>
                 <p style={{ padding: "1px" }}></p>

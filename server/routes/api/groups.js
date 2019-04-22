@@ -48,6 +48,7 @@ router.post('/createcategory', (req, res) => {
 // @access Users
 // @returns String
 router.post('/creategroup', (req, res) => {
+  console.log(req.body);
   const { name, desc, createdBy, catId } = req.body
   let obj = {
     groupId: ''
@@ -141,22 +142,21 @@ router.get('/getGroupsByCategoryName', (req, res) => {
   })
 })
 
+
 // @route GET api/posts/searchgroups
 // @desc list matching groups from newest to oldest
 // @access Users
 // @returns Array of Object(s)
 router.get('/searchgroups', (req, res) => {
-  const limit = req.query.limit || 0
-  Group.find({catId : req.query.catId},
-    {query:req.query.query})
-  .sort({ _id: -1})
-  .limit(Number(limit))
-  .then(data => {
-    res.send({
-      data: data
-    })
+  const q=req.query.query;
+  Group.find({
+    name: new RegExp(q,'i')
   })
-  .catch(err =>  console.log(err))
+  .sort({date:-1})
+  .then(data=>{
+    res.send(data);
+  })
+  .catch(err =>  console.log(err));
 })
 
 // @route GET api/posts/getmygroups 
