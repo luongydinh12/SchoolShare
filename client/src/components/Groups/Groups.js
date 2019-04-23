@@ -6,14 +6,23 @@ import GroupList from './GroupList';
 import GroupChat from './GroupChat';
 import { Link } from 'react-router-dom';
 import CreateGroup from './CreateGroup';
+import SearchGroups from './SearchGroups';
 
 class Groups extends Component {
-
+    state={
+        groupSearchResults:-1
+    }
+    groupSearchCb=(data)=>{ //cb function to be passed into search as a prop so it passes data back
+        this.setState({groupSearchResults:data})
+        this.props.history.push(this.props.match.path+'/searchresults')
+    }
+    clearSearchState=(e)=>{
+        this.setState({groupSearchResults:-1})
+    }
     render() {
-        console.log(this.props.auth)
         return (
             <div >
-                <div class="container" style={{
+                <div className="container" style={{
                     marginLeft: "auto",
                     marginRight: "auto"
                 }}>
@@ -54,12 +63,20 @@ class Groups extends Component {
                         Dashboard
               </Link>
 
+              <SearchGroups groupSearchCb={this.groupSearchCb} groupSearchResults={this.state.groupSearchResults} />
+
                 </div>
                 <p style={{ padding: "1px" }}></p>
                 <Fragment>
                     <Switch>
                         <Route path={this.props.match.path + '/create'} component={CreateGroup} />
                         <Route path={this.props.match.path + '/category/:id'} component={GroupList} />
+                        <Route path={this.props.match.path + '/searchresults'} render={(props)=>
+                            <GroupList {...props} 
+                                groupSearchResults={this.state.groupSearchResults}
+                                clearSearchState={this.clearSearchState}
+                            />} 
+                        />
                         <Route path={this.props.match.path + '/chat/:id'} component={GroupChat} />
                         <Route path='/' component={Categories} />
                     </Switch>

@@ -7,22 +7,48 @@ class GroupList extends Component {
     state = {
         groups: null,
         loading: true,
-        error: false
+        error: false,
+        zeroSearchResults:null
     }
-    componentDidMount = () => {
-        const id = this.props.location.pathname.split('/')[3]
-        axios.get('/api/groups/getallgroups?catId='+id)
-        .then(result => {
-            this.setState({groups: result.data.data, loading: false, error: false})
-        })
-        .catch(err => {
-            this.setState({loading: false, error: true})
-        })
+    componentDidMount = () => {       
+        if(!this.props.groupSearchResults){
+            this.setState({searchNumber:0})
+            const id = this.props.location.pathname.split('/')[3]
+            axios.get('/api/groups/getallgroups?catId=' + id)
+                .then(result => {
+                    this.setState({ groups: result.data.data, loading: false, error: false })
+                })
+                .catch(err => {
+                    this.setState({ loading: false, error: true })
+                })
+        }
+        else{
+            const results=this.props.groupSearchResults
+            if(results==-1){
+                this.setState({groups:null, loading:false,error:false,zeroSearchResults:true})
+            }
+            else{
+                this.setState({groups:results, loading:false,error:false, zeroSearchResults:false})
+            }
+            this.props.clearSearchState()
+        }
     }
-
+    componentDidUpdate=(prevProps)=>{ //if it's already displaying a groupslist component
+        if (this.props.groupSearchResults!== prevProps.groupSearchResults) {//prevents loop on setstate
+            const results=this.props.groupSearchResults
+            if(results==-1){
+                this.setState({groups:null, loading:false,error:false,zeroSearchResults:true})
+            }
+            else{
+                this.setState({groups:results, loading:false,error:false, zeroSearchResults:false})
+            }
+          }       
+    }
+ 
     render() {
         let groupList = <h4 style={{fontFamily: "Urbana",}}>Loading...</h4>
         const {groups, loading, error} = this.state;
+
         if(groups){
             groupList = groups.map(group => {
                 return (
@@ -42,6 +68,9 @@ class GroupList extends Component {
             })
         }if(error){
             groupList = <h4>an error occured...</h4>
+        }
+        if(this.state.zeroSearchResults){
+            groupList= <h4>No search results.</h4>
         }
         return (
             <div className="container">
