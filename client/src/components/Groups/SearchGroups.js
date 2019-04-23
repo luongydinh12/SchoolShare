@@ -35,7 +35,7 @@ class SearchGroups extends Component {
                     </form> 
                 </div>
             )
-        }
+        }  
         if(r==0){
             return(
                 <div>
