@@ -10,13 +10,16 @@ import SearchGroups from './SearchGroups';
 
 class Groups extends Component {
     state={
-        groupSearchResults:0
+        groupSearchResults:-1
     }
-    groupSearchCb=(data)=>{
+    groupSearchCb=(data)=>{ //cb function to be passed into search as a prop so it passes data back
         this.setState({groupSearchResults:data})
+        this.props.history.push(this.props.match.path+'/searchresults')
+    }
+    clearSearchState=(e)=>{
+        this.setState({groupSearchResults:-1})
     }
     render() {
-        console.log(this.props.auth)
         return (
             <div >
                 <div className="container" style={{
@@ -60,15 +63,20 @@ class Groups extends Component {
                         Dashboard
               </Link>
 
-              <SearchGroups groupSearchCb={this.groupSearchCb} />
+              <SearchGroups groupSearchCb={this.groupSearchCb} groupSearchResults={this.state.groupSearchResults} />
 
                 </div>
                 <p style={{ padding: "1px" }}></p>
                 <Fragment>
                     <Switch>
                         <Route path={this.props.match.path + '/create'} component={CreateGroup} />
-                        {/* <Route path={this.props.match.path + '/category/:id'} component={GroupList} /> */}
-                        <Route path={this.props.match.path + '/category/:id'} render={(props)=> <GroupList {...props} groupListFromSearch={false} groupSearchResults={this.state.groupSearchResults}/>} />
+                        <Route path={this.props.match.path + '/category/:id'} component={GroupList} />
+                        <Route path={this.props.match.path + '/searchresults'} render={(props)=>
+                            <GroupList {...props} 
+                                groupSearchResults={this.state.groupSearchResults}
+                                clearSearchState={this.clearSearchState}
+                            />} 
+                        />
                         <Route path={this.props.match.path + '/chat/:id'} component={GroupChat} />
                         <Route path='/' component={Categories} />
                     </Switch>

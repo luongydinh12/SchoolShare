@@ -1,15 +1,16 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import GroupList from './GroupList';
 
 class SearchGroups extends Component {
     state={
         query:'',
-        results:-1
+        results:this.props.groupSearchResults
     }
     componentDidMount=e=>{
+        this.setState({results:this.props.groupSearchResults});
     }
+    
     search= e => { 
         e.preventDefault();
         this.setState({loading: true, error: false})
@@ -19,14 +20,13 @@ class SearchGroups extends Component {
         axios.get('/api/groups/searchgroups',  {
             params: data
         }).then(res=>{
-            console.log(res.data);
             this.setState({results:res.data.length});
             this.props.groupSearchCb(res.data)
         });
     }
     render() {
         const r = this.state.results;
-        if (r == -1) {
+        if (this.state.results) {
             return (
                 <div className="search">
                     <form onSubmit={this.search}>
@@ -47,7 +47,6 @@ class SearchGroups extends Component {
             return(
                 <div>
                     {this.state.results} results!
-                    this.props
                 </div>
             )
         }
