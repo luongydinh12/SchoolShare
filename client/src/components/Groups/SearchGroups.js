@@ -25,31 +25,14 @@ class SearchGroups extends Component {
         });
     }
     render() {
-        const r = this.state.results;
-        if (this.state.results) {
-            return (
-                <div className="search">
-                    <form onSubmit={this.search}>
-                        <input value={this.state.query} id="search" onChange={(e) => this.setState({ query: e.target.value })} required type="text" />
-                        <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3">Search</button>
-                    </form> 
-                </div>
-            )
-        }  
-        if(r==0){
-            return(
-                <div>
-                    No results found!
-                </div>
-            )
-        }
-        else{
-            return(
-                <div>
-                    {this.state.results} results!
-                </div>
-            )
-        }
+        return (
+            <div className="search">
+                <form onSubmit={this.search}>
+                    <input value={this.state.query} id="search" onChange={(e) => this.setState({ query: e.target.value })} required type="text" />
+                    <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3">Search</button>
+                </form> 
+            </div>
+        )
     }
 }
 
