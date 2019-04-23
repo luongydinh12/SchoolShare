@@ -74,7 +74,7 @@ class Groups extends Component {
                         <Route path={this.props.match.path + '/searchresults'} render={(props)=>
                             <GroupList {...props} 
                                 groupSearchResults={this.state.groupSearchResults}
-                                clearSearchState={this.clearSearchState}
+                               // clearSearchState={this.clearSearchState}
                             />} 
                         />
                         <Route path={this.props.match.path + '/chat/:id'} component={GroupChat} />

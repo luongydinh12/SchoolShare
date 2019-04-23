@@ -10,8 +10,10 @@ class GroupList extends Component {
         error: false,
         zeroSearchResults:null
     }
-    componentDidMount = () => {       
+    componentDidMount = () => {   
+        console.log(this.props.groupSearchResults)    
         if(!this.props.groupSearchResults){
+            console.log("not from search")
             this.setState({searchNumber:0})
             const id = this.props.location.pathname.split('/')[3]
             axios.get('/api/groups/getallgroups?catId=' + id)
@@ -25,12 +27,14 @@ class GroupList extends Component {
         else{
             const results=this.props.groupSearchResults
             if(results==-1){
+                console.log("no search results")
                 this.setState({groups:null, loading:false,error:false,zeroSearchResults:true})
             }
             else{
+                console.log("search results present")
                 this.setState({groups:results, loading:false,error:false, zeroSearchResults:false})
             }
-            this.props.clearSearchState()
+            //this.props.clearSearchState()
         }
     }
     componentDidUpdate=(prevProps)=>{ //if it's already displaying a groupslist component
