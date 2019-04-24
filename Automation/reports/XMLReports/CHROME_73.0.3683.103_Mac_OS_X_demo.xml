@@ -5,18 +5,18 @@
 
   <testsuite name="demo"
     errors="0" failures="1" hostname="" id="" package="demo" skipped="0"
-    tests="1" time="6.149" timestamp="">
+    tests="1" time="6.542" timestamp="">
   
-    <testcase name="Demo test Google" classname="demo" time="6.149" assertions="4">
+    <testcase name="Demo test Google" classname="demo" time="6.542" assertions="4">
 
     
 
     
 
-      <failure message="Timed out while waiting for element &lt;button[name=btnG]&gt; to be present for 5000 milliseconds. - expected [0;32m&#34;visible&#34;[0m but got: [0;31m&#34;not found&#34;[0m">    at Object.Demo test Google (/Users/trevoranderson/Desktop/Automation/tests/demo.js:10:10)
+      <failure message="Timed out while waiting for element &lt;button[name=btnG]&gt; to be present for 5000 milliseconds. - expected [0;32m&#34;visible&#34;[0m but got: [0;31m&#34;not found&#34;[0m">    at Object.Demo test Google (/Users/trevoranderson/Documents/GitHub/SchoolShare/Automation/tests/demo.js:10:10)
     at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
 
-    <failure message="    at Object.Demo test Google (/Users/trevoranderson/Desktop/Automation/tests/demo.js:10:10)">    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
+    <failure message="    at Object.Demo test Google (/Users/trevoranderson/Documents/GitHub/SchoolShare/Automation/tests/demo.js:10:10)">    at process._tickCallback (internal/process/next_tick.js:68:7)</failure>
     </testcase>
   
 
