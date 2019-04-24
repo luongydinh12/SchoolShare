@@ -25,7 +25,7 @@ module.exports = {
         .setValue('input[id=password2]', randomPassword)
         .pause(1000)
         .click('#root > div > div.container > div > div > form > div:nth-child(5) > button')
-        .pause(3000)
+        .pause(1000)
         .assert.visible('input[type=email]')
         .setValue('input[type=email]', randomEmail)
         .pause(1000)
