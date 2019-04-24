@@ -5,9 +5,9 @@
 
   <testsuite name="createProfile"
     errors="0" failures="0" hostname="" id="" package="createProfile" skipped="0"
-    tests="1" time="23.05" timestamp="">
+    tests="1" time="23.17" timestamp="">
   
-    <testcase name="Test School Share Login" classname="createProfile" time="23.05" assertions="12">
+    <testcase name="Test School Share Login" classname="createProfile" time="23.17" assertions="12">
 
     
 
