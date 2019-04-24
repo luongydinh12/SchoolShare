@@ -119,7 +119,7 @@ class Dashboard extends Component {
                 Groups
               </Link>
 
-{/*               <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+              <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                   width: "150px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
@@ -128,7 +128,7 @@ class Dashboard extends Component {
                   marginLeft: 16,
                 }}>
                 FORUM
-              </Link> */}</div>
+              </Link> </div>
 
               <button
                 style={{
