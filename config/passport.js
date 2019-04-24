@@ -71,7 +71,7 @@ module.exports = passport => {
             name: profile.name.givenName + " " + profile.name.familyName,
             email: profile.emails[0].value,
             facebookId: profile.id,
-			avatar: profile.photos ? profile.photos[0].value : '/img/faces/unknown-user-pic.jpg'
+			avatar: "graph.facebook.com/"; + profile.username + "/picture";
           }).save().then((u) => {
             //console.log("new user created " + newUser);
             return done(null, u);
