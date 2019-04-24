@@ -1,9 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import ProfileSideNav from './ProfileSideNav';
 import axios from 'axios';
-import { TextInput } from 'react-materialize'; // npm install react-materialize --save (CLIENT)
 
 class Groups extends Component {
     state = {
