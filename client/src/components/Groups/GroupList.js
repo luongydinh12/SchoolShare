@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
-import ProfileSideNav from './ProfileSideNav';
 import { Link } from "react-router-dom";
 
 class GroupList extends Component {
@@ -51,7 +50,7 @@ class GroupList extends Component {
  
     render() {
         let groupList = <h4 style={{fontFamily: "Urbana",}}>Loading...</h4>
-        const {groups, loading, error} = this.state;
+        const {groups, error} = this.state;
 
         if(groups){
             groupList = groups.map(group => {

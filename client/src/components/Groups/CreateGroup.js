@@ -1,6 +1,6 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component} from 'react';
 import axios from 'axios';
-import ProfileSideNav from './ProfileSideNav';
+//import ProfileSideNav from './ProfileSideNav';
 import { connect } from 'react-redux';
 //import { $ } from 'jquery';
 
