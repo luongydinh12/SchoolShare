@@ -1,36 +1,30 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import axios from 'axios';
 
-class Groups extends Component {
-    state = {
-        categories: null,
-        loading: true,
-        error: false,
-    }
-    componentDidMount = () => {
-        axios.get('api/groups/getallcategories')
-            .then(result => {
-                this.setState({ categories: result.data, loading: false, error: false })
-            })
-            .catch(err => {
-                this.setState({ error: true, loading: false })
-            })
-    }
 
+class ForumCategories extends Component {
     render() {
         let cat = null;
-        const { categories, loading, error } = this.state;
-        if (loading) {
-            cat = <h4 style={{fontFamily: "Urbana"}}>Loading...</h4>
+        const categories = [{
+            name: 'General',
+            link: 'general'
+        },
+        {
+            name: 'Homework',
+            link: 'homework'
+        },
+        {
+            name: 'Feedback',
+            link: 'feedback'
         }
+    ]
         if (categories !== null) {
-            cat = categories.data.map(category => {
+            cat = categories.map(category => {
                 return (
                     <div style= {{marginBottom: "20px"}}>           
                     <Fragment key={category._id}>
-                        <Link to={'/groups/category/'+category._id} 
+                        <Link to={'/forum/'+category.link} 
                         style={{ fontSize: 18, 
                         fontFamily: "Urbana",
                         //fontWeight: "bold",
@@ -45,21 +39,24 @@ class Groups extends Component {
                 )
             })
         }
-        if (error){
-            cat = <h4>an error occured...</h4>
-        }
         return (
             <div className="container">
                 <div className="card white" style={{ padding: 5 }}>
-                    <h4 className="center-text" 
+                <div className="row">
+                <div className="col l9">
+                <h4 className="center-text" 
                     style ={{marginBottom: "50px", 
                     marginLeft: "10px",
-                    fontFamily: "Urbana" }}>List of Categories</h4>
+                    fontFamily: "Urbana" }}>Discussion Forum</h4>
+                </div>
+                <div className="col l3">
+                </div>
+                </div>
+
                     <div className="row">
                         <div className="col l9">
                             {cat}
                         </div>
-                       {/*  <ProfileSideNav /> */}
                     </div>
                 </div>
             </div>
@@ -71,4 +68,4 @@ const mapStateToProps = state => ({
     auth: state.auth
 });
 
-export default connect(mapStateToProps)(Groups);
+export default connect(mapStateToProps)(ForumCategories);

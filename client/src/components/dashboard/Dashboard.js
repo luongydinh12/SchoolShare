@@ -9,7 +9,6 @@ import { Link } from 'react-router-dom'
 import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
 import Spinner from '../common/Spinner'
 import ProfileActions from './ProfileActions'
-import GroupActions from './GroupActions'
 
 class Dashboard extends Component {
   onLogoutClick = e => {
@@ -119,7 +118,7 @@ class Dashboard extends Component {
                 Groups
               </Link>
 
-{/*               <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+              <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                   width: "150px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
@@ -128,7 +127,7 @@ class Dashboard extends Component {
                   marginLeft: 16,
                 }}>
                 FORUM
-              </Link> */}</div>
+              </Link> </div>
 
               <button
                 style={{

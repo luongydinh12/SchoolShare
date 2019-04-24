@@ -16,9 +16,9 @@ import OAuth from "./components/auth/OAuth";
 import PrivateRoute from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 
-import { clearCurrentProfile } from "./actions/profileActions";
-import CreateProfile from "./components/create-profile/CreateProfile";
-import EditProfile from "./components/edit-profile/EditProfile";
+//import { clearCurrentProfile } from "./actions/profileActions";
+import CreateProfile from "./components/profile/CreateProfile";
+import EditProfile from "./components/profile/EditProfile";
 //import Profiles from './components/profiles/Profiles'
 import Profile from "./components/profile/Profile";
 import NotFound from "./components/not-found/NotFound";
@@ -26,6 +26,7 @@ import NotFound from "./components/not-found/NotFound";
 import Groups from "./components/Groups/Groups";
 import MyGroups from "./components/Groups/MyGroups";
 import CreateCategory from "./components/Groups/CreateCategory";
+import Forum from "./components/forum/Forum";
 
 // import io from 'socket.io-client'
 // const keys = require("../package.json");
@@ -60,7 +61,7 @@ class App extends Component {
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/oauth" component={OAuth} />
-
+            <Route path="/forum" component={Forum} />
             <Route exact path="/profile/:handle" component={Profile} />
             <Route path="/groups" component={Groups} />
             <Route path="/mygroups" component={MyGroups} />

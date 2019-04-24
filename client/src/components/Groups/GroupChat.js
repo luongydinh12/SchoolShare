@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component} from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import {Button, Modal} from 'react-materialize';
@@ -64,7 +64,7 @@ class GroupChat extends Component {
         let membersList = <p style={{fontFamily: "Urbana",}}>Loading...</p>
         let joinButton = null, leaveButton = null, leaveModal = null;
         let messageForm = null;
-        const { messages, loading, error, members } = this.state;
+        const { messages, error, members } = this.state;
         if (messages) {
             messageList = messages.map(message => {
                 return (

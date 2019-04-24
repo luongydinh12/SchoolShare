@@ -1,13 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import TextFieldGroup from '../common/TextFieldGroup';
-import TextAreaFieldGroup from '../common/TextAreaFieldGroup';
-import InputGroup from '../common/InputGroup';
-import SelectListGroup from '../common/SelectListGroup';
-import { createProfile, getCurrentProfile } from '../../actions/profileActions';
-import isEmpty from '../../validation/is-empty';
+import TextFieldGroup from '../../common/TextFieldGroup';
+import { Link } from 'react-router-dom';
+import { createProfile } from '../../../actions/profileActions';
 
 class CreateProfile extends Component {
   constructor(props) {
@@ -15,7 +12,7 @@ class CreateProfile extends Component {
     this.state = {
       handle: '',
       description: '',
-      avatar: '', // ADD THIS
+      avatar: '',
       name: '',
       //email: '',
       errors: {}
@@ -25,40 +22,22 @@ class CreateProfile extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  componentDidMount() {
-    this.props.getCurrentProfile();
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.errors) {
       this.setState({ errors: nextProps.errors });
-    }
-
-    if (nextProps.profile.profile) {
-      const profile = nextProps.profile.profile;
-
-
-      profile.description = !isEmpty(profile.description) ? profile.description : '';
-
-      this.setState({
-        handle: profile.handle,
-        description: profile.description,
-        avatar: profile.user.avatar,// ADD THIS
-        name: profile.user.name,
-        //email: profile.user.email,
-      });
     }
   }
 
   onSubmit(e) {
     e.preventDefault();
 
+    
     const profileData = {
       handle: this.state.handle,
       description: this.state.description,
-      avatar: this.state.avatar,// ADD THIS
-      name: this.state.name,
-      //email: this.state.email,
+      avatar:  '',
+      name: '',
+      //email: '',
 
     };
 
@@ -72,6 +51,8 @@ class CreateProfile extends Component {
   render() {
     const { errors } = this.state;
 
+
+
     return (
       <div className="create-profile">
         <div className="container">
@@ -80,10 +61,12 @@ class CreateProfile extends Component {
               <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3">
                 Go Back
               </Link>
-              <h1 className="display-4 text-center">Edit Profile</h1>
+              <h1 className="display-4 text-center">Create Your Profile</h1>
+              <p className="lead text-center">
+                Let's get some information to make your profile stand out
+              </p>
               <small className="d-block pb-3">* = required fields</small>
               <form onSubmit={this.onSubmit}>
-                <p>Please type in </p>
                 <TextFieldGroup
                   placeholder="Your Name"
                   name="name"
@@ -92,7 +75,7 @@ class CreateProfile extends Component {
                   error={errors.name}
                   info="Your Name"
                 />
-                {/*                 <TextFieldGroup
+{/*                 <TextFieldGroup
                   placeholder="* Your Email"
                   name="email"
                   value={this.state.email}
@@ -106,7 +89,7 @@ class CreateProfile extends Component {
                   value={this.state.handle}
                   onChange={this.onChange}
                   error={errors.handle}
-                  info="A unique Username for your profile URL."
+                  info="A unique Username for your profile URL"
                 />
                 <TextFieldGroup
                   placeholder="Description"
@@ -116,6 +99,8 @@ class CreateProfile extends Component {
                   error={errors.description}
                   info="Tell me about yourself"
                 />
+
+
                 <TextFieldGroup
                   placeholder="Avatar"
                   name="avatar"
@@ -141,8 +126,6 @@ class CreateProfile extends Component {
 }
 
 CreateProfile.propTypes = {
-  createProfile: PropTypes.func.isRequired,
-  getCurrentProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired,
   errors: PropTypes.object.isRequired
 };
@@ -152,6 +135,6 @@ const mapStateToProps = state => ({
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { createProfile, getCurrentProfile })(
+export default connect(mapStateToProps, { createProfile })(
   withRouter(CreateProfile)
 );

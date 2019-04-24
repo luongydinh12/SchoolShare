@@ -45,10 +45,13 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
-// Post
+// Group
 const groups = require('./routes/api/groups');
 app.use('/api/groups',groups);
 
+// Post
+const posts = require('./routes/api/posts');
+app.use('/api/posts',posts);
 
 // Passport middleware
 app.use(passport.initialize());

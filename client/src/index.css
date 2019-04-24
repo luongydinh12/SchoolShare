@@ -38,3 +38,24 @@ code {
  .custom-modal-btn div{
   display: inline;
 }
+
+.forumThread{
+  width: 90%;
+  min-height: 100px;
+  margin: 15px auto;
+  border-radius: 6px;
+  box-shadow: 0px 0px 5px 0px grey;
+  position: relative;
+ }
+
+ .forumThread a{
+  font-size: 36px;
+    font-family: Urbana;
+    padding: 0 0 0 20px;
+}
+
+ .forumThread p{
+  position: absolute;
+    right: 10px;
+    bottom: 0;
+}

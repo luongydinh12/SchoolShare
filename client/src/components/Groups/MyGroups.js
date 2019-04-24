@@ -10,7 +10,7 @@ class MyGroups extends Component {
         error: false
     }
     componentDidMount = () => {
-        const id = this.props.location.pathname.split('/')[3]
+        //const id = this.props.location.pathname.split('/')[3]
         axios.get('/api/groups/getmygroups?user=' + this.props.auth.user.id)
             .then(result => {
                 this.setState({ groups: result.data.data, loading: false, error: false })
@@ -23,7 +23,7 @@ class MyGroups extends Component {
     render() {
         let groupList = <h4 style ={{fontFamily: "Urbana",}}>Loading...</h4>
         //let groupList = <Spinner />
-        const { groups, loading, error } = this.state;
+        const { groups, error } = this.state;
         if (groups) {
             groupList = groups.map(group => {
                 return (
@@ -94,7 +94,6 @@ class MyGroups extends Component {
                     <div className="card white" style={{ padding: 5 }}>
                         <h4 className="center-text"
                             style={{
-                                marginLeft: "10px",
                                 fontFamily: "Urbana",
                                 marginLeft: "15px",
                             }}>My Groups</h4>
