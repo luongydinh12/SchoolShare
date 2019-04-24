@@ -5,9 +5,13 @@
 
   <testsuite name="login_facebook"
     errors="0" failures="0" hostname="" id="" package="login_facebook" skipped="0"
-    tests="1" time="7.021" timestamp="">
+    tests="1" time="16.38" timestamp="">
   
-    <testcase name="Test School Share Login" classname="login_facebook" time="7.021" assertions="2">
+    <testcase name="Test School Share Login" classname="login_facebook" time="16.38" assertions="4">
+
+    
+
+    
 
     
 
