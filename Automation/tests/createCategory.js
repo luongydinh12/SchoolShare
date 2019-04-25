@@ -13,7 +13,7 @@ var jobdescriptor = faker.name.jobDescriptor();
 var jobtitle = faker.name.jobTitle();
 var word = faker.random.word();
 module.exports = {
-    '@tags': ['createCategory+Group+Message'],
+    '@tags': ['createCategory'],
     'Test School Share Login' : function (client) {
       client
         .url('https://schoolshare.me/')
