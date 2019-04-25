@@ -5,3 +5,4 @@ server/index.js
 /Automation/lib/**
 /Automation/log/**
 /Automation/reports/**
+/Automation/node_modules
