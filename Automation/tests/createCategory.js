@@ -35,12 +35,12 @@ module.exports = {
         .click('#root > div > div:nth-child(2) > div:nth-child(1) > a:nth-child(2)')
         .pause(1000)
         .assert.visible('input[id=name]')
-        .setValue('input[id=name]', department)
+        .setValue('input[id=name]', word)
         .pause(1000)
         .click('#root > div > div.container > div > div > div > form > button')
         .pause(1000)
         .click('#root > div > div.container > a:nth-child(1)')
-        .pause(10000)
+        .pause(3000)
         .end();
     }
   };
