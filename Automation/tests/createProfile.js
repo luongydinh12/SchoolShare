@@ -4,7 +4,7 @@ var randomEmail = faker.internet.email();
 var randomPassword = faker.internet.password();
 var randomUsername = faker.internet.userName();
 var randomDescription = faker.lorem.sentence();
-var randomPicture = faker.internet.avatar();
+var randomPicture = faker.image.imageUrl();
 module.exports = {
     '@tags': ['createProfile'],
     'Test School Share Login' : function (client) {
