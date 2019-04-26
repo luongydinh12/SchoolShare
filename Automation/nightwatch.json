@@ -18,7 +18,7 @@
   
     "test_settings" : {
       "chrome" : {
-        "launch_url":"http://localhost",
+        "launch_url":"https://schoolshare.me",
         "selenium_port": 4444,
         "selenium_host": "localhost",
         "silent": true,
