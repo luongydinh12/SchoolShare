@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 class Landing extends Component {
   componentDidMount() {
-    document.body.classList.remove("background-white");
+    //document.body.classList.remove("background-white");
+    document.body.classList.add("background-green");
   }
   render() {
     return (
@@ -9,37 +10,47 @@ class Landing extends Component {
         <div className="row">
           <div className="col s12 center-align">
             <div>
-              <span style={{
-                fontFamily: "Urbana",
-                color: "#ffffff",
-                fontSize: "125px"
-              }}>School Share.</span>
+              <span
+                style={{
+                  fontFamily: "Urbana",
+                  color: "#ffffff",
+                  fontSize: "125px"
+                }}
+              >
+                School Share.
+              </span>
             </div>
             <h3>
-              <span style={{
-                fontFamily: "Urbana",
-                color: "#fffff0"
-              }}>Collaborate with Classmates online.</span>
+              <span
+                style={{
+                  fontFamily: "Urbana",
+                  color: "#fffff0"
+                }}
+              >
+                Collaborate with Classmates online.
+              </span>
             </h3>
             <br />
-            <a href="/register"
+            <a
+              href="/register"
               style={{
                 width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                fontFamily: "Urbana",
+                fontFamily: "Urbana"
               }}
               className="btn btn-large waves-effect white hoverable black-text"
             >
               Register
             </a>
-            <a href="/login"
+            <a
+              href="/login"
               style={{
                 marginLeft: "2rem",
                 width: "150px",
                 borderRadius: "3px",
                 letterSpacing: "1.5px",
-                fontFamily: "Urbana",
+                fontFamily: "Urbana"
               }}
               className="btn btn-large waves-effect white hoverable black-text"
             >

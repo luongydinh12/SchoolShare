@@ -4,11 +4,8 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { loginUser } from "../../actions/authActions";
 import classnames from "classnames";
-import OAuth from "./OAuth"
+import OAuth from "./OAuth";
 class Login extends Component {
-
-
-
   constructor() {
     super();
     this.state = {
@@ -20,44 +17,38 @@ class Login extends Component {
 
   componentDidMount() {
     document.body.classList.add("background-white");
-    console.log(this.props.history)
+    console.log(this.props.history);
     // If logged in and user navigates to Login page, should redirect them to dashboard
     if (this.props.auth.isAuthenticated) {
       this.props.history.push("/dashboard");
     }
-    
   }
 
-
-componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps(nextProps) {
     if (nextProps.auth.isAuthenticated) {
       this.props.history.push("/dashboard"); // push user to dashboard when they login
     }
-if (nextProps.errors) {
+    if (nextProps.errors) {
       this.setState({
         errors: nextProps.errors
       });
     }
   }
-onChange = e => {
+  onChange = e => {
     this.setState({ [e.target.id]: e.target.value });
   };
-onSubmit = e => {
+  onSubmit = e => {
     e.preventDefault();
-const userData = {
+    const userData = {
       email: this.state.email,
       password: this.state.password
     };
-this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
+    this.props.loginUser(userData); // since we handle the redirect within our component, we don't need to pass in this.props.history as a parameter
   };
 
-
-
-
-render() {
+  render() {
     const { errors } = this.state;
-return (
-
+    return (
       <div className="container">
         <div style={{ marginTop: "4rem" }} className="row">
           <div className="col s8 offset-s2">
@@ -114,23 +105,20 @@ return (
                     width: "150px",
                     borderRadius: "3px",
                     letterSpacing: "1.5px",
-                    marginTop: "1rem",
+                    marginTop: "1rem"
                   }}
                   type="submit"
                   className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 >
                   Login
-                </button>            
+                </button>
               </div>
 
-              <div className="col s12" style={{ paddingLeft: "11.250px" }}> 
-              <OAuth />
-
-              
+              <div className="col s12" style={{ paddingLeft: "11.250px" }}>
+                <OAuth />
               </div>
             </form>
           </div>
-          
         </div>
       </div>
     );
