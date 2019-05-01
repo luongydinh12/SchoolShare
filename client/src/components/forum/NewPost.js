@@ -28,6 +28,10 @@ class NewPost extends Component {
       .post("/api/posts/newforumpost", data)
       .then(result => {
         this.setState({ success: true, loading: false, name: "" });
+        setTimeout(
+          () => this.props.history.push("/forum/post/" + result.data.data._id),
+          1500
+        );
       })
       .catch(err => {
         this.setState({

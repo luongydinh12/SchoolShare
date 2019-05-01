@@ -69,3 +69,24 @@ router.post('/newforumpost', (req, res) => {
 })
 
 module.exports = router;
+
+// @route GET api/posts/getpostbyid
+// @desc get posts for a specific category
+// @access Users
+// @returns Array of Object(s)
+router.get('/getpostbyid', (req, res) => {
+  const postID = req.query.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Thread.findById(postID).populate('author', 'name').then(post => {
+    if(post){
+      
+        res.send({...post._doc });
+      
+    } else {
+      res.sendStatus(404);
+    }
+  })
+    .catch(err =>  console.log(err))
+
+});
