@@ -5,6 +5,7 @@ const GroupCategory = require("../../../models/GroupCategory");
 const Message = require("../../../models/Messages");
 const User = require("../../../models/User");
 const Thread = require("../../../models/Thread");
+const Comment = require("../../../models/Comment");
 const router = express.Router();
 const mongoose = require('mongoose');
 
@@ -68,8 +69,6 @@ router.post('/newforumpost', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
-module.exports = router;
-
 // @route GET api/posts/getpostbyid
 // @desc get posts for a specific category
 // @access Users
@@ -80,9 +79,9 @@ router.get('/getpostbyid', (req, res) => {
 
   Thread.findById(postID).populate('author', 'name').then(post => {
     if(post){
-      
-        res.send({...post._doc });
-      
+      Comment.count({thread: postID}).then(count => {
+        res.send({...post._doc, commentCount: count}); 
+      })
     } else {
       res.sendStatus(404);
     }
@@ -90,3 +89,46 @@ router.get('/getpostbyid', (req, res) => {
     .catch(err =>  console.log(err))
 
 });
+
+// @route POST api/posts/postReply
+// @desc Create a thread reply
+// @access Users
+// @returns String and msg data(details)
+router.post('/postReply', (req, res) => {
+  console.log({body: req.body})
+  const { parent, thread, content, author } = req.body
+
+  const newComment = new Comment({
+    parent,
+    thread,
+    content,
+    author,
+  })
+
+  newComment
+  .save()
+  .then(data => {
+    res.send(data)
+  })
+  .catch(err =>  console.log(err))
+})
+
+// @route GET api/posts/getComments
+// @desc Gets top level comments
+// @access Users
+// @returns String and msg data(details)
+router.get('/getComments', (req, res) => {
+  console.log({query: req.query})
+  const { id } = req.query;
+
+  Comment.find({ parent: id })
+  .populate('author', 'name')
+  .then(data => {
+    res.send(data)
+  })
+  .catch(err =>  console.log(err))
+})
+
+
+
+module.exports = router;

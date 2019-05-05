@@ -14,9 +14,9 @@ const CommentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'thread'
   },
-  replies: [{
+  parent: {
     type: Schema.Types.ObjectId,
     ref: 'comment'
-  }]
+  }
 }, { timestamps: true });
 module.exports = Comment = mongoose.model("comment", CommentSchema);
