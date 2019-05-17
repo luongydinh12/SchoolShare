@@ -1,3 +1,4 @@
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import axios from 'axios';
@@ -26,11 +27,8 @@ class SearchGroups extends Component {
     }
     render() {
         return (
-            <div className="search">
-                <form onSubmit={this.search}>
-                    <input value={this.state.query} id="search" onChange={(e) => this.setState({ query: e.target.value })} required type="text" />
-                    <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3">Search</button>
-                </form> 
+            <div className="search">               
+                <input value={this.state.query} id="search" placeholder="Enter group here" onInput={this.search} onChange={(e) => this.setState({ query: e.target.value })} required type="text" />              
             </div>
         )
     }
