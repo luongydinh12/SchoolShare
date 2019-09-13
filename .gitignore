@@ -1,4 +1,4 @@
-/node_modules/**
+node_modules/
 /config/keys.js
 .env
 server/index.js
