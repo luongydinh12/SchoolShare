@@ -1,20 +1,22 @@
-//const express = require('express');
 import express from "express"
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const mongoose = require("mongoose");
-const passport = require("passport");
-const profile = require('./routes/api/profile');
-const users = require("./routes/api/users");
-const session=require('express-session');
-const app = express();
+import session from "express-session"
+import logger from "morgan"
+import bodyParser from "body-parser"
+import cors from "cors"
+import mongoose from "mongoose"
+import passport from "passport"
+
+import users from "./routes/api/users"
+import profile from "./routes/api/profile"
+import groups from "./routes/api/groups"
+import posts from "./routes/api/posts"
+
+import keys from "../config/keys"
+
 require('dotenv').config();
 
-const logger = require('morgan')// ADD
+const app = express();
 
-const keys=require("../config/keys");
-
-//Middleware
 //Middleware
 // logger to log requests on console
 app.use(logger('dev'))
@@ -27,14 +29,13 @@ app.use(bodyParser.json());
 app.use(cors());
 
 app.use(session({
-  secret: 'secret',//process.env.SESSION_SECRET,
+  secret: 'secret',
   resave:true,
   saveUninitialized:true
 }));
 
 
 //DB Config
-// const db = require("../config/keys").mongoURI;
 const db = keys.db.mongoURI;
 
 //Connect to MongoDB
@@ -46,25 +47,18 @@ mongoose
   .then(() => console.log("MongoDB successfully connected"))
   .catch(err => console.log(err));
 
-// Group
-const groups = require('./routes/api/groups');
-app.use('/api/groups',groups);
-
-// Post
-const posts = require('./routes/api/posts');
-app.use('/api/posts',posts);
-
 // Passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
 // Passport config
 require("../config/passport")(passport);
+
 // Routes
+app.use("/api/users", users);
+app.use("/api/profile", profile);
+app.use('/api/groups',groups);
+app.use('/api/posts',posts);
 
-app.use("./routes/api/users", users);
-app.use("./routes/api/profile", profile);
 
-
-//Heroku, might need to change this
 const port = process.env.PORT || 5000;
 app.listen(port,() => console.log( `Server started on port ${port}`));
