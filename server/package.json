@@ -4,11 +4,16 @@
   "description": "CECS491 Senior Project",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/index.js"
+    "start": "nodemon --watch src --exec npm run run",
+    "run": "npm run build && node build/index.js",
+    "build": "babel src --out-dir build"
   },
   "author": "Dinh Luong",
   "license": "ISC",
   "dependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "connect-flash": "^0.1.1",
