@@ -41,4 +41,5 @@ const UserSchema = new Schema({
     ref: 'messages'
   }]
 });
-module.exports = User = mongoose.model("users", UserSchema);
+var User = mongoose.model("users", UserSchema)
+module.exports = User

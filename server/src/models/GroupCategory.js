@@ -16,4 +16,5 @@ const GroupCategorySchema = new Schema({
     ref: 'groups'
   }]
 });
-module.exports = GroupCategory = mongoose.model("groupcategories", GroupCategorySchema);
+var GroupCategory = mongoose.model("groupcategories", GroupCategorySchema)
+module.exports=GroupCategory

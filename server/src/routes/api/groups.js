@@ -1,9 +1,9 @@
 const express = require('express');
 // model
-const Group = require("../../../models/Group");
-const GroupCategory = require("../../../models/GroupCategory");
-const Message = require("../../../models/Messages");
-const User = require("../../../models/User");
+const Group = require("../../models/Group");
+const GroupCategory = require("../../models/GroupCategory");
+const Message = require("../../models/Messages");
+const User = require("../../models/User");
 const router = express.Router();
 
 //Get Posts
