@@ -61,8 +61,8 @@ app.use(passport.session());
 require("../config/passport")(passport);
 // Routes
 
-app.use("/api/users", users);
-app.use("/api/profile", profile);
+app.use("./routes/api/users", users);
+app.use("./routes/api/profile", profile);
 
 
 //Heroku, might need to change this
