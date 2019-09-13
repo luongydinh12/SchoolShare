@@ -11,7 +11,7 @@ import profile from "./routes/api/profile"
 import groups from "./routes/api/groups"
 import posts from "./routes/api/posts"
 
-import keys from "../config/keys"
+import keys from "./config/keys"
 
 require('dotenv').config();
 
@@ -51,7 +51,7 @@ mongoose
 app.use(passport.initialize());
 app.use(passport.session());
 // Passport config
-require("../config/passport")(passport);
+require("./config/passport")(passport);
 
 // Routes
 app.use("/api/users", users);

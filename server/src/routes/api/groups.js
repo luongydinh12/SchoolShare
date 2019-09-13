@@ -1,9 +1,10 @@
-const express = require('express');
+import express from "express"
 // model
-const Group = require("../../models/Group");
-const GroupCategory = require("../../models/GroupCategory");
-const Message = require("../../models/Messages");
-const User = require("../../models/User");
+import Group from "../../models/Group"
+import GroupCategory from "../../models/GroupCategory"
+import Message from "../../models/Messages"
+import User from "../../models/User"
+
 const router = express.Router();
 
 //Get Posts
