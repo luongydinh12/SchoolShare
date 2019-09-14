@@ -37,4 +37,5 @@ const GroupSchema = new Schema({
     required: true,
   }]
 });
-module.exports = Group = mongoose.model("groups", GroupSchema);
+var Group = mongoose.model("groups", GroupSchema)
+module.exports= Group

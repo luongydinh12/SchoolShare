@@ -24,4 +24,5 @@ const MessagesSchema = new Schema({
     required: true
   }
 });
-module.exports = Messages = mongoose.model("messages", MessagesSchema);
+var Messages = mongoose.model("messages", MessagesSchema)
+module.exports = Messages
