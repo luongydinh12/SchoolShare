@@ -26,7 +26,7 @@ class Dashboard extends Component {
     document.body.classList.add("background-white");
     this.props.getCurrentProfile()
   }
-
+ //test
   handleDeleteAccount = () => {
     this.props.deleteAccount()
   }
