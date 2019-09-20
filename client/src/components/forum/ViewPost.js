@@ -58,8 +58,7 @@ class ViewPost extends Component {
             {post.author.name}:
           </p>
           <p>{post.content}</p>
-
-          {this.showCommentManagement()}
+          {this.showCommentManagement(post.author._id)}
           {this.renderPostReplyBox()}{" "}
 
         </div>
@@ -131,12 +130,12 @@ class ViewPost extends Component {
     e.preventDefault();
     this.setState({ displayReplyBox: false });
   }
-  showCommentManagement(){
-    if(this.props.auth.user != this.props.author) return (
+  showCommentManagement(e){
+    if(this.props.auth.user.id != e) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
-      </a></p>);
-    return(
+      </a></p>)
+    else return(
       <p>
         <a href="/" onClick={this.postReplyClick}>
           Reply

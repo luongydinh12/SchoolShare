@@ -126,15 +126,15 @@ class RenderComment extends Component {
   }
   closeReplyClick(e) {
     e.preventDefault();
-    this.setState({ displayReplyBox: false });
+    this.setState({ displayReplyBox: false, postReplyValue: "" });
   }
 
-  showCommentManagement(){
-    if(this.props.auth.user != this.props.author) return (
+  showCommentManagement(e){
+    if(this.props.auth.user.id != e) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
-      </a></p>);
-    return(
+      </a></p>)
+    else return(
       <p>
         <a href="/" onClick={this.postReplyClick}>
           Reply
@@ -148,7 +148,7 @@ class RenderComment extends Component {
             Delete
           </a>
       </p>
-    );
+    )
   }
 
   submitPostReply(e) {
@@ -180,7 +180,6 @@ class RenderComment extends Component {
   render() {
     console.log("RenderComment", { state: this.state });
     const { c: comment } = this.props;
-
     return (
       <>
         <div className="row" style={{ marginBottom: 0 }}>
@@ -193,7 +192,7 @@ class RenderComment extends Component {
                 {comment.author.name}:
               </div>
               <p>{comment.content}</p>
-              {this.showCommentManagement()}
+              {this.showCommentManagement(comment.author._id)}
               {this.renderPostReplyBox()}
 
               {Array.isArray(this.state.comments) &&
