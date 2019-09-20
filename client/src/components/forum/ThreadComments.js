@@ -67,6 +67,8 @@ class RenderComment extends Component {
     this.renderPostReplyBox = this.renderPostReplyBox.bind(this);
     this.submitPostReply = this.submitPostReply.bind(this);
     this.postReplyClick = this.postReplyClick.bind(this);
+    this.closeReplyClick = this.closeReplyClick.bind(this);
+    this.showCommentManagement = this.showCommentManagement.bind(this);
   }
 
   componentDidMount = () => {
@@ -110,6 +112,10 @@ class RenderComment extends Component {
         <a href="/" onClick={this.submitPostReply}>
           Reply
         </a>
+        {"\t | \t"}
+        <a href="/" onClick={this.closeReplyClick}>
+          Cancel Reply
+        </a>
       </div>
     );
   }
@@ -117,6 +123,32 @@ class RenderComment extends Component {
   postReplyClick(e) {
     e.preventDefault();
     this.setState({ displayReplyBox: true });
+  }
+  closeReplyClick(e) {
+    e.preventDefault();
+    this.setState({ displayReplyBox: false });
+  }
+
+  showCommentManagement(){
+    if(this.props.auth.user != this.props.author) return (
+      <p><a href="/" onClick={this.postReplyClick}>
+      Reply
+      </a></p>);
+    return(
+      <p>
+        <a href="/" onClick={this.postReplyClick}>
+          Reply
+        </a>
+        {"\t | \t"}
+          <a href="/" onClick={this.postReplyClick}>
+            Edit
+          </a>
+        {"\t | \t"}
+          <a href="/" onClick={this.postReplyClick}>
+            Delete
+          </a>
+      </p>
+    );
   }
 
   submitPostReply(e) {
@@ -161,11 +193,7 @@ class RenderComment extends Component {
                 {comment.author.name}:
               </div>
               <p>{comment.content}</p>
-              <p>
-                <a href="/" onClick={this.postReplyClick}>
-                  Reply
-                </a>
-              </p>
+              {this.showCommentManagement()}
               {this.renderPostReplyBox()}
 
               {Array.isArray(this.state.comments) &&
