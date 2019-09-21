@@ -60,14 +60,19 @@ class RenderComment extends Component {
       loading: true,
       error: false,
       postingReply: false,
-      displayReplyBox: false
+      displayReplyBox: false,
+      displayEditBox: false,
+      displayDeleteBox: false
     };
 
     this.getReplies = this.getReplies.bind(this);
     this.renderPostReplyBox = this.renderPostReplyBox.bind(this);
+    this.renderPostEditBox = this.renderPostEditBox.bind(this);
     this.submitPostReply = this.submitPostReply.bind(this);
     this.postReplyClick = this.postReplyClick.bind(this);
-    this.closeReplyClick = this.closeReplyClick.bind(this);
+    this.postEditClick = this.postEditClick.bind(this);
+    this.postDeleteClick = this.postDeleteClick.bind(this);
+    this.closeAll = this.closeAll.bind(this);
     this.showCommentManagement = this.showCommentManagement.bind(this);
   }
 
@@ -113,20 +118,78 @@ class RenderComment extends Component {
           Reply
         </a>
         {"\t | \t"}
-        <a href="/" onClick={this.closeReplyClick}>
+        <a href="/" onClick={this.closeAll}>
           Cancel Reply
         </a>
       </div>
     );
   }
 
+  renderPostEditBox(originalMessage) {
+    if (!this.state.displayEditBox) return undefined;
+    if (this.state.postingReply) {
+      return (
+        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+      );
+    }
+    return (
+      <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
+        <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          <Textarea
+            s={12}
+            m={12}
+            l={12}
+            xl={12}
+            placeholder={"Type your revised message here"}
+            value={originalMessage}
+            onChange={e => this.setState({ postReplyValue: e.target.value })}
+          />
+        </Row>
+        <a href="/" onClick={this.submitPostReply}>
+          Revise
+        </a>
+        {"\t | \t"}
+        <a href="/" onClick={this.closeAll}>
+          Cancel Edit
+        </a>
+      </div>
+    );
+  }
+
+  renderDeleteConfirmation() {
+    if (!this.state.displayDeleteBox) return undefined;
+    return (
+      <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
+        <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          Are you sure you want to delete this post?{"\t"}
+          <a href="/" onClick={this.closeAll}>
+            Delete
+          </a>
+          {"\t | \t"}
+          <a href="/" onClick={this.closeAll}>
+            Cancel
+          </a>
+        </Row>
+        
+      </div>
+    );
+  }
+
   postReplyClick(e) {
     e.preventDefault();
-    this.setState({ displayReplyBox: true });
+    this.setState({ displayReplyBox: true, displayDeleteBox: false, displayEditBox: false });
   }
-  closeReplyClick(e) {
+  closeAll(e) {
     e.preventDefault();
-    this.setState({ displayReplyBox: false, postReplyValue: "" });
+    this.setState({ displayReplyBox: false, postReplyValue: "", displayDeleteBox: false, displayEditBox: false });
+  }
+  postDeleteClick(e){
+    e.preventDefault();
+    this.setState({displayReplyBox: false, displayDeleteBox: true, displayEditBox: false });
+  }
+  postEditClick(e){
+    e.preventDefault();
+    this.setState({displayReplyBox: false, displayDeleteBox: false, displayEditBox: true });
   }
 
   showCommentManagement(e){
@@ -140,11 +203,11 @@ class RenderComment extends Component {
           Reply
         </a>
         {"\t | \t"}
-          <a href="/" onClick={this.postReplyClick}>
+          <a href="/" onClick={this.postEditClick}>
             Edit
           </a>
         {"\t | \t"}
-          <a href="/" onClick={this.postReplyClick}>
+          <a href="/" onClick={this.postDeleteClick}>
             Delete
           </a>
       </p>
@@ -194,6 +257,8 @@ class RenderComment extends Component {
               <p>{comment.content}</p>
               {this.showCommentManagement(comment.author._id)}
               {this.renderPostReplyBox()}
+              {this.renderPostEditBox(comment.content)}
+              {this.renderDeleteConfirmation()}
 
               {Array.isArray(this.state.comments) &&
               this.state.comments.length ? (
