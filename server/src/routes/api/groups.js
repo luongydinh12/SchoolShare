@@ -292,4 +292,38 @@ router.post('/createmsg', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route POST api/posts/editmsg
+// @desc Edit message
+// @access Users
+// @returns msg data(details)
+router.post('/editmsg', (req, res) => {
+  const { text, msgId } = req.body
+  Message.findOne({_id: msgId}, (err, msg) => {
+    if(msg) {
+      msg.text = text;
+      msg.save()
+      res.send(msg)
+    } else {
+      console.log(err)
+      res.send(404)
+    }
+  })
+})
+// @route POST api/posts/deletemsg
+// @desc Edit message
+// @access Users
+// @returns msg data(details)
+router.post('/deletemsg', (req, res) => {
+  const { msgId } = req.body
+  Message.findOne({_id: msgId}, (err, msg) => {
+    if(msg) {
+      msg.remove()
+      res.send({'message': 'Message sucessfully deleted'})
+    } else {
+      console.log(err)
+      res.send(404)
+    }
+  })
+})
+
 module.exports = router;
