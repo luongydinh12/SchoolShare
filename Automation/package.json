@@ -1,0 +1,14 @@
+{
+  "name": "automation",
+  "version": "1.0.0",
+  "description": "automation testing",
+  "main": "nightwatch.js",
+  "scripts": {
+    "test": ""
+  },
+  "author": "Trevor",
+  "license": "ISC",
+  "dependencies": {
+    "nightwatch": "^1.0.19"
+  }
+}
