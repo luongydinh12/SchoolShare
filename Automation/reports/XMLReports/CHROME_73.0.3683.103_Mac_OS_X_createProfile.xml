@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="0"
+            failures="0"
+            tests="1">
+
+  <testsuite name="createProfile"
+    errors="0" failures="0" hostname="" id="" package="createProfile" skipped="0"
+    tests="1" time="23.67" timestamp="">
+  
+    <testcase name="Test School Share Login" classname="createProfile" time="23.67" assertions="12">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    </testcase>
+  
+
+  
+
+  
+  </testsuite>
+</testsuites>
