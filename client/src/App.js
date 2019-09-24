@@ -27,6 +27,7 @@ import Groups from "./components/Groups/Groups";
 import MyGroups from "./components/Groups/MyGroups";
 import CreateCategory from "./components/Groups/CreateCategory";
 import Forum from "./components/forum/Forum";
+import Calendar from "./components/calendar/Calendar";
 
 // import io from 'socket.io-client'
 // const keys = require("../package.json");
@@ -64,6 +65,7 @@ class App extends Component {
             <Route path="/forum" component={Forum} />
             <Route exact path="/profile/:handle" component={Profile} />
             <Route path="/groups" component={Groups} />
+            <Route path="/calendar" component={Calendar} />
             <Route path="/mygroups" component={MyGroups} />
             <Route path="/create-category" exact component={CreateCategory} />
             <Switch>

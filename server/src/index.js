@@ -1,7 +1,6 @@
 import express from "express"
 import session from "express-session"
 import logger from "morgan"
-import bodyParser from "body-parser"
 import cors from "cors"
 import mongoose from "mongoose"
 import passport from "passport"
@@ -21,11 +20,11 @@ const app = express();
 // logger to log requests on console
 app.use(logger('dev'))
 app.use(
-    bodyParser.urlencoded({
+    express.urlencoded({
       extended: false
     })
   );
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
 
 app.use(session({
@@ -61,4 +60,4 @@ app.use('/api/posts',posts);
 
 
 const port = process.env.PORT || 5000;
-app.listen(port,() => console.log( `Server started on port ${port}`));
+app.listen(port,() => console.log( ` TEst Server started on port ${port}`));
