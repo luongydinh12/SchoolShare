@@ -1,4 +1,4 @@
-//++++++
+
 import React, { Component } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -10,7 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-//+++++++
+
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,9 +35,12 @@ export default () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            News
+            Login
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit">Forum</Button>
+           <Button color="inherit">Groups</Button>
+            <Button color="inherit">Edit profile</Button>
+             <Button color="inherit">Delete</Button>
         </Toolbar>
       </AppBar>
     </div>
