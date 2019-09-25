@@ -10,6 +10,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser, deleteUser } from "../../actions/authActions";
+import moment from 'moment'; //npm install moment --save (CLIENT)
+import { Link } from 'react-router-dom'
+import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
+import Spinner from '../common/Spinner'
+import ProfileActions from './ProfileActions'
+
+// for calendar
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+
 
 
 const useStyles = makeStyles(theme => ({
@@ -25,8 +38,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default () => {
+  
   const classes = useStyles();
-
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -37,10 +50,36 @@ export default () => {
           <Typography variant="h6" className={classes.title}>
             Login
           </Typography>
-          <Button color="inherit">Forum</Button>
-           <Button color="inherit">Groups</Button>
-            <Button color="inherit">Edit profile</Button>
-             <Button color="inherit">Delete</Button>
+          <Link to="/groups" className="btn waves-effect waves-light hoverable blue accent-3" style={{
+            width: "150px",
+            borderRadius: "3px",
+            letterSpacing: "1.5px",
+            marginTop: "2rem",
+            marginBottom: "1.4rem",
+          }}>
+            Groups
+              </Link>
+
+          <Link to="/forum" className="btn waves-effect waves-light hoverable blue accent-3" style={{
+            width: "150px",
+            borderRadius: "3px",
+            letterSpacing: "1.5px",
+            marginTop: "2rem",
+            marginBottom: "1.4rem",
+            marginLeft: 16,
+          }}>
+            FORUM
+              </Link>
+          <Link to="/calendar" className="btn waves-effect waves-light hoverable blue accent-3" style={{
+            width: "150px",
+            borderRadius: "3px",
+            letterSpacing: "1.5px",
+            marginTop: "2rem",
+            marginBottom: "1.4rem",
+            marginLeft: 16,
+          }}>
+            CALENDAR
+              </Link>
         </Toolbar>
       </AppBar>
     </div>
