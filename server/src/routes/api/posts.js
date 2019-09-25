@@ -129,6 +129,31 @@ router.get('/getComments', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route POST api/posts/editComment
+// @desc Gets top level comments
+// @access Comment
+// @returns String and msg data(details)
+router.get('/editComment', (req, res) => {
+  const postID = req.query.id || undefined;
+  if(!postID) return console.error('No post specified');
 
+  Comment.findByIdAndUpdate({_id: postID},{content: req.body.content})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+})
+// @route POST api/posts/deleteComment
+// @desc Gets top level comments
+// @access Comment
+// @returns String and msg data(details)
+router.get('/deleteComment', (req, res) => {
+  const postID = req.query.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Comment.findByIdAndUpdate({_id: postID},{deleted: true})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+})
 
 module.exports = router;
