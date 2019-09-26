@@ -127,7 +127,18 @@ class Dashboard extends Component {
                   marginLeft: 16,
                 }}>
                 FORUM
-              </Link> </div>
+              </Link> 
+              
+              <Link to="/profilelist" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "2rem",
+                  marginBottom: "1.4rem",
+                  marginLeft: 16,
+                }}>
+                View Users
+              </Link>
+              </div>
 
               <button
                 style={{
