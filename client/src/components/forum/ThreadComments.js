@@ -60,6 +60,8 @@ class RenderComment extends Component {
       loading: true,
       error: false,
       postingReply: false,
+      postingEdit: false,
+      postingDelete: false,
       displayReplyBox: false,
       displayEditBox: false,
       displayDeleteBox: false
@@ -71,6 +73,8 @@ class RenderComment extends Component {
     this.submitPostReply = this.submitPostReply.bind(this);
     this.postReplyClick = this.postReplyClick.bind(this);
     this.postEditClick = this.postEditClick.bind(this);
+    this.submitEdit = this.submitEdit.bind(this);
+    this.deleteComment = this.deleteComment.bind(this);
     this.postDeleteClick = this.postDeleteClick.bind(this);
     this.closeAll = this.closeAll.bind(this);
     this.showCommentManagement = this.showCommentManagement.bind(this);
@@ -125,11 +129,11 @@ class RenderComment extends Component {
     );
   }
 
-  renderPostEditBox(originalMessage) {
+  renderPostEditBox(commentId) {
     if (!this.state.displayEditBox) return undefined;
-    if (this.state.postingReply) {
+    if (this.state.postingEdit) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Editing...</div>
       );
     }
     return (
@@ -141,11 +145,11 @@ class RenderComment extends Component {
             l={12}
             xl={12}
             placeholder={"Type your revised message here"}
-            value={originalMessage}
+            value={this.state.postReplyValue}
             onChange={e => this.setState({ postReplyValue: e.target.value })}
           />
         </Row>
-        <a href="/" onClick={this.submitPostReply}>
+        <a href="/" onClick={this.submitEdit}>
           Revise
         </a>
         {"\t | \t"}
@@ -158,11 +162,16 @@ class RenderComment extends Component {
 
   renderDeleteConfirmation() {
     if (!this.state.displayDeleteBox) return undefined;
+    if (this.state.postingDelete) {
+      return (
+        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Deleting...</div>
+      );
+    }
     return (
       <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
         <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
           Are you sure you want to delete this post?{"\t"}
-          <a href="/" onClick={this.closeAll}>
+          <a href="/" onClick={this.deleteComment}>
             Delete
           </a>
           {"\t | \t"}
@@ -177,11 +186,11 @@ class RenderComment extends Component {
 
   postReplyClick(e) {
     e.preventDefault();
-    this.setState({ displayReplyBox: true, displayDeleteBox: false, displayEditBox: false });
+    this.setState({ displayReplyBox: true, displayDeleteBox: false, displayEditBox: false, postReplyValue: "", });
   }
   closeAll(e) {
     e.preventDefault();
-    this.setState({ displayReplyBox: false, postReplyValue: "", displayDeleteBox: false, displayEditBox: false });
+    this.setState({ displayReplyBox: false, displayDeleteBox: false, displayEditBox: false });
   }
   postDeleteClick(e){
     e.preventDefault();
@@ -189,11 +198,11 @@ class RenderComment extends Component {
   }
   postEditClick(e){
     e.preventDefault();
-    this.setState({displayReplyBox: false, displayDeleteBox: false, displayEditBox: true });
+    this.setState({displayReplyBox: false, displayDeleteBox: false, displayEditBox: true, postReplyValue: this.props.c.content });
   }
 
   showCommentManagement(e){
-    if(this.props.auth.user.id != e) return (
+    if(this.props.auth.user.id != e || this.props.c.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
       </a></p>)
@@ -240,6 +249,54 @@ class RenderComment extends Component {
       });
   }
 
+  submitEdit(e) {
+    e.preventDefault();
+    this.setState({ postingEdit: true });
+    console.log({ state: this.state });
+
+    const id = this.props.c._id;
+    axios
+      .post("/api/posts/editComment", {
+        id: id,
+        content: this.state.postReplyValue
+      })
+      .then(({ data }) => {
+        console.log(this.props.c);
+        this.props.c.content = this.state.postReplyValue;
+      })
+      .catch(err => {})
+      .finally(() => {
+        this.setState({
+          displayEditBox: false,
+          postReplyValue: "",
+          postingEdit: false
+        });
+      });
+  }
+
+  deleteComment(e){
+    e.preventDefault();
+    this.setState({ postingDelete: true });
+    console.log({ state: this.state });
+
+    const id = this.props.c._id;
+    axios
+      .post("/api/posts/deleteComment", {
+        id: id
+      })
+      .then(({ data }) => {
+        this.props.c.deleted = true;
+      })
+      .catch(err => {})
+      .finally(() => {
+        this.setState({
+          displayDeleteBox: false,
+          postReplyValue: "",
+          postingDelete: false
+        });
+      });
+  }
+
   render() {
     console.log("RenderComment", { state: this.state });
     const { c: comment } = this.props;
@@ -254,10 +311,10 @@ class RenderComment extends Component {
               <div style={{ color: "#2BB673", fontWeight: 600 }}>
                 {comment.author.name}:
               </div>
-              <p>{comment.content}</p>
+              <p>{comment.deleted?"[comment deleted]":comment.content}</p>
               {this.showCommentManagement(comment.author._id)}
               {this.renderPostReplyBox()}
-              {this.renderPostEditBox(comment.content)}
+              {this.renderPostEditBox(comment._id)}
               {this.renderDeleteConfirmation()}
 
               {Array.isArray(this.state.comments) &&
