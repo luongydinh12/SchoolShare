@@ -129,6 +129,45 @@ router.get('/getComments', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route POST api/posts/editComment
+// @desc Changes content of selected comment
+// @access Comment
+// @returns String and msg data(details)
+router.post('/editComment', (req, res) => {
+  const postID = req.body.id || undefined;
+  if(!postID) return console.error('No post specified');
 
+  Comment.findByIdAndUpdate({_id: postID},{content: req.body.content})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+})
+// @route POST api/posts/deleteComment
+// @desc Deletes given comment
+// @access Comment
+// @returns String and msg data(details)
+router.post('/deleteComment', (req, res) => {
+  const postID = req.body.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Comment.findByIdAndUpdate({_id: postID},{deleted: true})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+})
+
+// @route POST api/posts/deleteComment
+// @desc Reveals previously deleted comment
+// @access Comment
+// @returns String and msg data(details)
+router.post('/restoreComment', (req, res) => {
+  const postID = req.body.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Comment.findByIdAndUpdate({_id: postID},{deleted: false})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+})
 
 module.exports = router;
