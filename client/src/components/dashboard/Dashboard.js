@@ -18,6 +18,7 @@ import NavBar from './NavBar'
 class Dashboard extends Component {
 
   onLogoutClick = e => {
+    alert("test logout");
     e.preventDefault();
     this.props.logoutUser();
   };
