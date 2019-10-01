@@ -15,6 +15,12 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 //test
 import NavBar from './NavBar'
 
+const options = [
+  'EDIT PROFILE',
+  'DELETE',
+  'CALENDER',
+  'LOG OUT',
+];
 class Dashboard extends Component {
 
   onLogoutClick = e => {
@@ -115,7 +121,7 @@ class Dashboard extends Component {
               {dashboardContent}
 
               <div>
-              <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+              {/* <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                   width: "150px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
@@ -123,9 +129,9 @@ class Dashboard extends Component {
                   marginBottom: "1.4rem",
                 }}>
                 Groups
-              </Link>
+              </Link> */}
 
-              <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+              {/* <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                   width: "150px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
@@ -134,7 +140,7 @@ class Dashboard extends Component {
                   marginLeft: 16,
                 }}>
                 FORUM
-              </Link> 
+              </Link>  */}
               <Link to="/calendar" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                   width: "150px",
                   borderRadius: "3px",
