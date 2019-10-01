@@ -154,8 +154,8 @@ class GroupChat extends Component {
                 messageForm = (
                     <form onSubmit={this.createMessage}>
                         <div className="input-field">
-                            <input value={this.state.text} id="text" onChange={(e) => this.setState({ text: e.target.value })} required type="text" />
-                            <label htmlFor="text">Type a message</label>
+                            <input placeholder="Type a message" value={this.state.text} id="text" onChange={(e) => this.setState({ text: e.target.value })} required type="text" />
+                            {/* <label htmlFor="text">Type a message</label> */}
                         </div>
                         <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3"
                         style={{width: "150px"}}>SEND</button>
