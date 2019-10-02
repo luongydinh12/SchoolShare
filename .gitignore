@@ -2,3 +2,5 @@
 /config/keys.js
 .env
 server/index.js
+client/node_modules/*
+server/node_modules/*
