@@ -3,15 +3,22 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser, deleteUser } from "../../actions/authActions";
 import moment from 'moment'; //npm install moment --save (CLIENT)
-
-
 import { Link } from 'react-router-dom'
 import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
 import Spinner from '../common/Spinner'
 import ProfileActions from './ProfileActions'
+
+// for calendar
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+
 //test
+import NavBar from './NavBar'
+
 class Dashboard extends Component {
+
   onLogoutClick = e => {
+    alert("test logout");
     e.preventDefault();
     this.props.logoutUser();
   };
@@ -26,7 +33,7 @@ class Dashboard extends Component {
     document.body.classList.add("background-white");
     this.props.getCurrentProfile()
   }
-
+ //test
   handleDeleteAccount = () => {
     this.props.deleteAccount()
   }
@@ -76,6 +83,7 @@ class Dashboard extends Component {
 
     return (
       <div>
+        <NavBar/>
         <div style={{ height: "75vh" }} className="container">
           <div className="row">
             <div className="col s12 center-align ">
@@ -139,6 +147,10 @@ class Dashboard extends Component {
                 View Users
               </Link>
               </div>
+                
+      
+
+              
 
               <button
                 style={{
@@ -166,13 +178,16 @@ class Dashboard extends Component {
               >
                 Delete Account
             </button>
-            </div>
+            </div> 
           </div>
         </div>
       </div>
     );
   }
 }
+
+
+
 Dashboard.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   getCurrentProfile: PropTypes.func.isRequired,
