@@ -315,5 +315,48 @@ router.post('/createmsg', function (req, res) {
   })["catch"](function (err) {
     return console.log(err);
   });
+}); // @route POST api/posts/editmsg
+// @desc Edit message
+// @access Users
+// @returns msg data(details)
+
+router.post('/editmsg', function (req, res) {
+  var _req$body3 = req.body,
+      text = _req$body3.text,
+      msgId = _req$body3.msgId;
+
+  _Messages["default"].findOne({
+    _id: msgId
+  }, function (err, msg) {
+    if (msg) {
+      msg.text = text;
+      msg.save();
+      res.send(msg);
+    } else {
+      console.log(err);
+      res.send(404);
+    }
+  });
+}); // @route POST api/posts/deletemsg
+// @desc Edit message
+// @access Users
+// @returns msg data(details)
+
+router.post('/deletemsg', function (req, res) {
+  var msgId = req.body.msgId;
+
+  _Messages["default"].findOne({
+    _id: msgId
+  }, function (err, msg) {
+    if (msg) {
+      msg.remove();
+      res.send({
+        'message': 'Message sucessfully deleted'
+      });
+    } else {
+      console.log(err);
+      res.send(404);
+    }
+  });
 });
 module.exports = router;

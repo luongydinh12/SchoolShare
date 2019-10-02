@@ -149,5 +149,56 @@ router.get('/getComments', function (req, res) {
   })["catch"](function (err) {
     return console.log(err);
   });
+}); // @route POST api/posts/editComment
+// @desc Changes content of selected comment
+// @access Comment
+// @returns String and msg data(details)
+
+router.post('/editComment', function (req, res) {
+  var postID = req.body.id || undefined;
+  if (!postID) return console.error('No post specified');
+  Comment.findByIdAndUpdate({
+    _id: postID
+  }, {
+    content: req.body.content
+  }).then(function (data) {
+    res.send(data);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}); // @route POST api/posts/deleteComment
+// @desc Deletes given comment
+// @access Comment
+// @returns String and msg data(details)
+
+router.post('/deleteComment', function (req, res) {
+  var postID = req.body.id || undefined;
+  if (!postID) return console.error('No post specified');
+  Comment.findByIdAndUpdate({
+    _id: postID
+  }, {
+    deleted: true
+  }).then(function (data) {
+    res.send(data);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
+}); // @route POST api/posts/deleteComment
+// @desc Reveals previously deleted comment
+// @access Comment
+// @returns String and msg data(details)
+
+router.post('/restoreComment', function (req, res) {
+  var postID = req.body.id || undefined;
+  if (!postID) return console.error('No post specified');
+  Comment.findByIdAndUpdate({
+    _id: postID
+  }, {
+    deleted: false
+  }).then(function (data) {
+    res.send(data);
+  })["catch"](function (err) {
+    return console.log(err);
+  });
 });
 module.exports = router;

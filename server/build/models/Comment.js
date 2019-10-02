@@ -19,6 +19,10 @@ var CommentSchema = new Schema({
   parent: {
     type: Schema.Types.ObjectId,
     ref: 'comment'
+  },
+  deleted: {
+    type: Boolean,
+    "default": false
   }
 }, {
   timestamps: true

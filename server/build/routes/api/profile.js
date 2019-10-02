@@ -17,10 +17,13 @@ var validateClassInput = require('../../validation/class'); // Load Profile Mode
 var Profile = require('../../models/Profile'); // Load User Model
 
 
-var User = require('../../models/User'); // @route   GET api/profile/test
+var User = require('../../models/User');
+
+var auth = passport.authenticate('jwt', {
+  session: false
+}); // @route   GET api/profile/test
 // @desc    Tests profile route
 // @access  Public
-
 
 router.get('/test', function (req, res) {
   return res.json({
@@ -252,6 +255,22 @@ router["delete"]('/', passport.authenticate('jwt', {
         success: true
       });
     });
+  });
+});
+router.get('/listAllProfiles', auth, function (req, res) {
+  Profile.find(function (err, profiles) {
+    if (err) {
+      console.log(err);
+      res.status(500);
+    }
+
+    var profList = profiles.map(function (profile) {
+      return {
+        id: profile._id,
+        handle: profile.handle
+      };
+    });
+    res.json(profList);
   });
 });
 module.exports = router;

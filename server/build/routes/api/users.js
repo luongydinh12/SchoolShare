@@ -231,4 +231,18 @@ router.post('/delete', passport.authenticate('jwt', {
     msg: 'authorized'
   });
 });
+router.get('/listAllUsers', passport.authenticate('jwt', {
+  session: false
+}), function (req, res) {
+  User.find(function (err, users) {
+    if (err) return console.log(err);
+    var uList = users.map(function (user) {
+      return {
+        id: user._id,
+        name: user.name
+      };
+    });
+    res.json(uList);
+  });
+});
 module.exports = router;
