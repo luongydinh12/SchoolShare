@@ -23,18 +23,10 @@ class Forum extends Component {
               marginBottom: "2rem"
             }}
           >
-            Back to Dashboard
+            Back to  E
           </Link>
         </div>
-        {/*                 <Link to="/mygroups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                    width: "250px",
-                    borderRadius: "1px",
-                    marginTop: "3rem",
-                    marginLeft: "2rem",
-                    marginBottom: "2rem",
-                }}>
-                    My Groups
-              </Link> */}
+        
         <p style={{ padding: "1px" }} />
         <Fragment>
           <Switch>
