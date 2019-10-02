@@ -14,16 +14,23 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser, deleteUser } from "../../actions/authActions";
 import moment from 'moment'; //npm install moment --save (CLIENT)
-import { Link } from 'react-router-dom'
-import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
-import Spinner from '../common/Spinner'
-import ProfileActions from './ProfileActions'
+import { Link } from 'react-router-dom';
+import { getCurrentProfile, deleteAccount } from '../../actions/profileActions';
+import Spinner from '../common/Spinner';
+import ProfileActions from './ProfileActions';
 
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 // for calendar
 import { Calendar } from '@fullcalendar/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
 
 
+const options = [
+  'EDIT PROFILE',
+  'DELETE',
+  'CALENDER',
+  'LOG OUT',
+];
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,10 +52,10 @@ export default () => {
       <AppBar position="static">
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu">
-            <MenuIcon />
+              <MenuIcon /> 
           </IconButton>
           <Typography variant="h6" className={classes.title}>
-            Login
+            Menu
           </Typography>
           <Link to="/groups" className="btn waves-effect waves-light hoverable blue accent-3" style={{
             width: "150px",
