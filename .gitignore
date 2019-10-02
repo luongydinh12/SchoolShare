@@ -8,3 +8,4 @@ server/index.js
 /Automation/reports/**
 /Automation/node_modules
 node_modules
+package-lock.json
