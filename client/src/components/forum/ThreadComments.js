@@ -311,7 +311,7 @@ class RenderComment extends Component {
               <div style={{ color: "#2BB673", fontWeight: 600 }}>
                 {comment.author.name}:
               </div>
-              <p>{comment.deleted?"[comment deleted]":comment.content}</p>
+              <p style={comment.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{comment.deleted?"[comment deleted]":comment.content}</p>
               {this.showCommentManagement(comment.author._id)}
               {this.renderPostReplyBox()}
               {this.renderPostEditBox(comment._id)}

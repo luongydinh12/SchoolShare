@@ -90,6 +90,34 @@ router.get('/getpostbyid', (req, res) => {
 
 });
 
+// @route GET api/posts/editTitle
+// @desc changes the title of the given thread
+// @access Users
+// @returns String and msg data(details)
+router.post('/editTitle', (req,res) => {
+  const postID = req.body.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Thread.findByIdAndUpdate(postID, {title: req.body.newtitle})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+});
+
+// @route GET api/posts/editDescription
+// @desc changes the description of the given thread
+// @access Users
+// @returns String and msg data(details)
+router.post('/editDescription', (req,res) => {
+  const postID = req.body.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Thread.findByIdAndUpdate(postID, {content: req.body.newdesc})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+});
+
 // @route POST api/posts/postReply
 // @desc Create a thread reply
 // @access Users
