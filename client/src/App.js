@@ -19,14 +19,15 @@ import Dashboard from "./components/dashboard/Dashboard";
 //import { clearCurrentProfile } from "./actions/profileActions";
 import CreateProfile from "./components/profile/CreateProfile";
 import EditProfile from "./components/profile/EditProfile";
-//import Profiles from './components/profiles/Profiles'
 import Profile from "./components/profile/Profile";
+import ProfilesList from "./components/profile/ProfilesList"
 import NotFound from "./components/not-found/NotFound";
 
 import Groups from "./components/Groups/Groups";
 import MyGroups from "./components/Groups/MyGroups";
 import CreateCategory from "./components/Groups/CreateCategory";
 import Forum from "./components/forum/Forum";
+import Calendar from "./components/calendar/Calendar";
 
 // import io from 'socket.io-client'
 // const keys = require("../package.json");
@@ -63,7 +64,9 @@ class App extends Component {
             <Route exact path="/oauth" component={OAuth} />
             <Route path="/forum" component={Forum} />
             <Route exact path="/profile/:handle" component={Profile} />
+            <Route exact path="/profilelist" component={ProfilesList} />
             <Route path="/groups" component={Groups} />
+            <Route path="/calendar" component={Calendar} />
             <Route path="/mygroups" component={MyGroups} />
             <Route path="/create-category" exact component={CreateCategory} />
             <Switch>

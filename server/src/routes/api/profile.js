@@ -13,6 +13,8 @@ const Profile = require('../../models/Profile');
 // Load User Model
 const User = require('../../models/User');
 
+const auth = passport.authenticate('jwt', { session: false })
+
 // @route   GET api/profile/test
 // @desc    Tests profile route
 // @access  Public
@@ -141,11 +143,11 @@ router.post(
           { $set: userFields },
           { new: true }
         ).then(user => res.json(user));
-       /* User.findOneAndUpdate(
-          { _id: req.user.id },
-          { avatar: avatarhere, name: namehere, email: emailhere },
-          { new: true }
-        ).then(user => res.json(user));*/
+        /* User.findOneAndUpdate(
+           { _id: req.user.id },
+           { avatar: avatarhere, name: namehere, email: emailhere },
+           { new: true }
+         ).then(user => res.json(user));*/
 
       } else {
         // Create
@@ -233,5 +235,23 @@ router.delete(
     });
   }
 );
+
+
+router.get('/listAllProfiles', auth,
+  (req, res) => {
+    Profile.find((err, profiles) => {
+      if (err) {
+        console.log(err)
+        res.status(500)
+      }
+      const profList = profiles.map((profile) => {
+        return {
+          id: profile._id,
+          handle: profile.handle
+        }
+      })
+      res.json(profList)
+    })
+  })
 
 module.exports = router;
