@@ -41,7 +41,8 @@ class ThreadComments extends Component {
         return (
           <div>
             {this.state.comments.map(c => (
-              <RenderComment key={c._id} c={c} {...this.props} />
+              // <RenderComment key={c._id} c={c} {...this.props} />
+              <RenderComment getComments={this.getComments} key={c._id} c={c} {...this.props} />
             ))}
           </div>
         );
@@ -64,7 +65,8 @@ class RenderComment extends Component {
       postingDelete: false,
       displayReplyBox: false,
       displayEditBox: false,
-      displayDeleteBox: false
+      displayDeleteBox: false,
+      commentId: null,
     };
 
     this.getReplies = this.getReplies.bind(this);
@@ -78,6 +80,7 @@ class RenderComment extends Component {
     this.postDeleteClick = this.postDeleteClick.bind(this);
     this.closeAll = this.closeAll.bind(this);
     this.showCommentManagement = this.showCommentManagement.bind(this);
+    this.likeComment = this.likeComment.bind(this);
   }
 
   componentDidMount = () => {
@@ -158,6 +161,20 @@ class RenderComment extends Component {
         </a>
       </div>
     );
+  }
+
+  likeComment (e, commentId) {
+    e.preventDefault();
+    const userId = localStorage.getItem('userId')
+    const data = {
+      commentId: commentId,
+      userId: userId
+    }
+    axios
+    .post('/api/posts/likeComment', data)
+    .then(res => {
+      this.props.getComments();
+    })
   }
 
   renderDeleteConfirmation() {
@@ -300,6 +317,10 @@ class RenderComment extends Component {
   render() {
     console.log("RenderComment", { state: this.state });
     const { c: comment } = this.props;
+    const loggedInUserId = localStorage.getItem('userId');
+    console.log(comment._id, loggedInUserId, comment.content)
+    console.log("My current userID /localStorge "+loggedInUserId)
+    console.log("My current userID /auth.user "+this.props.auth.user.id)
     return (
       <>
         <div className="row" style={{ marginBottom: 0 }}>
@@ -317,6 +338,11 @@ class RenderComment extends Component {
               {this.renderPostEditBox(comment._id)}
               {this.renderDeleteConfirmation()}
 
+              <span style={{color: 'rgb(44, 127, 252)', margin: '10px', width: 'fit-content'}}>Liked By {comment.likes.length}</span>
+
+              {!(comment.likes.find(el => el.user === loggedInUserId))?<a style={{color: 'rgb(44, 127, 252)', marginLeft: 20}} href="/" onClick={e => this.likeComment(e, comment._id)}>
+                  Like</a>:null}
+              
               {Array.isArray(this.state.comments) &&
               this.state.comments.length ? (
                 <ThreadComments id={comment._id} auth={this.props.auth} />
