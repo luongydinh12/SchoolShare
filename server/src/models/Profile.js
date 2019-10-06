@@ -43,5 +43,31 @@ const ProfileSchema = new Schema({
   }
 });
 
+ProfileSchema.virtual('friends', {
+  ref: 'friend',
+  localField: '_id',
+  foreignField: 'profileA',
+  foreignField: 'profileB'
+})
+
+const FriendSchema = new Schema({
+  profileA: {
+    type: Schema.Types.ObjectId,
+    ref: 'profile',
+    required:true
+  },
+  profileB: {
+    type: Schema.Types.ObjectId,
+    ref: 'profile',
+    required:true
+  },
+  status: {
+    type: String,
+    required:true
+  }
+}
+)
+
 var Profile = mongoose.model('profile', ProfileSchema)
-module.exports=Profile
+var Friend = mongoose.model('friend', FriendSchema)
+module.exports = {Profile,Friend}

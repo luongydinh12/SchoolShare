@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
+const jwt = require("jsonwebtoken");
 
 // Load Validation
 const validateProfileInput = require('../../validation/profile')
@@ -9,7 +10,7 @@ const validateClassInput = require('../../validation/class');
 
 
 // Load Profile Model
-const Profile = require('../../models/Profile');
+import { Profile, Friend } from "../../models/Profile";
 // Load User Model
 const User = require('../../models/User');
 
@@ -252,6 +253,60 @@ router.get('/listAllProfiles', auth,
       })
       res.json(profList)
     })
+  })
+
+router.get('/sendFriendRequest/:targetid', auth, //targetID is target's profile id
+  (req, res) => {
+    const targetid = req.params.targetid
+    const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
+    User.findById(tokenUser.id).exec((err, user) => {//
+      if (err) {
+        return res.sendStatus(403)
+      }
+      Profile.findOne({ user: user._id }).exec((err, profileA) => {
+        if(targetid==profileA._id) return res.sendStatus(403)
+        if (err) return res.json({ err: err })
+        Profile.findById(targetid).exec((err, profileB) => {
+          if (err) return res.json({ err: err })
+          console.log(`profileA: ${JSON.stringify(profileA)} profileB: ${JSON.stringify(profileB)}`)
+          Friend.findOne({ $and:[
+            {$or: [{ profileA: profileA._id }, { profileB: profileA._id }]},
+            {$or: [{ profileA: profileB._id }, { profileB: profileB._id }]}
+          ]
+          }).exec((err,friend)=>{
+            if(friend){
+               res.json({ err: "Friend already exists!", profileA: profileA, profileB: profileB, friend: friend })
+            }else{
+              const friend = new Friend({
+                profileA: profileA._id,
+                profileB: targetid,
+                status: 'pending'
+              }).save().then((friend) => {
+                console.log(JSON.stringify(friend))
+                return res.json({ profileA: profileA, profileB: profileB, friend: friend })
+              }, (err) => {
+                return res.json({ 'err': err })
+              })//save().then()
+            }
+          })//friend.exec
+        })
+      })
+
+    })//User.findByID
+  }
+)
+
+router.get('/listFriends', auth,
+  (req, res) => {
+    const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
+    User.findById(tokenUser.id).exec((err, user) => {
+      Profile.findOne({user:user._id}).exec((err, profile) => {
+        Friend.find({ $or: [{ profileA:profile._id }, { profileB: profile._id }] }).exec((err, friends) => {
+          res.json(friends)
+        })
+      })//profile.exec
+    })//user.exec
+
   })
 
 module.exports = router;
