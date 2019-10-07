@@ -43,7 +43,9 @@ const ProfileSchema = new Schema({
     default: Date.now
   }
 });
-
+ProfileSchema.statics.findByUserId=function(id,cb){
+  return this.findOne({user:id}).exec(cb)
+}
 ProfileSchema.methods.getFriends = function (cb) {
   return Friend.find({ $or: [{ profileA: this._id }, { profileB: this._id }] }).exec(cb)
 }
