@@ -326,9 +326,4 @@ router.get('/findUserProfile', auth,
     })
   })
 
-router.get('/friendstatictest', auth, (req, res) => {
-  Friend.getFriendDocument().exec().then((friend) => {
-    res.json(friend)
-  })
-})
 module.exports = router;
