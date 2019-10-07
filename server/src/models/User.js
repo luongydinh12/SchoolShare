@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-import { Profile } from './Profile'
+import Profile from './Profile'
 const Schema = mongoose.Schema;
 // Create Schema
 const UserSchema = new Schema({

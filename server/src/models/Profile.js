@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+import Friend from './Friend'
 
 // Create Schema
 const ProfileSchema = new Schema({
@@ -43,28 +44,9 @@ const ProfileSchema = new Schema({
   }
 });
 
-ProfileSchema.methods.getFriends=function(cb){
+ProfileSchema.methods.getFriends = function (cb) {
   return Friend.find({ $or: [{ profileA: this._id }, { profileB: this._id }] }).exec(cb)
 }
 
-const FriendSchema = new Schema({
-  profileA: {
-    type: Schema.Types.ObjectId,
-    ref: 'profile',
-    required:true
-  },
-  profileB: {
-    type: Schema.Types.ObjectId,
-    ref: 'profile',
-    required:true
-  },
-  status: {
-    type: String,
-    required:true
-  }
-}
-)
-
 var Profile = mongoose.model('profile', ProfileSchema)
-var Friend = mongoose.model('friend', FriendSchema)
-module.exports = {Profile,Friend}
+module.exports = Profile
