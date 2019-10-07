@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+import { Profile } from './Profile'
 const Schema = mongoose.Schema;
 // Create Schema
 const UserSchema = new Schema({
@@ -19,20 +20,20 @@ const UserSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  googleId:{
-    type:String,
-    required:false
+  googleId: {
+    type: String,
+    required: false
   },
-  facebookId:{
-    type:String,
-    required:false
+  facebookId: {
+    type: String,
+    required: false
   },
-  avatar:{
+  avatar: {
     type: String,
     required: false,
     default: "https://res.cloudinary.com/geekysrm/image/upload/v1542221619/default-user.png"
   },
-  description:{
+  description: {
     type: String,
     required: false
   },
@@ -41,5 +42,8 @@ const UserSchema = new Schema({
     ref: 'messages'
   }]
 });
+UserSchema.methods.getUserProfile= function(cb){ //if cb is null,returns promise
+  return Profile.findOne({user:this._id}).exec(cb) 
+}
 var User = mongoose.model("users", UserSchema)
 module.exports = User

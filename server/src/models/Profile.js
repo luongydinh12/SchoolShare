@@ -43,12 +43,9 @@ const ProfileSchema = new Schema({
   }
 });
 
-ProfileSchema.virtual('friends', {
-  ref: 'friend',
-  localField: '_id',
-  foreignField: 'profileA',
-  foreignField: 'profileB'
-})
+ProfileSchema.methods.getFriends=function(cb){
+  return Friend.find({ $or: [{ profileA: this._id }, { profileB: this._id }] }).exec(cb)
+}
 
 const FriendSchema = new Schema({
   profileA: {
