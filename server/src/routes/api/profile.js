@@ -10,7 +10,8 @@ const validateClassInput = require('../../validation/class');
 
 
 // Load Profile Model
-import { Profile, Friend } from "../../models/Profile";
+import Profile from "../../models/Profile";
+import Friend from '../../models/Friend'
 // Load User Model
 const User = require('../../models/User');
 
@@ -259,68 +260,48 @@ router.get('/sendFriendRequest/:targetid', auth, //targetID is target's profile 
   (req, res) => {
     const targetid = req.params.targetid
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
-    User.findById(tokenUser.id).exec((err, user) => {//
-      if (err) {
-        return res.sendStatus(403)
-      }
-      Profile.findOne({ user: user._id }).exec((err, profileA) => {
-        if (targetid == profileA._id) return res.sendStatus(403)
-        if (err) return res.json({ err: err })
-        Profile.findById(targetid).exec((err, profileB) => {
-          if (err) return res.json({ err: err })
-          console.log(`profileA: ${JSON.stringify(profileA)} profileB: ${JSON.stringify(profileB)}`)
-          Friend.findOne({
-            $and: [
-              { $or: [{ profileA: profileA._id }, { profileB: profileA._id }] },
-              { $or: [{ profileA: profileB._id }, { profileB: profileB._id }] }
-            ]
-          }).exec((err, friend) => {
-            if (friend) {
-              res.json({ err: "Friend already exists!", profileA: profileA, profileB: profileB, friend: friend })
-            } else {
-              const friend = new Friend({
-                profileA: profileA._id,
-                profileB: targetid,
-                status: 'pending'
-              }).save().then((friend) => {
-                return res.json({ profileA: profileA, profileB: profileB, friend: friend })
-              }, (err) => {
-                return res.json({ 'err': err })
-              })//save().then()
+    User.findById(tokenUser.id).then((user) => {
+      user.getUserProfile().then((profileA) => {
+        if (!profileA) return res.sendStatus(403)
+        else {
+          Profile.findById(targetid).exec().then((profileB) => {
+            if (!profileB) return res.sendStatus(403)
+            else {
+              Friend.getFriendDocument(profileA._id, profileB._id).exec().then((friend) => {
+                if (!friend) {
+                  const f = new Friend({
+                    profileA: profileA._id,
+                    profileB: targetid,
+                    status: 'pending'
+                  }).save().then((friend) => {
+                    return res.json({ profileA: profileA, profileB: profileB, friend: friend })
+                  })//save().then()
+                }
+                else {
+                  res.json({ err: "Request already sent", friend: friend })
+                }
+              })
             }
-          })//friend.exec
-        })
+          })
+        }
       })
-
-    })//User.findByID
+    })
   }
 )
 
-router.get('/acceptFriendRequest/:requesterid', auth, //targetID is target's profile id
+router.get('/acceptFriendRequest/:friendDocId', auth, 
   (req, res) => {
-    const requesterid = req.params.requesterid
+    const friendDocId = req.params.friendDocId
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
-    User.findById(tokenUser.id).exec((err, user) => {//
-      if (err) {
-        return res.sendStatus(403)
-      }
-      Profile.findOne({ user: user._id }).exec((err, profileA) => {
-        if (targetid == profileA._id) return res.sendStatus(403)
-        if (err) return res.json({ err: err })
-        Profile.findById(targetid).exec((err, profileB) => {
-          if (err) return res.json({ err: err })
-          console.log(`profileA: ${JSON.stringify(profileA)} profileB: ${JSON.stringify(profileB)}`)
-          Friend.findOne({ profileA: requesterid }).exec((err, friend) => {
-            if (friend.status != 'approved') {
-              friend.status = 'approved'
-            } else {
-              return res.json({ err: err })
-            }
-          })//friend.exec
+    Profile.findByUserId(tokenUser.id).then((prof)=>{
+      Friend.findById(friendDocId).exec().then((friend)=>{
+        if(friend.profileB!=prof._id||friend.status!='pending') return res.sendStatus(403)
+        friend.status='approved'
+        friend.save().then((friend)=>{
+          return res.json(friend)
         })
       })
-
-    })//User.findByID
+    })
   }
 )
 
@@ -329,7 +310,7 @@ router.get('/listFriends', auth,
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
     User.findById(tokenUser.id).exec().then((user) => {
       user.getUserProfile().then((profile) => {
-        profile.getFriends().then((friends)=>{
+        profile.getFriends().then((friends) => {
           res.json(friends)
         })
       })
@@ -340,12 +321,14 @@ router.get('/listFriends', auth,
 router.get('/findUserProfile', auth,
   (req, res) => {
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
-    User.findById(tokenUser.id).exec((err, user) => {
-      user.getUserProfile().then((profile) => {
-        res.json(profile)
-      }, (err) => {
-        res.json(err)
-      })
+    Profile.findByUserId(tokenUser.id).then((profile)=>{
+      res.json(profile)
     })
   })
+
+router.get('/friendstatictest', auth, (req, res) => {
+  Friend.getFriendDocument().exec().then((friend) => {
+    res.json(friend)
+  })
+})
 module.exports = router;

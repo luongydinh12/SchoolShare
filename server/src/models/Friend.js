@@ -18,11 +18,11 @@ const FriendSchema = new Schema({
     }
   }
   )
-  FriendSchema.statics.getFriendDocument = function (profileA, profileB, cb) {
+  FriendSchema.statics.getFriendDocument = function (profileIdA, profileIdB, cb) {
     return this.findOne({
       $and: [
-        { $or: [{ profileA: profileA._id }, { profileB: profileA._id }] },
-        { $or: [{ profileA: profileB._id }, { profileB: profileB._id }] }
+        { $or: [{ profileA: profileIdA }, { profileB: profileIdA }] },
+        { $or: [{ profileA: profileIdB }, { profileB: profileIdB }] }
       ]
     },cb)
   }
