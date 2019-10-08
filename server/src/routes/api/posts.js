@@ -25,7 +25,8 @@ router.get('/getpostsforcat', (req, res) => {
   if(!catId) return console.error('No category specified');
 
   Thread.count({category: catId}).then(count => {
-    Thread.find({ category: catId })
+    Thread.find({ category: catId})
+    .where('deleted').ne(true)
     .populate('author' , '_id name')
     .sort({ _id: -1})
     .limit(10)
@@ -71,7 +72,7 @@ router.post('/newforumpost', (req, res) => {
 
 // @route GET api/posts/getpostbyid
 // @desc get posts for a specific category
-// @access Users
+// @access ID of post
 // @returns Array of Object(s)
 router.get('/getpostbyid', (req, res) => {
   const postID = req.query.id || undefined;
@@ -90,9 +91,9 @@ router.get('/getpostbyid', (req, res) => {
 
 });
 
-// @route GET api/posts/editTitle
+// @route POST api/posts/editTitle
 // @desc changes the title of the given thread
-// @access Users
+// @access ID of post
 // @returns String and msg data(details)
 router.post('/editTitle', (req,res) => {
   const postID = req.body.id || undefined;
@@ -104,15 +105,43 @@ router.post('/editTitle', (req,res) => {
   }).catch(err =>  console.log(err))
 });
 
-// @route GET api/posts/editDescription
+// @route POST api/posts/editDescription
 // @desc changes the description of the given thread
-// @access Users
+// @access ID of post
 // @returns String and msg data(details)
 router.post('/editDescription', (req,res) => {
   const postID = req.body.id || undefined;
   if(!postID) return console.error('No post specified');
 
   Thread.findByIdAndUpdate(postID, {content: req.body.newdesc})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+});
+
+// @route POST api/posts/deleteThread
+// @desc hides thread from public view and hides description
+// @access ID of post
+// @returns String and msg data(details)
+router.post('/deleteThread', (req,res) => {
+  const postID = req.body.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Thread.findByIdAndUpdate(postID, {deleted: true})
+  .then(data => {
+    res.send(data)
+  }).catch(err =>  console.log(err))
+});
+
+// @route POST api/posts/restoreThread
+// @desc hides thread from public view and hides description
+// @access ID of post
+// @returns String and msg data(details)
+router.post('/restoreThread', (req,res) => {
+  const postID = req.body.id || undefined;
+  if(!postID) return console.error('No post specified');
+
+  Thread.findByIdAndUpdate(postID, {deleted: false})
   .then(data => {
     res.send(data)
   }).catch(err =>  console.log(err))

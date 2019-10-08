@@ -26,6 +26,8 @@ class ViewPost extends Component {
     this.renderEditTitleBox = this.renderEditTitleBox.bind(this);
     this.submitPostReply = this.submitPostReply.bind(this);
     this.submitPostEditTitle = this.submitPostEditTitle.bind(this);
+    this.submitPostEditDesc = this.submitPostEditDesc.bind(this);
+    this.submitPostDelete = this.submitPostDelete.bind(this);
     this.postReplyClick = this.postReplyClick.bind(this);
     this.editTitleClick = this.editTitleClick.bind(this);
     this.editDescClick = this.editDescClick.bind(this);
@@ -69,6 +71,8 @@ class ViewPost extends Component {
           {this.showCommentManagement(post)}
           {this.renderPostReplyBox()}
           {this.renderEditTitleBox()}
+          {this.renderEditDescBox()}
+          {this.renderDeleteConfirmation()}
           {" "}
 
         </div>
@@ -187,6 +191,109 @@ class ViewPost extends Component {
         });
       });
   }
+
+  renderEditDescBox() {
+    if (!this.state.displayEditDesc) return undefined;
+    if (this.state.postingReply) {
+      return (
+        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+      );
+    }
+    return (
+      <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
+        <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          <Textarea
+            s={12}
+            m={12}
+            l={12}
+            xl={12}
+            placeholder={"Type your new thread title here"}
+            value={this.state.postReplyValue}
+            onChange={e => this.setState({ postReplyValue: e.target.value })}
+          />
+        </Row>
+        <a href="/" onClick={this.submitPostEditTitle}>
+          Edit
+        </a>
+        {"\t | \t"}
+        <a href="/" onClick={this.closeAll}>
+          Cancel
+        </a>
+      </div>
+    );
+  }
+
+  submitPostEditDesc(e) {
+    e.preventDefault();
+    this.setState({ postingReply: true });
+    console.log({ state: this.state });
+
+    const thread = this.props.location.pathname.split("/")[3];
+    axios
+      .post("/api/posts/editDesc", {
+        id: thread,
+        newdesc: this.state.postReplyValue
+      })
+      .then(({ data }) => {
+        this.state.post.content = this.state.postReplyValue;
+      })
+      .catch(err => {})
+      .finally(() => {
+        this.setState({
+          displayEditDesc: false,
+          postingReply: false,
+          postReplyValue: ""
+        });
+      });
+  }
+
+  renderDeleteConfirmation() {
+    if (!this.state.displayDeleteConfirm) return undefined;
+    if (this.state.postingDelete) {
+      return (
+        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Deleting...</div>
+      );
+    }
+    return (
+      <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
+        <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          Are you sure you want to delete this thread?{"\t"}
+          <a href="/" onClick={this.submitPostDelete}>
+            Delete
+          </a>
+          {"\t | \t"}
+          <a href="/" onClick={this.closeAll}>
+            Cancel
+          </a>
+        </Row>
+        
+      </div>
+    );
+  }
+
+  submitPostDelete(e) {
+    e.preventDefault();
+    this.setState({ postingReply: true });
+    console.log({ state: this.state });
+
+    const thread = this.props.location.pathname.split("/")[3];
+    axios
+      .post("/api/posts/deleteThread", {
+        id: thread
+      })
+      .then(({ data }) => {
+        this.state.post.deleted = true;
+      })
+      .catch(err => {})
+      .finally(() => {
+        this.setState({
+          displayDeleteConfirm: false,
+          postingReply: false,
+          postReplyValue: ""
+        });
+      });
+  }
+
   postReplyClick(e) {
     e.preventDefault();
     this.setState({ displayReplyBox: true, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: false, postReplyValue: ""});
