@@ -231,21 +231,20 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Profile.findOneAndRemove({ user: req.user.id }).then(() => {
-      User.findOneAndRemove({ _id: req.user.id }).then(() =>
-        res.json({ success: true })
-      );
-    });
-  }
-);
+      return User.findOneAndRemove({ _id: req.user.id })
+    }).then(() =>
+      res.json({ success: true })
+    ).catch((err) => {
+      console.log(`${err}`)
+      res.status(400)
+      return res.send(`${err}`)
+    })
+  })
 
 
 router.get('/listAllProfiles', auth,
   (req, res) => {
-    Profile.find((err, profiles) => {
-      if (err) {
-        console.log(err)
-        res.status(500)
-      }
+    Profile.find().then((profiles) => {
       const profList = profiles.map((profile) => {
         return {
           id: profile._id,
@@ -253,77 +252,128 @@ router.get('/listAllProfiles', auth,
         }
       })
       res.json(profList)
+    }).catch((err) => {
+      console.log(err)
+      res.sendStatus(500)
     })
   })
 
-router.get('/sendFriendRequest/:targetid', auth, //targetID is target's profile id
+router.get('/sendFriendRequest/:targetid', auth,
   (req, res) => {
     const targetid = req.params.targetid
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
-    User.findById(tokenUser.id).then((user) => {
-      user.getUserProfile().then((profileA) => {
-        if (!profileA) return res.sendStatus(403)
-        else {
-          Profile.findById(targetid).exec().then((profileB) => {
-            if (!profileB) return res.sendStatus(403)
-            else {
-              Friend.getFriendDocument(profileA._id, profileB._id).exec().then((friend) => {
-                if (!friend) {
-                  const f = new Friend({
-                    profileA: profileA._id,
-                    profileB: targetid,
-                    status: 'pending'
-                  }).save().then((friend) => {
-                    return res.json({ profileA: profileA, profileB: profileB, friend: friend })
-                  })//save().then()
-                }
-                else {
-                  res.json({ err: "Request already sent", friend: friend })
-                }
-              })
-            }
-          })
+    var userProfileID
+    Profile.findByUserId(tokenUser.id).then((profileA) => {
+      userProfileID = profileA._id
+      return Profile.findByUserId(targetid)
+    }).then((profileB) => {
+      return Friend.getFriendDocument(userProfileID, targetid)
+    })
+      .then((friend) => {
+        console.log(friend)
+        if (friend) throw Error(`A friend record with profile IDs ${userProfileID} and ${targetid} exists already. Record: ${friend}`)
+        if (!friend) {
+          return new Friend({
+            profileA: userProfileID,
+            profileB: targetid,
+            status: 'pending'
+          }).save()
         }
+      }).then((friend) => {
+        return res.json({ friend: friend })
+      }).catch((err) => {
+        console.log(`${err}`)
+        res.status(400)
+        return res.send(`${err}`)
       })
-    })
   }
 )
 
-router.get('/acceptFriendRequest/:friendDocId', auth, 
+router.post('/acceptOrRejectFriendRequest', auth,
   (req, res) => {
-    const friendDocId = req.params.friendDocId
+    const friendDocId = req.body.friendDocId
+    const acceptStatus = req.body.accept
+    console.log(friendDocId, acceptStatus)
+
+    if (!acceptStatus || (acceptStatus != "approved" && acceptStatus != "reject")) {
+      res.status(400)
+      res.send(`Invalid accept status.`)
+    }
+
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
-    Profile.findByUserId(tokenUser.id).then((prof)=>{
-      Friend.findById(friendDocId).exec().then((friend)=>{
-        if(friend.profileB!=prof._id||friend.status!='pending') return res.sendStatus(403)
-        friend.status='approved'
-        friend.save().then((friend)=>{
-          return res.json(friend)
-        })
-      })
+
+    var userProfileID
+    Profile.findByUserId(tokenUser.id).then((profile) => {
+      userProfileID = profile._id
+      return Friend.findById(friendDocId)
+    }).then((friend) => {
+      if (!friend.profileB.equals(userProfileID)) throw Error(`${userProfileID} is not the recipient of request ${friendDocId}`)
+      if (friend.status != 'pending') throw Error(`Request ${friendDocId} is not pending`)
+      if (acceptStatus == "reject") {
+        return friend.remove()
+      }
+      else {
+        friend.status = acceptStatus
+        return friend.save()
+      }
+    }).then((friend) => {
+      return res.json(friend)
+    }).catch((err) => {
+      console.log(`${err}`)
+      res.status(400)
+      return res.send(`${err}`)
     })
   }
 )
 
+// router.post('/createFriendRequest',
+//   (req, res) => {
+//     const a = req.body.a
+//     const b = req.body.b
+//     console.log(`a: ${a} b: ${b}`)
+//     new Friend({
+//       profileA: a,
+//       profileB: b,
+//       status: 'pending'
+//     }).save().then((friend) => {
+//       console.log(`########friend created ${friend}`)
+//       res.json(friend)
+//     })
+//   }) //DELETE THIS
+
+// router.post('/deleteFriendRequest',
+//   (req, res) => {
+//     const a = req.body.friendDocId
+//     Friend.findById(a).then((friend) => {
+//       console.log(`remove ${friend}`)
+//       return friend.remove()
+//     }).then((friend) => {
+//       return res.json({ friend: friend })
+//     })
+//   }) //DELETE THIS
+  
 router.get('/listFriends', auth,
   (req, res) => {
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
-    User.findById(tokenUser.id).exec().then((user) => {
-      user.getUserProfile().then((profile) => {
-        profile.getFriends().then((friends) => {
-          res.json(friends)
-        })
-      })
+    Profile.findByUserId(tokenUser.id).then((profile) => {
+      return profile.getFriends()
+    }).then((friends) => {
+      return res.json(friends)
+    }).catch((err) => {
+      console.log(`${err}`)
+      res.status(400)
+      return res.send(`${err}`)
     })
-  })//user.findbyid
+  })
 
 
 router.get('/findUserProfile', auth,
   (req, res) => {
     const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
-    Profile.findByUserId(tokenUser.id).then((profile)=>{
+    Profile.findByUserId(tokenUser.id).then((profile) => {
       res.json(profile)
     })
   })
+
 
 module.exports = router;
