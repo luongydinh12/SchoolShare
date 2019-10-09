@@ -194,7 +194,8 @@ router.post("/login", (req, res) => {
           (err, token) => {
             res.json({
               success: true,
-              token: "Bearer " + token
+              token: "Bearer " + token,
+              userId: user.id
             });
           }
         );
@@ -219,5 +220,19 @@ router.post('/delete', passport.authenticate('jwt', { session: false }),
     })
   });
 
+  router.get('/listAllUsers', passport.authenticate('jwt',{session:false}),
+    (req,res)=>{
+      User.find((err,users)=>{
+        if(err) return console.log(err)
+        const uList=users.map((user)=>{
+          return {
+            id:user._id,
+            name:user.name
+          }
+        })
+        res.json(uList)
+      })
+    }
+  )
 
 module.exports = router;

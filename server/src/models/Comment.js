@@ -17,7 +17,15 @@ const CommentSchema = new Schema({
   parent: {
     type: Schema.Types.ObjectId,
     ref: 'comment'
-  }
+  },
+  deleted: {
+    type: Boolean,
+    default: false
+  },
+  likes: [{
+    type: Schema.Types.ObjectId,
+    ref: 'commentlike'
+  }]
 }, { timestamps: true });
 var Comment=mongoose.model("comment", CommentSchema)
 module.exports = Comment
