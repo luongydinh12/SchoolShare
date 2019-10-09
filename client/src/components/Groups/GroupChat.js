@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { Component} from 'react';
+=======
+import React, { Component, Fragment} from 'react';
+>>>>>>> Development
 import axios from 'axios';
 import { connect } from 'react-redux';
 import {Button, Modal} from 'react-materialize';
@@ -9,7 +13,15 @@ class GroupChat extends Component {
         loading: true,
         error: false,
         text: '',
+<<<<<<< HEAD
         members: null,
+=======
+        editing: false,
+        members: null,
+        msgId: null,
+        openDeleteModal: false,
+        msgDeleteId: null
+>>>>>>> Development
     }
     fetchChats = () => {
         const id = this.props.location.pathname.split('/')[3]
@@ -26,6 +38,7 @@ class GroupChat extends Component {
     }
     createMessage = e => {
         e.preventDefault();
+<<<<<<< HEAD
         const id = this.props.location.pathname.split('/')[3]
         const data = {
             text: this.state.text,
@@ -39,6 +52,52 @@ class GroupChat extends Component {
                 this.setState({ text: '' })
             })
     }
+=======
+        if(!this.state.editing) {
+            const id = this.props.location.pathname.split('/')[3]
+            const data = {
+                text: this.state.text,
+                createdByName: this.props.auth.user.name,
+                createdBy: this.props.auth.user.id,
+                groupId: id,
+            }
+            axios.post('/api/groups/createmsg', data)
+                .then(result => {
+                    this.fetchChats();
+                    this.setState({ text: '' })
+                })
+        } else {
+            const data = {
+                msgId: this.state.msgId,
+                text: this.state.text
+            }
+            axios.post('/api/groups/editmsg', data) 
+            .then(res => {
+                this.setState({editing: false, text: ''})
+                this.fetchChats();
+            })
+        }
+    }
+    editMessage = (e, text, id) => {
+        e.preventDefault();
+        this.setState({text: text, msgId: id, editing: true})
+    }
+    showDeleteModal = (e, id) => {
+        e.preventDefault();
+        this.setState({openDeleteModal: true, msgDeleteId: id})
+    }
+    deleteMessage = () => {
+        const data = {
+            msgId: this.state.msgDeleteId
+        }
+        axios.post('/api/groups/deletemsg', data)
+        .then(res => {
+            this.setState({openDeleteModal: false})
+            this.fetchChats();
+        })
+    }
+
+>>>>>>> Development
     joinGroup = e => {
         const id = this.props.location.pathname.split('/')[3]
         axios.get('/api/groups/joingroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
@@ -62,15 +121,48 @@ class GroupChat extends Component {
     render() {
         let messageList = <h4 style={{fontFamily: "Urbana",}}>Loading...</h4>
         let membersList = <p style={{fontFamily: "Urbana",}}>Loading...</p>
+<<<<<<< HEAD
         let joinButton = null, leaveButton = null, leaveModal = null;
+=======
+        let joinButton = null, leaveButton = null, leaveModal = null, deleteModal = null, editDelete = null;
+>>>>>>> Development
         let messageForm = null;
         const { messages, error, members } = this.state;
         if (messages) {
             messageList = messages.map(message => {
+<<<<<<< HEAD
+=======
+                const userName = this.props.auth.user.name
+                if (!this.state.members.includes(userName)) {
+                    editDelete = null;
+                } else {
+                    const deleteBtn = this.props.auth.user.id===message.createdBy&&(this.state.members.find(el => el === this.props.auth.user.name))?<a onClick={e => this.showDeleteModal(e, message._id)} style={{marginRight: 10, color: 'red'}}>DELETE</a>:null
+                    editDelete = (
+                        <Fragment>
+                            <Modal options={{opacity: .2}} header="Confirmation" open={this.state.openDeleteModal}
+                            actions={[<Button  waves="green" modal="close" flat onClick={()=>this.deleteMessage()}>Yes</Button>, <Button onClick={e => this.setState({openDeleteModal: false})} waves="green" flat>No</Button>]}
+                            >
+                                <p>
+                                Are you sure you want to delete this comment?
+                                </p>
+                            </Modal>
+                            {deleteBtn}
+                            {this.props.auth.user.id === message.createdBy&&(this.state.members.find(el => el === this.props.auth.user.name))?
+                                <a onClick={e => this.editMessage(e, message.text, message._id)} style={{marginRight: 10}}>EDIT</a>:null}
+                        </Fragment>
+                    )
+                }              
+                
+                
+>>>>>>> Development
                 return (
                     <div key={message._id} className="card white col l11 darken-2" style={{ padding: 5 }}>
                         <p>{message.text}</p>
                         <p style={{ fontSize: 10 }}>{message.createdByName} {message.date.split('T')[0]} {message.date.split('T')[1].split('.')[0]}</p>
+<<<<<<< HEAD
+=======
+                        {editDelete}
+>>>>>>> Development
                     </div>
                 )
             })
@@ -96,11 +188,21 @@ class GroupChat extends Component {
                 messageForm = (
                     <form onSubmit={this.createMessage}>
                         <div className="input-field">
+<<<<<<< HEAD
                             <input value={this.state.text} id="text" onChange={(e) => this.setState({ text: e.target.value })} required type="text" />
                             <label htmlFor="text">Type a message</label>
                         </div>
                         <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3"
                         style={{width: "150px"}}>SEND</button>
+=======
+                            <input placeholder="Type a message" value={this.state.text} id="text" onChange={(e) => this.setState({ text: e.target.value })} required type="text" />
+                            {/* <label htmlFor="text">Type a message</label> */}
+                        </div>
+                        <button type="submit" className="btn btn-large waves-effect waves-light hoverable green accent-3"
+                        style={{width: "150px"}}>SEND</button>
+                        {this.state.editing?<button onClick={() => this.setState({editing: false, text: ''})} type="button" className="btn btn-large waves-effect waves-light hoverable red accent-3"
+                        style={{width: "fit-content", marginLeft: 20}}>CANCEL EDITING</button>:null}
+>>>>>>> Development
                     </form>
                 )
             }

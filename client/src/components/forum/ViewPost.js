@@ -22,6 +22,11 @@ class ViewPost extends Component {
     this.renderPostReplyBox = this.renderPostReplyBox.bind(this);
     this.submitPostReply = this.submitPostReply.bind(this);
     this.postReplyClick = this.postReplyClick.bind(this);
+<<<<<<< HEAD
+=======
+    this.closeReplyClick = this.closeReplyClick.bind(this);
+    this.showCommentManagement = this.showCommentManagement.bind(this);
+>>>>>>> Development
   }
 
   componentDidMount = () => {
@@ -56,18 +61,26 @@ class ViewPost extends Component {
             {post.author.name}:
           </p>
           <p>{post.content}</p>
+<<<<<<< HEAD
           <p>
             <a href="/" onClick={this.postReplyClick}>
               Reply
             </a>
           </p>
 
+=======
+          {this.showCommentManagement(post.author._id)}
+>>>>>>> Development
           {this.renderPostReplyBox()}{" "}
 
         </div>
       </>
     );
   }
+<<<<<<< HEAD
+=======
+  
+>>>>>>> Development
   renderPostReplyBox() {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
@@ -91,6 +104,13 @@ class ViewPost extends Component {
         <a href="/" onClick={this.submitPostReply}>
           Reply
         </a>
+<<<<<<< HEAD
+=======
+        {"\t | \t"}
+        <a href="/" onClick={this.closeReplyClick}>
+          Cancel Reply
+        </a>
+>>>>>>> Development
       </div>
     );
   }
@@ -124,7 +144,35 @@ class ViewPost extends Component {
     e.preventDefault();
     this.setState({ displayReplyBox: true });
   }
+<<<<<<< HEAD
 
+=======
+  closeReplyClick(e) {
+    e.preventDefault();
+    this.setState({ displayReplyBox: false });
+  }
+  showCommentManagement(e){
+    if(this.props.auth.user.id != e) return (
+      <p><a href="/" onClick={this.postReplyClick}>
+      Reply
+      </a></p>)
+    else return(
+      <p>
+        <a href="/" onClick={this.postReplyClick}>
+          Reply
+        </a>
+        {"\t | \t"}
+          <a href="/" onClick={this.postReplyClick}>
+            Edit
+          </a>
+        {"\t | \t"}
+          <a href="/" onClick={this.postReplyClick}>
+            Delete
+          </a>
+      </p>
+    );
+  }
+>>>>>>> Development
 
   // DELETE THREAD ()
 

@@ -6,12 +6,20 @@ import Category from "./Category";
 import { Link } from "react-router-dom";
 import NewPost from "./NewPost";
 import ViewPost from "./ViewPost";
+<<<<<<< HEAD
+=======
+import NavBar from '../dashboard/NavBar'
+>>>>>>> Development
 
 class Forum extends Component {
   render() {
     console.log(this.props.match);
     return (
       <div>
+<<<<<<< HEAD
+=======
+      <NavBar/>
+>>>>>>> Development
         <div className="container" style={{}}>
           <Link
             to="/dashboard"
@@ -23,6 +31,7 @@ class Forum extends Component {
               marginBottom: "2rem"
             }}
           >
+<<<<<<< HEAD
             Back to Dashboard
           </Link>
         </div>
@@ -35,6 +44,12 @@ class Forum extends Component {
                 }}>
                     My Groups
               </Link> */}
+=======
+            Back to  E
+          </Link>
+        </div>
+
+>>>>>>> Development
         <p style={{ padding: "1px" }} />
         <Fragment>
           <Switch>

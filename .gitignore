@@ -1,6 +1,15 @@
-/node_modules/**
+node_modules/
+build/
 /config/keys.js
 .env
 server/index.js
+<<<<<<< HEAD
 client/node_modules/*
 server/node_modules/*
+=======
+/Automation/lib/**
+/Automation/log/**
+/Automation/reports/**
+/Automation/node_modules
+node_modules
+>>>>>>> Development

@@ -12,6 +12,11 @@ const validateClassInput = require('../../validation/class');
 const Profile = require('../../models/Profile');
 // Load User Model
 const User = require('../../models/User');
+<<<<<<< HEAD:server/src/routes/api/profile.js
+=======
+
+const auth = passport.authenticate('jwt', { session: false })
+>>>>>>> Development:server/src/routes/api/profile.js
 
 // @route   GET api/profile/test
 // @desc    Tests profile route
@@ -141,11 +146,19 @@ router.post(
           { $set: userFields },
           { new: true }
         ).then(user => res.json(user));
+<<<<<<< HEAD:server/src/routes/api/profile.js
        /* User.findOneAndUpdate(
           { _id: req.user.id },
           { avatar: avatarhere, name: namehere, email: emailhere },
           { new: true }
         ).then(user => res.json(user));*/
+=======
+        /* User.findOneAndUpdate(
+           { _id: req.user.id },
+           { avatar: avatarhere, name: namehere, email: emailhere },
+           { new: true }
+         ).then(user => res.json(user));*/
+>>>>>>> Development:server/src/routes/api/profile.js
 
       } else {
         // Create
@@ -233,5 +246,23 @@ router.delete(
     });
   }
 );
+
+
+router.get('/listAllProfiles', auth,
+  (req, res) => {
+    Profile.find((err, profiles) => {
+      if (err) {
+        console.log(err)
+        res.status(500)
+      }
+      const profList = profiles.map((profile) => {
+        return {
+          id: profile._id,
+          handle: profile.handle
+        }
+      })
+      res.json(profList)
+    })
+  })
 
 module.exports = router;
