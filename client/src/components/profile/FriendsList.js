@@ -39,7 +39,7 @@ class ProfileListItemFragment extends Component {
         return (
             <Fragment >
                 <li className="collection-item avatar">
-                    <img src="images/yuna.jpg" alt="" className="circle" />
+                    <img src={friend.avatar} alt="" className="circle" />
                     <Link to={'/profile/' + friend.handle}                    >
                         <span className="title">{friend.handle}</span>                </Link>
 

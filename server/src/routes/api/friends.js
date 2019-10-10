@@ -15,10 +15,15 @@ Router.get('/listFriends', auth,
             return profile.getFriends().then(friends => [profile._id, friends]) //pass along profile id
         }).then(([profileId, friends]) => {
             const list = friends.map((friend) => {//maps to only the one that isn't the logged in user
+                var prof
                 if (friend.profileA.equals(profileId)) {
-                    return { friend: friend.profileB, status: friend.status } //return { id: friend.profileB._id, handle: friend.profileB.handle }
+                    prof=friend.profileB //return { id: friend.profileB._id, handle: friend.profileB.handle }
                 }
-                return { friend: friend.profileA, status: friend.status }
+                prof={_id:prof.id,
+                    avatar:prof.user.avatar,
+                    handle:prof.handle,
+                    description:prof.description}
+                return { friend: prof, status: friend.status }
             })
             return res.json(list)
         }).catch((err) => {
