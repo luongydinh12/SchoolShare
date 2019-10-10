@@ -13,6 +13,26 @@ const auth = Passport.authenticate('jwt', { session: false })
 Router.get('/listFriends', auth,
     (req, res) => {
         const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
+        return Profile.findByUserId(tokenUser.id).then((profile) => {
+            return profile.getFriends().then(friends => [profile._id, friends]) //pass along profile id
+        }).then(([profileId, friends]) => {
+            const list = friends.map((friend) => {//maps to only the one that isn't the logged in user
+                if (friend.profileA.equals(profileId)) {
+                    return {friend:friend.profileB, status:friend.status} //return { id: friend.profileB._id, handle: friend.profileB.handle }
+                }
+                return {friend:friend.profileA, status:friend.status}
+            })
+            return res.json(list)
+        }).catch((err)=>{
+            console.log(err)
+            res.status(400)
+            return res.send(`${err}`)
+        })
+    })
+
+Router.get('/listFriendsOld', auth,
+    (req, res) => {
+        const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
         Profile.findByUserId(tokenUser.id).then((profile) => {
             return profile.getFriends()
         }).then((friends) => {
