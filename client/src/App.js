@@ -21,6 +21,7 @@ import CreateProfile from "./components/profile/CreateProfile";
 import EditProfile from "./components/profile/EditProfile";
 import Profile from "./components/profile/Profile";
 import ProfilesList from "./components/profile/ProfilesList"
+import FriendsList from './components/profile/FriendsList'
 import NotFound from "./components/not-found/NotFound";
 
 import Groups from "./components/Groups/Groups";
@@ -64,6 +65,7 @@ class App extends Component {
             <Route path="/forum" component={Forum} />
             <Route exact path="/profile/:handle" component={Profile} />
             <Route exact path="/profilelist" component={ProfilesList} />
+            <Route exact path="/friendslist" component={FriendsList} />
             <Route path="/groups" component={Groups} />
             <Route path="/mygroups" component={MyGroups} />
             <Route path="/create-category" exact component={CreateCategory} />

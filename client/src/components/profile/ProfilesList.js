@@ -16,20 +16,20 @@ class ProfilesList extends Component {
         const profiles = this.state.profiles
         if (profiles) {
             const list = profiles.map((p) => {
-                return (<ProfileListItemFragment {...p} />)
+                return (<ProfileListItemFragment {...p} key={p.id} />)
             })
 
-            return (<div className="container">
-                <div className="card white" style={{ padding: 5 }}>
-                    <h4 className="center-text"
-                        style={{
-                            marginBottom: "50px",
-                            marginLeft: "10px",
-                            fontFamily: "Urbana"
-                        }}>List of Profiles</h4>
-                    {list}
-                </div>
-            </div>)
+            return (
+                <div className="container" style={{ marginBottom: "20px" }}>
+                    <div className="card white" style={{ padding: 5 }}>
+                        <ul className="collection with-header">
+                        <Link to="/friendsList"><i className="material-icons right">people</i></Link>
+                            <li className="collection-header"><h3>List of Profiles</h3>
+                            </li>
+                            {list}
+                        </ul>
+                    </div>
+                </div>)
         }
         return (<div>Error</div>)
     }
@@ -38,19 +38,12 @@ class ProfilesList extends Component {
 class ProfileListItemFragment extends Component {
     render() {
         return (
-            <Fragment key={this.props._id} style={{ marginBottom: "20px" }}>
-                <div className='row'>
-                <Link to={'/profile/' + this.props.handle}
-                    style={{
-                        fontSize: 18,
-                        fontFamily: "Urbana",
-                        letterSpacing: "1px",
-                        border: '1px solid #2BB673',
-                        padding: 10,
-                        borderRadius: "10px"
-                    }} >{this.props.handle}
-                </Link>
-                </div>
+            <Fragment >
+                <a className='collection-item'>
+                    <Link to={'/profile/' + this.props.handle}
+                    >{this.props.handle}
+                    </Link>
+                </a>
             </Fragment>
         )
     }
