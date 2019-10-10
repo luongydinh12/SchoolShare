@@ -1,11 +1,9 @@
 import Express from 'express'
-import Mongoose from 'mongoose'
 import Passport from 'passport'
 import JWT from 'jsonwebtoken'
 
 import Profile from "../../models/Profile"
 import Friend from '../../models/Friend'
-import User from '../../models/User'
 
 const Router = Express.Router()
 const auth = Passport.authenticate('jwt', { session: false })
@@ -18,12 +16,12 @@ Router.get('/listFriends', auth,
         }).then(([profileId, friends]) => {
             const list = friends.map((friend) => {//maps to only the one that isn't the logged in user
                 if (friend.profileA.equals(profileId)) {
-                    return {friend:friend.profileB, status:friend.status} //return { id: friend.profileB._id, handle: friend.profileB.handle }
+                    return { friend: friend.profileB, status: friend.status } //return { id: friend.profileB._id, handle: friend.profileB.handle }
                 }
-                return {friend:friend.profileA, status:friend.status}
+                return { friend: friend.profileA, status: friend.status }
             })
             return res.json(list)
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err)
             res.status(400)
             return res.send(`${err}`)
@@ -48,30 +46,28 @@ Router.get('/sendFriendRequest/:targetid', auth,
     (req, res) => {
         const targetid = req.params.targetid
         const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
-        var userProfileID
         Profile.findByUserId(tokenUser.id).then((profileA) => {
-            userProfileID = profileA._id
-            return Profile.findByUserId(targetid)
-        }).then((profileB) => {
-            return Friend.getFriendDocument(userProfileID, targetid)
+            return Profile.findByUserId(targetid).then(profileB => [profileA._id, profileB])
+        }).then(([profileAId, profileB]) => {
+            console.log(`uprof: ${profileAId} profileB:${profileB}`)
+            return Friend.getFriendDocument(profileAId, targetid).then(friend => [profileAId, friend])
+        }).then(([profileAId, friend]) => {
+            console.log(`profileAId: ${profileAId} friend: ${friend}`)
+            if (friend) throw Error(`A friend record with profile IDs ${profileAId} and ${targetid} exists already. Record: ${friend}`)
+            if (!friend) {
+                return new Friend({
+                    profileA: profileAId,
+                    profileB: targetid,
+                    status: 'pending'
+                }).save()
+            }
+        }).then((friend) => {
+            return res.json({ friend: friend })
+        }).catch((err) => {
+            console.log(`${err}`)
+            res.status(400)
+            return res.send(`${err}`)
         })
-            .then((friend) => {
-                console.log(friend)
-                if (friend) throw Error(`A friend record with profile IDs ${userProfileID} and ${targetid} exists already. Record: ${friend}`)
-                if (!friend) {
-                    return new Friend({
-                        profileA: userProfileID,
-                        profileB: targetid,
-                        status: 'pending'
-                    }).save()
-                }
-            }).then((friend) => {
-                return res.json({ friend: friend })
-            }).catch((err) => {
-                console.log(`${err}`)
-                res.status(400)
-                return res.send(`${err}`)
-            })
     }
 )
 
@@ -89,12 +85,10 @@ Router.post('/acceptOrRejectFriendRequest', auth,
 
         const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
 
-        var userProfileID
         Profile.findByUserId(tokenUser.id).then((profile) => {
-            userProfileID = profile._id
-            return Friend.findById(friendDocId)
-        }).then((friend) => {
-            if (!friend.profileB.equals(userProfileID)) throw Error(`${userProfileID} is not the recipient of request ${friendDocId}`)
+            return Friend.findById(friendDocId).then(friend => [profile._id, friend])
+        }).then(([profileAId, friend]) => {
+            if (!friend.profileB.equals(profileAId)) throw Error(`${profileAId} is not the recipient of request ${friendDocId}`)
             if (acceptStatus == "reject") {
                 return friend.remove()
             }
@@ -116,7 +110,7 @@ Router.post('/acceptOrRejectFriendRequest', auth,
 
 
 
-// router.post('/createFriendRequest',
+// Router.post('/createFriendRequest',
 //   (req, res) => {
 //     const a = req.body.a
 //     const b = req.body.b
@@ -131,9 +125,10 @@ Router.post('/acceptOrRejectFriendRequest', auth,
 //     })
 //   }) //DELETE THIS
 
-// router.post('/deleteFriendRequest',
+// Router.post('/deleteFriendRequest',
 //   (req, res) => {
 //     const a = req.body.friendDocId
+//     console.log(a)
 //     Friend.findById(a).then((friend) => {
 //       console.log(`remove ${friend}`)
 //       return friend.remove()
