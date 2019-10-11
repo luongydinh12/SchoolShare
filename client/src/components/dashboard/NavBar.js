@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { getCurrentProfile, deleteAccount } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
 import ProfileActions from './ProfileActions';
+import { Link as RouterLink } from 'react-router-dom';
 
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 // for calendar
@@ -50,6 +51,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   appBar: {
+    backgroundColor: "#2BB673",
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -137,15 +139,23 @@ export default () => {
         >
           <MenuIcon />
         </IconButton>
+        <RouterLink to="/dashboard">
+        <img
+          width="200"
+          alt="Logo"
+          src="/images/logos/logo--white.png"
+        />
+        </RouterLink>
           <Typography variant="h6" className={classes.title}>
-            School Share
+
           </Typography>
-          <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
+          <Link to="/groups" className="btn waves-effect waves-light hoverable white" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             marginTop: "2rem",
             marginBottom: "1.4rem",
+            color:"black"
           }}>
             Groups
               </Link>
