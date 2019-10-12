@@ -25,7 +25,7 @@ class Forum extends Component {
               marginBottom: "2rem"
             }}
           >
-            Back to  E
+            Go Back
           </Link>
         </div>
 
