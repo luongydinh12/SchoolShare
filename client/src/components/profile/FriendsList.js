@@ -45,7 +45,7 @@ class ProfileListItemFragment extends Component {
 
                     <p>{friend.description}
                     </p>
-                    <a className="secondary-content"><i className="material-icons">{this.props.status == "approved" ? "check" : ""}</i></a>
+                    <a className="secondary-content"><i className="material-icons">{this.props.status === "approved" ? "check" : ""}</i></a>
                 </li>
             </Fragment>
         )

@@ -34,12 +34,12 @@ class Profile extends Component {
   FriendButton = () => {
     console.log(`friend: ${JSON.stringify(this.state)}`)
     const friend = this.state.friend
-    if (friend == null || friend == "self") {
+    if (friend === null || friend === "self") {
       return (null)
     }
-    if (friend.status == "approved") return (<i className="material-icons right">people</i>)
-    if (friend.status == "pending") {
-      if (friend.request == true) {
+    if (friend.status === "approved") return (<i className="material-icons right">people</i>)
+    if (friend.status === "pending") {
+      if (friend.request === true) {
         return (<div><button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={true}>Accept</button>
           <button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={false} >Reject</button></div>)
       }

@@ -3,8 +3,8 @@ import { oAuthLogin } from "../../actions/authActions"
 import { connect } from "react-redux";
 import io from 'socket.io-client'
 
-const local="http://localhost"
-const remote="https://schoolshare.me"
+// const local="http://localhost"
+// const remote="https://schoolshare.me"
 const socket = io("https://schoolshare.me")
 //const socket=io(remote+":5050")
 
@@ -81,7 +81,7 @@ export class OAuth extends Component {
   render() {
     return (
       <div>
-        <a onClick={this.startAuthGoogle}
+        <button onClick={this.startAuthGoogle}
           style={{
             marginLeft: "0rem",
             width: "150px",
@@ -93,8 +93,8 @@ export class OAuth extends Component {
           className="btn btn-large waves-effect white hoverable black-text"
         >
           Google
-    </a>
-        <a onClick={this.startAuthFacebook}
+    </button>
+        <button onClick={this.startAuthFacebook}
           style={{
             marginLeft: "2rem",
             width: "150px",
@@ -106,7 +106,7 @@ export class OAuth extends Component {
           className="btn btn-large waves-effect white hoverable black-text"
         >
           Facebook
-    </a>
+    </button>
       </div>
     )
   }

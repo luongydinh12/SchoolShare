@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from "react";
 import axios from "axios";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class Category extends Component {
@@ -75,7 +75,7 @@ class Category extends Component {
     if (error) {
       postList = <h4>an error occured...</h4>;
     }
-    if (totalPosts == 0) {
+    if (totalPosts === 0) {
       postList = <h4>No posts yet in this category.</h4>;
     }
     if (loading) {
