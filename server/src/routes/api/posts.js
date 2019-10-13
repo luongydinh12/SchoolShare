@@ -21,9 +21,11 @@ router.get('/', (req, res)=>{
 // @returns Array of Object(s)
 router.get('/getpostsforcat', (req, res) => {
   const catId = req.query.catId || undefined;
+  const search = req.query.search || undefined;
   const page = req.query.page - 1 || 0;
   if(!catId) return console.error('No category specified');
 
+  if(!search || search == ""){
   Thread.count({category: catId}).then(count => {
     Thread.find({ category: catId})
     .where('deleted').ne(true)
@@ -40,7 +42,24 @@ router.get('/getpostsforcat', (req, res) => {
     })
     .catch(err =>  console.log(err))
   }).catch(err =>  console.log(err))
-
+  } else {
+    Thread.count({category: catId, title: new RegExp(search, 'i')}).then(count => {
+      Thread.find({ category: catId, title: new RegExp(search, 'i')})
+      .where('deleted').ne(true)
+      .populate('author' , '_id name')
+      .sort({ _id: -1})
+      .limit(10)
+      .skip(page * 10)
+      .then(data => {
+        res.send({
+          totalPosts: count,
+          totalPages: Math.ceil(count/10),
+          posts: data
+        });
+      })
+      .catch(err =>  console.log(err))
+    }).catch(err =>  console.log(err))
+  }
 
 })
 
