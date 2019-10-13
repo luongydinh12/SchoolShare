@@ -39,10 +39,8 @@ class ProfileListItemFragment extends Component {
     render() {
         return (
             <Fragment >
-                <a className='collection-item'>
-                    <Link to={'/profile/' + this.props.handle}
-                    >{this.props.handle}
-                    </Link>
+                <a href={'/profile/' + this.props.handle} className='collection-item'>
+                    {this.props.handle}
                 </a>
             </Fragment>
         )

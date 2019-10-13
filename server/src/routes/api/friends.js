@@ -52,12 +52,14 @@ Router.get('/sendFriendRequest/:targetid', auth,
         const targetid = req.params.targetid
         const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
         Profile.findByUserId(tokenUser.id).then((profileA) => {
-            return Profile.findByUserId(targetid).then(profileB => [profileA._id, profileB])
+            // console.log(`profileA: ${profileA}`)
+            return Profile.findById(targetid).then((profileB)=>[profileA._id,profileB])
         }).then(([profileAId, profileB]) => {
-            console.log(`uprof: ${profileAId} profileB:${profileB}`)
+            if(!profileB) throw Error(`${targetid} does not exist.`)
+            // console.log(`profileAID: ${profileAId} profileB:${profileB}`)
             return Friend.getFriendDocument(profileAId, targetid).then(friend => [profileAId, friend])
         }).then(([profileAId, friend]) => {
-            console.log(`profileAId: ${profileAId} friend: ${friend}`)
+            // console.log(`profileAId: ${profileAId} friend: ${friend}`)
             if (friend) throw Error(`A friend record with profile IDs ${profileAId} and ${targetid} exists already. Record: ${friend}`)
             if (!friend) {
                 return new Friend({
@@ -112,6 +114,18 @@ Router.post('/acceptOrRejectFriendRequest', auth,
     }
 )
 
+Router.get('/getFriend/:targetid', auth,
+    (req, res) => {
+        const targetid = req.params.targetid
+        const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
+        Profile.findByUserId(tokenUser.id).then((profile)=>{
+            if(profile._id==targetid) return "self"
+            return Friend.getFriendDocument(profile._id,targetid)
+        }).then((friend)=>{
+            if(!friend) res.json(0) //react: state.friend=null is used before api call to render null button
+            res.json(friend)
+        })
+    })
 
 
 
