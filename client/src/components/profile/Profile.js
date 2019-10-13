@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { getProfileByHandle } from "../../actions/profileActions";
 import ProfileHeader from "./ProfileHeader";
 import ProfileAbout from "./ProfileAbout";
-
+import { inspect } from 'util'
 import Spinner from "../common/Spinner";
 import Axios from "axios";
 
@@ -31,25 +31,38 @@ class Profile extends Component {
     }
   }
 
-  FriendButton=()=> {
+  FriendButton = () => {
     console.log(`friend: ${JSON.stringify(this.state)}`)
-    const friend=this.state.friend
-    if(friend==null||friend=="self"){
-      return(null)
+    const friend = this.state.friend
+    if (friend == null || friend == "self") {
+      return (null)
     }
-    if(friend.status=="approved") return(<i className="material-icons right">people</i>)
-    if(friend.status=="pending") return(<i className="material-icons right">access_time</i>)
+    if (friend.status == "approved") return (<i className="material-icons right">people</i>)
+    if (friend.status == "pending") {
+      if (friend.request == true) {
+        return (<div><button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={true}>Accept</button>
+          <button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={false} >Reject</button></div>)
+      }
+      return (<i className="material-icons right">access_time</i>)
+    }
     else return (
-    <a className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.sendFriendRequest}>button</a>
+      <button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.sendFriendRequest}>Send Friend Request</button>
     )
   }
 
-  sendFriendRequest=()=>{
-    console.log('send friend request')
+
+  sendFriendRequest = () => {
     Axios.get(`/api/friends/sendFriendRequest/${this.props.profile.profile._id}`)
-      .then((res)=>{
-        this.setState({friend:res.data.friend})
+      .then((res) => {
+        this.setState({ friend: res.data.friend })
       })
+  }
+  acceptFriendRequest = (e) => {
+    console.log(`accept friend request: ${inspect(e.target.value)}`)
+    Axios.post('/api/friends/acceptOrRejectFriendRequest',{
+      friendDocId:this.state.friend._id,
+      accept:e.target.value
+    })
   }
 
   render() {
