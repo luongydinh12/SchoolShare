@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-
+import NavBar from '../dashboard/NavBar'
 
 class ForumCategories extends Component {
     render() {
@@ -22,15 +22,15 @@ class ForumCategories extends Component {
         if (categories !== null) {
             cat = categories.map(category => {
                 return (
-                    <div style= {{marginBottom: "20px"}}>           
+                    <div style= {{marginBottom: "20px"}}>
                     <Fragment key={category._id}>
-                        <Link to={'/forum/'+category.link} 
-                        style={{ fontSize: 18, 
+                        <Link to={'/forum/'+category.link}
+                        style={{ fontSize: 18,
                         fontFamily: "Urbana",
                         //fontWeight: "bold",
                         letterSpacing: "1px",
-                        border: '1px solid #2BB673', 
-                        padding: 10, 
+                        border: '1px solid #2BB673',
+                        padding: 10,
                         borderRadius: "10px" }} >{category.name}</Link>
                         <br />
                         <br />
@@ -44,8 +44,8 @@ class ForumCategories extends Component {
                 <div className="card white" style={{ padding: 5 }}>
                 <div className="row">
                 <div className="col l9">
-                <h4 className="center-text" 
-                    style ={{marginBottom: "50px", 
+                <h4 className="center-text"
+                    style ={{marginBottom: "50px",
                     marginLeft: "10px",
                     fontFamily: "Urbana" }}>Discussion Forum</h4>
                 </div>

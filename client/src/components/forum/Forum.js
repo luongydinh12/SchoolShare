@@ -6,12 +6,14 @@ import Category from "./Category";
 import { Link } from "react-router-dom";
 import NewPost from "./NewPost";
 import ViewPost from "./ViewPost";
+import NavBar from '../dashboard/NavBar'
 
 class Forum extends Component {
   render() {
     console.log(this.props.match);
     return (
       <div>
+      <NavBar/>
         <div className="container" style={{}}>
           <Link
             to="/dashboard"
@@ -23,10 +25,10 @@ class Forum extends Component {
               marginBottom: "2rem"
             }}
           >
-            Back to  E
+            Go Back
           </Link>
         </div>
-        
+
         <p style={{ padding: "1px" }} />
         <Fragment>
           <Switch>

@@ -93,7 +93,6 @@ class Dashboard extends Component {
         <div style={{ height: "75vh" }} className="container">
           <div className="row">
             <div className="col s12 center-align ">
-              <h1 style={{ fontFamily: "Urbana" }}>Welcome to School Share 🎉</h1>
 
               <img id="userAvatar" style={{
                 verticalAlign: "middle",
@@ -141,8 +140,8 @@ class Dashboard extends Component {
                   marginLeft: 16,
                 }}>
                 FORUM
-              </Link> 
-              
+              </Link>
+
               <Link to="/profilelist" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
               </Link>  */}
               <Link to="/calendar" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
@@ -156,10 +155,10 @@ class Dashboard extends Component {
                 View Users
               </Link>
               </div>
-                
-      
 
-              
+
+
+
 
               <button
                 style={{

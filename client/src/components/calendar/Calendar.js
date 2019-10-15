@@ -6,6 +6,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from "@fullcalendar/interaction";
+import NavBar from '../dashboard/NavBar'
+
 //import './main.scss' // webpack must be configured to do this
 
 class Calendar extends React.Component {
@@ -18,8 +20,8 @@ class Calendar extends React.Component {
     ]
   }
   render() {
-    return (  
-      <FullCalendar 
+    return (
+      <FullCalendar
         defaultView="dayGridMonth"
         header={{
           left: 'prev,next today',
@@ -34,6 +36,7 @@ class Calendar extends React.Component {
         />
 
     )
+
   }
   toggleWeekends = () => {
     this.setState({ // update a property
