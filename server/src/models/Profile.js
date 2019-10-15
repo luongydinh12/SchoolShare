@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+import Friend from './Friend'
 
 // Create Schema
 const ProfileSchema = new Schema({
@@ -42,6 +43,14 @@ const ProfileSchema = new Schema({
     default: Date.now
   }
 });
-
+ProfileSchema.statics.findByUserId=function(id,cb){
+  return this.findOne({user:id}).exec(cb)
+}
+ProfileSchema.methods.getFriends = function (cb) {
+  return Friend.find({ $or: [{ profileA: this._id }, { profileB: this._id }] }).populate({path:'profileA profileB', populate: {path:'user'}}).exec(cb)
+}
+ProfileSchema.methods.getUser=function(cb){
+  return User.findById(this.user).exec(cb)
+}
 var Profile = mongoose.model('profile', ProfileSchema)
-module.exports=Profile
+module.exports = Profile

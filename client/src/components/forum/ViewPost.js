@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
 import axios from 'axios';
+import React, { Component } from 'react';
+import { Row, Textarea } from 'react-materialize';
 import { connect } from 'react-redux';
-import { Textarea, Row, Button } from 'react-materialize';
 import ThreadComments from "./ThreadComments";
-import Modal from 'react-materialize/lib/Modal';
 
 class ViewPost extends Component {
   constructor(props) {
@@ -402,7 +401,7 @@ class ViewPost extends Component {
 
           {this.state.loading ||
           this.state.postingReply ||
-          this.state.commentCount == 0 ? (
+          this.state.commentCount === 0 ? (
             undefined
           ) : (
             <div className="row">
