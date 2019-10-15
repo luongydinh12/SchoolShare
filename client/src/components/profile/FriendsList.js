@@ -8,16 +8,22 @@ class FriendsList extends Component {
         friends: null
     }
     componentDidMount = () => {
+        this.getFriendsList()
+    }
+    getFriendsList=()=>{
         Axios.get('/api/friends/listFriends')
-            .then((res) => {
-                this.setState({ friends: res.data })
-            })
+        .then((res) => {
+            this.setState({ friends: res.data })
+        })
+    }
+    friendButtonCb=()=>{
+        this.getFriendsList()
     }
     render() {
         const friends = this.state.friends
         if (friends) {
             const list = friends.map((f) => {
-                return (<ProfileListItemFragment {...f} key={f.friend._id} />)
+                return (<ProfileListItemFragment {...f} key={f.friend._id} cb={this.friendButtonCb} />)
             })
 
             return (<div className="container" style={{ marginBottom: "20px" }}>
@@ -51,7 +57,7 @@ class ProfileListItemFragment extends Component {
                         </li>
                     </div>
                     <div className="col s2">
-                        <FriendButton profileId={friend._id} />
+                        <FriendButton profileId={friend._id} cb={this.props.cb}/>
                     </div>
                 </div>
             </Fragment>

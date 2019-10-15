@@ -23,7 +23,9 @@ class FriendButton extends Component {
             friendDocId: this.state.friend._id,
             accept: e.target.value
         }).then((res)=>{
-            console.log(res)
+            if(this.props.cb){
+                this.props.cb()
+            }
         })
     }
     render() {
