@@ -7,14 +7,13 @@ class FriendButton extends Component {
         friend: null
       }
     componentDidMount(){
-        console.log(`profid: ${this.props.profile.profile._id}`)
-        Axios.get(`/api/friends/getFriend/${this.props.profile.profile._id}`)
+        Axios.get(`/api/friends/getFriend/${this.props.profileId}`)
         .then((res) => {
           this.setState({ friend: res.data })
         })
     }
     sendFriendRequest = () => {
-        Axios.get(`/api/friends/sendFriendRequest/${this.props.profile.profile._id}`)
+        Axios.get(`/api/friends/sendFriendRequest/${this.props.profileId}`)
             .then((res) => {
                 this.setState({ friend: res.data.friend })
             })
@@ -23,6 +22,8 @@ class FriendButton extends Component {
         Axios.post('/api/friends/acceptOrRejectFriendRequest', {
             friendDocId: this.state.friend._id,
             accept: e.target.value
+        }).then((res)=>{
+            console.log(res)
         })
     }
     render() {
@@ -43,7 +44,5 @@ class FriendButton extends Component {
         )
     }
 }
-const mapStateToProps = state => ({
-    profile: state.profile
-  })
-export default connect(mapStateToProps)(FriendButton)
+
+export default FriendButton

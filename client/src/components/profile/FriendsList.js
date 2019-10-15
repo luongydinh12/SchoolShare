@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import Axios from 'axios'
 import { Link } from 'react-router-dom'
+import FriendButton from './FriendButton'
 
 class FriendsList extends Component {
     state = {
@@ -22,7 +23,7 @@ class FriendsList extends Component {
             return (<div className="container" style={{ marginBottom: "20px" }}>
                 <div className="card white" style={{ padding: 5 }}>
                     <h4 className="center-text"
-                        >List of Friends</h4>
+                    >List of Friends</h4>
                     <ul className="collection">
                         {list}
                     </ul>
@@ -38,15 +39,21 @@ class ProfileListItemFragment extends Component {
         const friend = this.props.friend
         return (
             <Fragment >
-                <li className="collection-item avatar">
-                    <img src={friend.avatar} alt="" className="circle" />
-                    <Link to={'/profile/' + friend.handle}                    >
-                        <span className="title">{friend.handle}</span>                </Link>
+                <div className="row">
+                    <div className="col s10">
+                        <li className="collection-item avatar">
+                            <img src={friend.avatar} alt="" className="circle" />
+                            <Link to={'/profile/' + friend.handle}                    >
+                                <span className="title">{friend.handle}</span>                </Link>
 
-                    <p>{friend.description}
-                    </p>
-                    <a className="secondary-content"><i className="material-icons">{this.props.status === "approved" ? "check" : "access_time"}</i></a>
-                </li>
+                            <p>{friend.description}
+                            </p>
+                        </li>
+                    </div>
+                    <div className="col s2">
+                        <FriendButton profileId={friend._id} />
+                    </div>
+                </div>
             </Fragment>
         )
     }

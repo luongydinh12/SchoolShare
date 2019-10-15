@@ -20,11 +20,11 @@ class Profile extends Component {
     if (nextProps.profile.profile === null && this.props.profile.loading) {
       this.props.history.push("/not-found");
     }
-    if (nextProps.profile.profile) {
-      Axios.get(`/api/friends/getFriend/${nextProps.profile.profile._id}`)
-        .then((res) => {
-          this.setState({ friend: res.data })
-        })
+  }
+
+  FriendButton = () => {
+    if (this.props.profile.profile._id) {
+      return <FriendButton profileId={this.props.profile.profile._id} />
     }
   }
 
@@ -47,7 +47,7 @@ class Profile extends Component {
               </Link>
             </div>
             <div className="col s1 offset-s4" >
-              <FriendButton profile={profile}/>
+              <this.FriendButton />
             </div>
           </div>
           <ProfileHeader profile={profile} />
