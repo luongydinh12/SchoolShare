@@ -1,3 +1,4 @@
+import { Textarea, Row} from 'react-materialize';
 import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
@@ -12,7 +13,8 @@ class Category extends Component {
       totalPosts: 0,
       totalPages: 0,
       loading: true,
-      error: false
+      error: false,
+      currentSearch: ""
     };
 
     this.getPosts = this.getPosts.bind(this);
@@ -24,13 +26,17 @@ class Category extends Component {
     this.getPosts();
   };
 
-  getPosts(_page = undefined) {
+  getPosts(_page = undefined, searchTerm = undefined) {
     this.setState({ loading: true });
 
     const id = this.props.location.pathname.split("/")[2];
     const page = _page ? _page : this.state.page;
     axios
-      .get("/api/posts/getpostsforcat?catId=" + id + "&page=" + page)
+      .get(
+        (!searchTerm || searchTerm == "")?
+        encodeURI("/api/posts/getpostsforcat?catId=" + id + "&page=" + page)
+        : encodeURI("/api/posts/getpostsforcat?catId=" + id + "&page=" + page +"&search=" + searchTerm)
+        )
       .then(({ data }) => {
         this.setState({ ...data, loading: false, error: false });
       })
@@ -170,8 +176,19 @@ class Category extends Component {
               </Link>
             </div>
           </div>
-
           <div className="row">
+            <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+            <Textarea
+              s={12}
+             m={12}
+             l={12}
+             xl={12}
+             placeholder={"Search"}
+             value={this.state.currentSearch}
+             onChange={e => {this.setState({ currentSearch: e.target.value, page: 1 }); 
+                this.getPosts(this.state.page,e.target.value);}}
+               />
+            </Row>
             <div className="col s12" style={{ marginTop: "2rem" }}>
               {postList}
             </div>

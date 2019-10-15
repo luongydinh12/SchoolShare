@@ -7,3 +7,4 @@ server/index.js
 /Automation/log/**
 /Automation/reports/**
 /Automation/node_modules
+node_modules

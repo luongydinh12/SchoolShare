@@ -3,15 +3,28 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { logoutUser, deleteUser } from "../../actions/authActions";
 import moment from 'moment'; //npm install moment --save (CLIENT)
-
-
 import { Link } from 'react-router-dom'
 import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
 import Spinner from '../common/Spinner'
 import ProfileActions from './ProfileActions'
+
+// for calendar
+import { Calendar } from '@fullcalendar/core';
+import dayGridPlugin from '@fullcalendar/daygrid';
+
 //test
+import NavBar from './NavBar'
+
+const options = [
+  'EDIT PROFILE',
+  'DELETE',
+  'CALENDER',
+  'LOG OUT',
+];
 class Dashboard extends Component {
+
   onLogoutClick = e => {
+    alert("test logout");
     e.preventDefault();
     this.props.logoutUser();
   };
@@ -26,7 +39,7 @@ class Dashboard extends Component {
     document.body.classList.add("background-white");
     this.props.getCurrentProfile()
   }
-
+ //test
   handleDeleteAccount = () => {
     this.props.deleteAccount()
   }
@@ -76,10 +89,10 @@ class Dashboard extends Component {
 
     return (
       <div>
+        <NavBar/>
         <div style={{ height: "75vh" }} className="container">
           <div className="row">
             <div className="col s12 center-align ">
-              <h1 style={{ fontFamily: "Urbana" }}>Welcome to School Share 🎉</h1>
 
               <img id="userAvatar" style={{
                 verticalAlign: "middle",
@@ -108,7 +121,7 @@ class Dashboard extends Component {
               {dashboardContent}
 
               <div>
-              <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+              {/* <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                   width: "150px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
@@ -116,9 +129,9 @@ class Dashboard extends Component {
                   marginBottom: "1.4rem",
                 }}>
                 Groups
-              </Link>
+              </Link> */}
 
-              <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+              {/* <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
                   width: "150px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
@@ -127,9 +140,12 @@ class Dashboard extends Component {
                   marginLeft: 16,
                 }}>
                 FORUM
-              </Link> 
-              
+              </Link>
+
               <Link to="/profilelist" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+              </Link>  */}
+              <Link to="/calendar" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+                  width: "150px",
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
                   marginTop: "2rem",
@@ -139,6 +155,10 @@ class Dashboard extends Component {
                 View Users
               </Link>
               </div>
+
+
+
+
 
               <button
                 style={{
@@ -173,6 +193,9 @@ class Dashboard extends Component {
     );
   }
 }
+
+
+
 Dashboard.propTypes = {
   logoutUser: PropTypes.func.isRequired,
   getCurrentProfile: PropTypes.func.isRequired,
