@@ -1,38 +1,38 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
-import { getProfileByHandle } from "../../actions/profileActions";
-import ProfileHeader from "./ProfileHeader";
-import ProfileAbout from "./ProfileAbout";
-import { inspect } from 'util'
-import Spinner from "../common/Spinner";
 import Axios from "axios";
-import FriendButton from './FriendButton'
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import Spinner from "../common/Spinner";
+import FriendButton from './FriendButton';
+import ProfileAbout from "./ProfileAbout";
+import ProfileHeader from "./ProfileHeader";
 class Profile extends Component {
-  componentDidMount() {
-    if (this.props.match.params.handle) {
-      this.props.getProfileByHandle(this.props.match.params.handle);
-    }
+  state={
+    profile:null
   }
+  componentDidMount() {
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.profile.profile === null && this.props.profile.loading) {
-      this.props.history.push("/not-found");
-    }
+    const handle=this.props.location.pathname.split('/')[2]
+    console.log(handle)
+    Axios.get(`/api/profile/handle/${handle}`).then((res)=>{
+      console.log(res.data)
+      this.setState({profile:res.data})
+    }).catch((err)=>{
+      console.log(err)
+      this.props.history.push("/not-found")
+    })
   }
 
   FriendButton = () => {
-    if (this.props.profile.profile._id) {
-      return <FriendButton profileId={this.props.profile.profile._id} />
+    if (this.state.profile._id) {
+      return <FriendButton profileId={this.state.profile._id} />
     }
   }
 
   render() {
-    const { profile, loading } = this.props.profile;
+    const profile=this.state.profile
     let profileContent;
 
-    if (profile === null || loading) {
+    if (profile === null) {
       profileContent = <Spinner />;
     } else {
       profileContent = (
@@ -68,16 +68,4 @@ class Profile extends Component {
   }
 }
 
-Profile.propTypes = {
-  profile: PropTypes.object.isRequired,
-  getProfileByHandle: PropTypes.func.isRequired
-};
-
-const mapStateToProps = state => ({
-  profile: state.profile
-});
-
-export default connect(
-  mapStateToProps,
-  { getProfileByHandle }
-)(Profile);
+export default Profile
