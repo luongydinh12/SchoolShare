@@ -18,6 +18,7 @@ import { Link } from 'react-router-dom';
 import { getCurrentProfile, deleteAccount } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
 import ProfileActions from './ProfileActions';
+import { Link as RouterLink } from 'react-router-dom';
 
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 // for calendar
@@ -137,20 +138,28 @@ export default () => {
         >
           <MenuIcon />
         </IconButton>
+        <RouterLink to="/dashboard">
+          {/* <img
+          width="200"
+          alt="School Share"
+          src="/images/logos/logo--white.png"
+          /> */}
+        </RouterLink>
           <Typography variant="h6" className={classes.title}>
             School Share
           </Typography>
-          <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
+          {/* <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             marginTop: "2rem",
             marginBottom: "1.4rem",
+            color:"black"
           }}>
             Groups
-              </Link>
+              </Link> */}
 
-          <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
+          {/* <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
@@ -159,7 +168,7 @@ export default () => {
             marginLeft: 16,
           }}>
             FORUM
-              </Link>
+              </Link> */}
           <Link to="/calendar" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
@@ -188,20 +197,75 @@ export default () => {
         </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {['Edit profile', 'View calender', 'Log out', 'Delete'].map((text, index) => (
+
+<Link to="/Edit profile" className= " accent-3" style={{
+  width: "200px",
+  borderRadius: "3px",
+  letterSpacing: "1.5px",
+  marginTop: "2rem"
+}}>
+
+<Link to="/Log out" className= " accent-3" style={{
+  width: "200px",
+  borderRadius: "3px",
+  letterSpacing: "1.5px",
+  marginTop: "2rem",
+  marginLeft: "1rem"
+}}>
+<Link to="/Delete " className= " accent-3" style={{
+  width: "200px",
+  borderRadius: "3px",
+  letterSpacing: "1.5px",
+  marginTop: "2rem",
+  marginLeft: "1rem"
+}}>
+
             <ListItem button key={text}>
               <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
+            </Link>
+            </Link>
+            </Link>
           ))}
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          {['Group', 'Forum', 'Calender'].map((text, index) => (
+
+         <Link to="/groups" className= " accent-3" style={{
+          width: "150px",
+          borderRadius: "3px",
+          letterSpacing: "1.5px",
+          marginTop: "2rem",
+          marginBottom: "1.4rem",
+          marginLeft: 16,
+        }}>
+          <Link to="/forum" className=" accent-3" style={{
+            width: "150px",
+            borderRadius: "3px",
+            letterSpacing: "1.5px",
+            marginTop: "2rem",
+            marginBottom: "1.4rem",
+            marginLeft: 16,
+          }}>
+            {/* <Link to="/Calender" className=" accent-3" style={{
+            width: "150px",
+            borderRadius: "3px",
+            letterSpacing: "1.5px",
+            marginTop: "2rem",
+            marginBottom: "1.4rem",
+            marginLeft: 16,
+          }}></Link> */}
+            
+         
             <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
+            </Link>
+            </Link>
           ))}
         </List>
       </Drawer>
