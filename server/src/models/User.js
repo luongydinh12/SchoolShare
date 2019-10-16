@@ -39,6 +39,10 @@ const UserSchema = new Schema({
   messageId: [{
     type: Schema.Types.ObjectId,
     ref: 'messages'
+  }],
+  calendarEvents: [{
+    type: Schema.Types.ObjectId,
+    ref: 'calendarevents'
   }]
 });
 var User = mongoose.model("users", UserSchema)
