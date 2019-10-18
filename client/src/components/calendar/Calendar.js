@@ -27,6 +27,10 @@ class Calendar extends React.Component {
 
   }
   componentDidMount = () => {
+    this.updateCalendar()
+  }
+ 
+  updateCalendar = () => {
     axios.get('/api/calendar/getallevents?user=' + this.props.auth.user.id)
         .then(result => {
           console.log(result.data.data)
@@ -37,20 +41,10 @@ class Calendar extends React.Component {
             //this.setState({ loading: false, error: true })
         })
   }
- 
-  
   handleSubmit = e => {
-    this.setState({  // add new event data
-      calendarEvents: this.state.calendarEvents.concat({ // creates a new array
-        title: this.state.title,
-        desc: this.state.desc,
-        start: this.state.date,
-        allDay: this.state.allDay
-      }),
+    this.setState({
       show: false
-    }) 
-    console.log(this.state)  
-    //console.log('this.state.title')
+    });
     axios.post('/api/calendar/newevent',{
       title:this.state.title,
       start: this.state.date,
@@ -63,21 +57,9 @@ class Calendar extends React.Component {
         })
         .catch(err => {
             console.log('Something went wrong')
-        })
+        })  
 
-        /**
-         * axios.post('/user', {
-    firstName: 'Fred',
-    lastName: 'Flintstone'
-  })
-  .then(function (response) {
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-         */
-    
+       this.updateCalendar()    
 }
   render() {
     
