@@ -140,28 +140,16 @@ export default () => {
           <MenuIcon />
         </IconButton>
         <RouterLink to="/dashboard">
-<<<<<<< HEAD
         <img
           width="200"
           alt="Logo"
           src="/images/logos/logo--white.png"
         />
-=======
-          {/* <img
-          width="200"
-          alt="School Share"
-          src="/images/logos/logo--white.png"
-          /> */}
->>>>>>> mellis
         </RouterLink>
           <Typography variant="h6" className={classes.title}>
 
           </Typography>
-<<<<<<< HEAD
           <Link to="/groups" className="btn waves-effect waves-light hoverable white" style={{
-=======
-          {/* <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
->>>>>>> mellis
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
@@ -170,9 +158,9 @@ export default () => {
             color:"black"
           }}>
             Groups
-              </Link> */}
+              </Link>
 
-          {/* <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
+          <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
@@ -181,7 +169,7 @@ export default () => {
             marginLeft: 16,
           }}>
             FORUM
-              </Link> */}
+              </Link>
           <Link to="/calendar" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
@@ -210,75 +198,20 @@ export default () => {
         </div>
         <Divider />
         <List>
-          {['Edit profile', 'View calender', 'Log out', 'Delete'].map((text, index) => (
-
-<Link to="/Edit profile" className= " accent-3" style={{
-  width: "200px",
-  borderRadius: "3px",
-  letterSpacing: "1.5px",
-  marginTop: "2rem"
-}}>
-
-<Link to="/Log out" className= " accent-3" style={{
-  width: "200px",
-  borderRadius: "3px",
-  letterSpacing: "1.5px",
-  marginTop: "2rem",
-  marginLeft: "1rem"
-}}>
-<Link to="/Delete " className= " accent-3" style={{
-  width: "200px",
-  borderRadius: "3px",
-  letterSpacing: "1.5px",
-  marginTop: "2rem",
-  marginLeft: "1rem"
-}}>
-
+          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
             <ListItem button key={text}>
               <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
-            </Link>
-            </Link>
-            </Link>
           ))}
         </List>
         <Divider />
         <List>
-          {['Group', 'Forum', 'Calender'].map((text, index) => (
-
-         <Link to="/groups" className= " accent-3" style={{
-          width: "150px",
-          borderRadius: "3px",
-          letterSpacing: "1.5px",
-          marginTop: "2rem",
-          marginBottom: "1.4rem",
-          marginLeft: 16,
-        }}>
-          <Link to="/forum" className=" accent-3" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            marginLeft: 16,
-          }}>
-            {/* <Link to="/Calender" className=" accent-3" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            marginLeft: 16,
-          }}></Link> */}
-            
-         
+          {['All mail', 'Trash', 'Spam'].map((text, index) => (
             <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
-            </Link>
-            </Link>
           ))}
         </List>
       </Drawer>
