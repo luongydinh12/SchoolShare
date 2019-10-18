@@ -5,7 +5,7 @@ import User from "../../models/User"
 
 const router = express.Router();
 
-//Get Posts
+//Get event
 router.get('/', (req, res)=>{
   res.send('calendar');
 });
@@ -50,3 +50,5 @@ router.post('/newevent', (req, res) => {
   })
   .catch(err =>  console.log(err))
 })
+
+module.exports = router;
