@@ -1,6 +1,6 @@
-const LocateStrategy = require('../util/locatestrategy.js');
-const Element = require('../page-object/element.js');
-const Logger = require('../util/logger.js');
+const LocateStrategy = require('../element/strategy.js');
+const Element = require('../element/element.js');
+const Utils = require('../util/utils.js');
 
 module.exports = class ProtocolActions {
   static get ScreenOrientation() {
@@ -27,14 +27,24 @@ module.exports = class ProtocolActions {
     return [
       'script',
       'implicit',
-      'page load'
+      'page load',
+      'pageLoad'
     ];
+  }
+
+  static makePromise(cb, context, result) {
+    const cbResult = cb.call(context, result);
+    if (cbResult instanceof Promise) {
+      return cbResult;
+    }
+
+    return result;
   }
 
   static validateElementId(id, apiMethod) {
     if (typeof id != 'string') {
       const err = new Error(`First argument passed to .${apiMethod}() should be a web element ID string. Received ${typeof id}.`);
-      err.detailedErr = `See http://nightwatchjs.org/api/${apiMethod}.html\n`;
+      err.detailedErr = `See https://nightwatchjs.org/api/${apiMethod}.html\n`;
       throw err;
     }
   }
@@ -43,19 +53,23 @@ module.exports = class ProtocolActions {
     return this.nightwatchInstance.sessionId;
   }
 
-  get Transport() {
+  get transport() {
     return this.nightwatchInstance.transport;
+  }
+
+  get elementLocator() {
+    return this.nightwatchInstance.elementLocator;
   }
 
   get TransportActions() {
     const self = this;
 
-    return new Proxy(this.Transport.Actions, {
+    return new Proxy(this.transport.Actions, {
       get(target, name) {
         return function (...args) {
           const callback = args.pop() || function () {};
           const definition = {
-            args: args
+            args
           };
 
           let method;
@@ -75,15 +89,7 @@ module.exports = class ProtocolActions {
               throw err;
             }
 
-            const cbResult = callback.call(self.nightwatchInstance.api, result);
-
-            if (cbResult instanceof Promise) {
-              return cbResult.then(_ => {
-                return result;
-              });
-            }
-
-            return result;
+            return ProtocolActions.makePromise(callback, self.nightwatchInstance.api, result);
           });
         };
       }
@@ -119,6 +125,7 @@ module.exports = class ProtocolActions {
        *
        *
        * @link /#new-session
+       * @editline L141
        * @syntax .session([action], [sessionId], [callback])
        * @param {string} [action] The http verb to use, can be "get", "post" or "delete". If only the callback is passed, get is assumed by default.
        * @param {string} [sessionId] The id of the session to get info about or delete.
@@ -158,6 +165,7 @@ module.exports = class ProtocolActions {
        *    });
        * }
        *
+       * @editline L166
        * @section sessions
        * @syntax .sessions(callback)
        * @param {function} callback Callback function which is called with the result value.
@@ -168,25 +176,37 @@ module.exports = class ProtocolActions {
       },
 
       /**
-       * Configure the amount of time that a particular type of operation can execute for before they are aborted and a |Timeout| error is returned to the client.
+       * Configure or retrieve the amount of time that a particular type of operation can execute for before they are aborted and a |Timeout| error is returned to the client.
+       *
+       * If called with only a callback as argument, the command will return the existing configured timeout values.
        *
        * @example
        *  this.demoTest = function (browser) {
        *    browser.timeouts('script', 10000, function(result) {
        *      console.log(result);
        *    });
+       *
+       *    browser.timeouts(function(result) {
+       *      console.log('timeouts', result);
+       *    });
        * }
        *
        * @link /#set-timeout
+       * @editline L188
+       * @syntax .timeouts([callback])
        * @syntax .timeouts(type, ms, [callback])
        * @section sessions
-       * @param {string} type The type of operation to set the timeout for. Valid values are "script" for script timeouts, "implicit" for modifying the implicit wait timeout and "page load" for setting a page load timeout.
+       * @param {string} type The type of operation to set the timeout for. Valid values are "script" for script timeouts, "implicit" for modifying the implicit wait timeout and "pageLoad" (or "page load" for legacy JsonWire) for setting a page load timeout.
        * @param {number} ms The amount of time, in milliseconds, that time-limited commands are permitted to run.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
        * @api protocol.sessions
        */
       timeouts(type, ms, callback) {
-        if (ProtocolActions.TimeoutTypes.indexOf(type) === -1) {
+        if (Utils.isFunction(type) && arguments.length === 1 || arguments.length === 0) {
+          return this.TransportActions.getTimeouts(type);
+        }
+
+        if (!ProtocolActions.TimeoutTypes.includes(type)) {
           throw new Error(`Invalid timeouts type value: ${type}. Accepted values are: ${ProtocolActions.TimeoutTypes.join(', ')}`);
         }
 
@@ -208,6 +228,7 @@ module.exports = class ProtocolActions {
        * }
        *
        * @syntax .timeoutsAsyncScript(ms, [callback])
+       * @jsonwire
        * @param {number} ms The amount of time, in milliseconds, that time-limited commands are permitted to run.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
        * @api protocol.sessions
@@ -230,7 +251,7 @@ module.exports = class ProtocolActions {
        *    });
        * }
        *
-       * @link
+       * @jsonwire
        * @syntax .timeoutsImplicitWait(ms, [callback])
        * @param {number} ms The amount of time, in milliseconds, that time-limited commands are permitted to run.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
@@ -398,7 +419,7 @@ module.exports = class ProtocolActions {
        * @param {string} method The HTTP method to use. Can be either `POST` (change focus) or `DELETE` (close window).
        * @param {string} handleOrName The window to change focus to.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
-       * @api protocol.contexts
+       * @api protocol.window
        */
       window(method, handleOrName, callback) {
         method = method.toUpperCase();
@@ -431,7 +452,7 @@ module.exports = class ProtocolActions {
        *
        * @link /#get-window-handle
        * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.contexts
+       * @api protocol.window
        */
       windowHandle(callback) {
         return this.TransportActions.getWindowHandle(callback);
@@ -450,7 +471,7 @@ module.exports = class ProtocolActions {
        *
        * @link /#get-window-handles
        * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.contexts
+       * @api protocol.window
        */
       windowHandles(callback) {
         return this.TransportActions.getAllWindowHandles(callback);
@@ -460,19 +481,195 @@ module.exports = class ProtocolActions {
        * Increases the window to the maximum available size without going full-screen.
        *
        * @example
-       *  this.demoTest = function (browser) {
-       *    browser.windowMaximize('current', function(result) {
-       *      console.log(result);
-       *    });
+       * module.exports = {
+       *  'demo Test with W3C Webdriver clients': function(browser) {
+       *     // W3C Webdriver API doesn't require the window handle parameter anymore
+       *     browser.windowMaximize(function(result) {
+       *       console.log(result);
+       *     });
+       *   },
+       *
+       *   'ES6 async demo Test': async function(browser) {
+       *     const result = await browser.windowMaximize();
+       *     console.log('result value is:', result.value);
+       *   },
+       *
+       *   'when using JSONWire (deprecated) clients': function(browser) {
+       *      browser.windowMaximize('current', function(result) {
+       *        console.log(result);
+       *      });
+       *   }
        * }
        *
-       * @link /#maximize-window
-       * @param {string} [handleOrName] windowHandle URL parameter; if it is "current", the currently active window will be maximized.
+       * @link /#dfn-maximize-window
+       * @param {string} [handleOrName] Only required when using non-W3C Webdriver protocols (such as JSONWire). windowHandle URL parameter; if it is "current", the currently active window will be maximized.
+       * @param {function} [callback] Optional callback function to be called when the command finishes.
+       * @api protocol.window
+       */
+      windowMaximize(handleOrName = 'current', callback) {
+        return this.TransportActions.maximizeWindow(handleOrName, callback);
+      },
+
+      /**
+       * Hides the window in the system tray. If the window happens to be in fullscreen mode, it is restored the normal state then it will be "iconified" - minimize or hide the window from the visible screen.
+       *
+       * @example
+       * module.exports = {
+       *  'demo Test': function(browser) {
+       *     browser.minimizeWindow(function(result) {
+       *       console.log(result);
+       *     });
+       *   },
+       *
+       *   'ES6 async demo Test': async function(browser) {
+       *     const result = await browser.minimizeWindow();
+       *     console.log('result value is:', result.value);
+       *   }
+       * }
+       *
+       * @link /#dfn-minimize-window
        * @param {function} [callback] Optional callback function to be called when the command finishes.
        * @api protocol.contexts
        */
-      windowMaximize(handleOrName, callback) {
-        return this.TransportActions.maximizeWindow(handleOrName, callback);
+      minimizeWindow(callback) {
+        return this.TransportActions.minimizeWindow(callback);
+      },
+
+      /**
+       * Sets the current window state to fullscreen.
+       *
+       * @example
+       * module.exports = {
+       *  'demo Test': function(browser) {
+       *     browser.fullscreenWindow(function(result) {
+       *       console.log(result);
+       *     });
+       *   },
+       *
+       *   'ES6 async demo Test': async function(browser) {
+       *     const result = await browser.fullscreenWindow();
+       *     console.log('result value is:', result.value);
+       *   }
+       * }
+       *
+       * @link /#dfn-fullscreen-window
+       * @param {function} [callback] Optional callback function to be called when the command finishes.
+       * @api protocol.contexts
+       */
+      fullscreenWindow(callback) {
+        return this.TransportActions.fullscreenWindow(callback);
+      },
+
+      /**
+       * Opens a new top-level browser window, which can be either a tab (default) or a separate new window.
+       *
+       * This command is only available for W3C Webdriver compatible browsers.
+       *
+       * @example
+       * module.exports = {
+       *  'demo Test': function(browser) {
+       *     // open a new window tab (default)
+       *     browser.openNewWindow(function(result) {
+       *       console.log(result);
+       *     });
+       *
+       *     // open a new window
+       *     browser.openNewWindow('window', function(result) {
+       *       console.log(result);
+       *     });
+       *   },
+       *
+       *   'ES6 async demo Test': async function(browser) {
+       *     const result = await browser.fullscreenWindow();
+       *     console.log('result value is:', result.value);
+       *   }
+       * }
+       *
+       * @link /#dfn-new-window
+       * @param {string} [type] Can be either "tab" or "window", with "tab" set to default if none is specified.
+       * @param {function} [callback] Optional callback function to be called when the command finishes.
+       * @api protocol.contexts
+       */
+      openNewWindow(type = 'tab', callback) {
+        return this.TransportActions.openNewWindow(type, callback);
+      },
+
+      /**
+       * Change or get the [window rect](https://w3c.github.io/webdriver/#dfn-window-rect). This is defined as a dictionary of the `screenX`, `screenY`, `outerWidth` and `outerHeight` attributes of the window.
+       *
+       * Its JSON representation is the following:
+       * - `x` - window's screenX attribute;
+       * - `y` - window's screenY attribute;
+       * - `width` - outerWidth attribute;
+       * - `height` - outerHeight attribute.
+       *
+       * All attributes are in in CSS pixels. To change the window react, you can either specify `width` and `height`, `x` and `y` or all properties together.
+       *
+       * @example
+       * module.exports = {
+       *   'demo test .windowRect()': function(browser) {
+       *
+       *      // Change the screenX and screenY attributes of the window rect.
+       *      browser.windowRect({x: 500, y: 500});
+       *
+       *      // Change the width and height attributes of the window rect.
+       *      browser.windowRect({width: 600, height: 300});
+       *
+       *      // Retrieve the attributes
+       *      browser.windowRect(function(result) {
+       *        console.log(result.value);
+       *      });
+       *   },
+       *
+       *   'windowRect ES6 demo test': async function(browser) {
+       *      const resultValue = await browser.windowRect();
+       *      console.log('result value', resultValue);
+       *   }
+       * }
+       *
+       * @w3c
+       * @link /#dfn-get-window-rect
+       * @syntax .windowRect({width, height, x, y}, [callback]);
+       * @param {object} options An object specifying either `width` and `height`, `x` and `y`, or all together to set properties for the [window rect](https://w3c.github.io/webdriver/#dfn-window-rect).
+       * @param {function} [callback] Optional callback function to be called when the command finishes.
+       * @api protocol.window
+       */
+      windowRect(options, callback = function() {}) {
+        if (arguments[0] === null) {
+          return this.TransportActions.getWindowRect(callback);
+        }
+
+        const {width, height, x, y} = options;
+
+        if (!Utils.isUndefined(width) && !Utils.isNumber(width)) {
+          throw new Error(`Width argument passed to .windowRect() must be a number; received: ${typeof width} (${width}).`);
+        }
+
+        if (!Utils.isUndefined(height) && !Utils.isNumber(height)) {
+          throw new Error(`Height argument passed to .windowRect() must be a number; received: ${typeof height} (${height}).`);
+        }
+
+        if (Utils.isNumber(width) && !Utils.isNumber(height) ||
+          !Utils.isNumber(width) && Utils.isNumber(height)
+        ) {
+          throw new Error('Attributes "width" and "height" must be specified together.');
+        }
+
+        if (!Utils.isUndefined(x) && !Utils.isNumber(x)) {
+          throw new Error(`X position argument passed to .windowRect() must be a number; received: ${typeof x} (${x}).`);
+        }
+
+        if (!Utils.isUndefined(y) && !Utils.isNumber(y)) {
+          throw new Error(`Y position argument passed to .windowRect() must be a number; received: ${typeof y} (${y}).`);
+        }
+
+        if (Utils.isNumber(x) && !Utils.isNumber(y) ||
+          !Utils.isNumber(x) && Utils.isNumber(y)
+        ) {
+          throw new Error('Attributes "x" and "y" must be specified together.');
+        }
+
+        return this.TransportActions.setWindowRect(arguments[0], callback);
       },
 
       /**
@@ -494,13 +691,13 @@ module.exports = class ProtocolActions {
        *    });
        * }
        *
-       *
-       * @link /#get-window-position
+       * @see windowRect
+       * @jsonwire
        * @param {string} windowHandle
        * @param {number} offsetX
        * @param {number} offsetY
        * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.contexts
+       * @api protocol.window
        */
       windowPosition(windowHandle, offsetX, offsetY, callback) {
         if (typeof windowHandle !== 'string') {
@@ -547,12 +744,13 @@ module.exports = class ProtocolActions {
        *    });
        * }
        *
-       * @link /#get-window-size
+       * @see windowRect
+       * @jsonwire
        * @param {string} windowHandle
        * @param {number} width
        * @param {number} height
        * @param {function} [callback] Optional callback function to be called when the command finishes.
-       * @api protocol.contexts
+       * @api protocol.window
        */
       windowSize(windowHandle, width, height, callback) {
         if (typeof windowHandle !== 'string') {
@@ -594,7 +792,7 @@ module.exports = class ProtocolActions {
        * @link /#switch-to-frame
        * @param {string|number|null} [frameId] Identifier for the frame to change focus to.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
-       * @api protocol.contexts
+       * @api protocol.frames
        */
       frame(frameId, callback) {
         if (arguments.length === 1 && typeof frameId === 'function') {
@@ -619,7 +817,7 @@ module.exports = class ProtocolActions {
        * @link /#switch-to-parent-frame
        * @param {function} [callback] Optional callback function to be called when the command finishes.
        * @since v0.4.8
-       * @api protocol.contexts
+       * @api protocol.frames
        */
       frameParent(callback) {
         return this.TransportActions.switchToParentFrame(callback);
@@ -632,31 +830,60 @@ module.exports = class ProtocolActions {
        * Search for an element on the page, starting from the document root. The located element will be returned as a web element JSON object.
        * First argument to be passed is the locator strategy, which is detailed on the [WebDriver docs](https://www.w3.org/TR/webdriver/#locator-strategies).
        *
+       * The locator stragy can be one of:
+       * - `css selector`
+       * - `link text`
+       * - `partial link text`
+       * - `tag name`
+       * - `xpath`
+       *
        * @example
        * module.exports = {
        *  'demo Test' : function(browser) {
        *     browser.element('css selector', 'body', function(result) {
        *       console.log(result.value)
        *     });
+       *   },
+       *
+       *   'es6 async demo Test': async function(browser) {
+       *     const result = await browser.element('css selector', 'body');
+       *     console.log('result value is:', result.value);
        *   }
        * }
        *
        * @link /#find-element
        * @syntax .element(using, value, callback)
+       * @editline L680
        * @param {string} using The locator strategy to use.
        * @param {string} value The search target.
        * @param {function} callback Callback function which is called with the result value.
        * @api protocol.elements
        */
       element(using, value, callback) {
-        let elem = Element.createFromSelector(value, using);
+        const commandName = 'element';
+        if (using instanceof Element) {
+          return this.findElements({
+            element: using,
+            callback: value,
+            commandName
+          });
+        }
 
-        return this.filterElements(elem, 'element', callback);
+        return this.findElements({
+          using, value, commandName, callback
+        });
       },
 
       /**
        * Search for multiple elements on the page, starting from the document root. The located elements will be returned as web element JSON objects.
        * First argument to be passed is the locator strategy, which is detailed on the [WebDriver docs](https://www.w3.org/TR/webdriver/#locator-strategies).
+       *
+       * The locator strategy can be one of:
+       * - `css selector`
+       * - `link text`
+       * - `partial link text`
+       * - `tag name`
+       * - `xpath`
        *
        * @example
        * module.exports = {
@@ -664,24 +891,55 @@ module.exports = class ProtocolActions {
        *     browser.elements('css selector', 'ul li', function(result) {
        *       console.log(result.value)
        *     });
+       *   },
+       *
+       *   'es6 async demo Test': async function(browser) {
+       *     const result = await browser.elements('css selector', 'ul li');
+       *     console.log('result value is:', result.value);
+       *   },
+       *
+       *   'page object demo Test': function (browser) {
+       *      var nightwatch = browser.page.nightwatch();
+       *      nightwatch
+       *        .navigate()
+       *        .assert.titleContains('Nightwatch.js');
+       *
+       *      nightwatch.api.elements('@featuresList', function(result) {
+       *        console.log(result);
+       *      });
+       *
+       *      browser.end();
        *   }
        * }
        *
        * @link /#find-elements
        * @syntax .elements(using, value, callback)
+       * @editline L734
        * @param {string|null} using The locator strategy to use.
        * @param {string} value The search target.
        * @param {function} callback Callback function to be invoked with the result when the command finishes.
        * @api protocol.elements
        */
       elements(using, value, callback) {
-        let elem = Element.createFromSelector(value, using);
+        const commandName = 'elements';
 
-        return this.filterElements(elem, 'elements', callback);
+        if (using instanceof Element) {
+          return this.findElements({
+            element: using,
+            callback: value,
+            commandName
+          });
+        }
+
+        return this.findElements({
+          using, value, commandName, callback
+        });
       },
 
       /**
-       * Test if two element IDs refer to the same DOM element.
+       * Test if two web element IDs refer to the same DOM element.
+       *
+       * This command is __deprecated__ and is only available on the [JSON Wire protocol](https://github.com/SeleniumHQ/selenium/wiki/JsonWireProtocol#sessionsessionidelementidequalsother)
        *
        * @example
        * module.exports = {
@@ -693,44 +951,78 @@ module.exports = class ProtocolActions {
        * }
        *
        * @link /#finding-elements-to-interact
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {string} otherId The web element ID of the other element to compare against.
+       * @editline L772
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {string} otherId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the other element to compare against.
        * @param {function} callback Callback function which is called with the result value.
+       * @internal
        * @api protocol.elements
        */
-      elementIdEquals(id, otherId, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdEquals');
+      elementIdEquals(webElementId, otherId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdEquals');
 
-        return this.TransportActions.elementIdEquals(id, otherId, callback);
+        return this.TransportActions.elementIdEquals(webElementId, otherId, callback);
       },
 
       /**
-       * Search for an element on the page, starting from the identified element. The located element will be returned as a web element JSON object.
+       * Search for an element on the page, starting from the identified element. The located element will be returned as a Web Element JSON object.
+       *
+       * This command operates on a protocol level and requires a [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements). Read more on [Element retrieval](https://www.w3.org/TR/webdriver1/#element-retrieval) on the W3C WebDriver spec page.
        *
        * @example
        * module.exports = {
        *  'demo Test' : function(browser) {
-       *     browser.elementIdElement('<ID>', 'css selector', '.new-element', function(result) {
+       *     browser.elementIdElement('<WebElementId>', 'css selector', '.new-element', function(result) {
        *       console.log(result.value)
        *     });
+       *   },
+       *
+       *   'es6 async demo Test': async function(browser) {
+       *     const result = await browser.elementIdElement('<WebElementId>', 'css selector', '.new-element');
+       *     console.log(result.value);
+       *   },
+       *
+       *   'page object demo Test': function (browser) {
+       *      var nightwatch = browser.page.nightwatch();
+       *      nightwatch.navigate();
+       *
+       *      const navbarHeader = nightwatch.section.navbarHeader;
+       *
+       *      navbarHeader.api.elementIdElement('@versionDropdown', 'css selector', 'option', function(result) {
+       *        browser.assert.ok(client.WEBDRIVER_ELEMENT_ID in result.value, 'The Webdriver Element Id is found in the result');
+       *      });
        *   }
        * }
        *
-       * @link /#finding-elements-to-interact
-       * @param {string} id The web element ID of the element to route the command to.
+       * @link /#find-element-from-element
+       * @syntax .elementIdElement(webElementId, using, value, callback)
+       * @editline L794
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
        * @param {string} using The locator strategy to use.
        * @param {string} value The search target.
        * @param {function} callback Callback function which is called with the result value.
+       * @internal
        * @api protocol.elements
        */
-      elementIdElement(id, using, value, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdElement');
+      elementIdElement(webElementId, using, value, callback = function() {}) {
+        const commandName = 'elementIdElement';
 
-        const elem = Element.createFromSelector(value, using);
-
-        if (LocateStrategy.isValid(elem.locateStrategy)) {
-          return this.TransportActions.locateSingleElementByElementId(id, elem.locateStrategy, elem.selector, callback);
+        if (webElementId instanceof Element) {
+          return this.findElements({
+            parentElement: webElementId,
+            callback,
+            using,
+            value,
+            commandName
+          });
         }
+
+        ProtocolActions.validateElementId(webElementId, 'elementIdElement');
+        LocateStrategy.validate(using, 'elementIdElement');
+
+        return this.findElements({
+          id: webElementId, using, value, commandName, callback
+        });
       },
 
       /**
@@ -739,55 +1031,77 @@ module.exports = class ProtocolActions {
        * @example
        * module.exports = {
        *  'demo Test' : function(browser) {
-       *     browser.elementIdElements('<ID>', 'css selector', 'ul li', function(result) {
+       *     browser.elementIdElements('<WebElementId>', 'css selector', 'ul li', function(result) {
        *       console.log(result.value)
        *     });
+       *   },
+       *
+       *   'es6 async demo Test': async function(browser) {
+       *     const result = await browser.elementIdElements('<WebElementId>', 'css selector', 'ul li');
+       *     console.log(result.value);
+       *   },
+       *
+       *   'page object demo Test': function (browser) {
+       *      var nightwatch = browser.page.nightwatch();
+       *      nightwatch.navigate();
+       *
+       *      const navbarHeader = nightwatch.section.navbarHeader;
+       *
+       *      navbarHeader.api.elementIdElements('@versionDropdown', 'css selector', 'option', function(result) {
+       *        browser.assert.equal(result.value.length, 2, 'There are two option elements in the drop down');
+       *      });
        *   }
        * }
        *
        *
-       * @link /#finding-elements-to-interact
-       * @param {string} id The web element ID of the element to route the command to.
+       * @link /#find-elements-from-element
+       * @syntax .elementIdElements(webElementId, using, value, callback)
+       * @editline L840
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
        * @param {string} using The locator strategy to use.
        * @param {string} value The search target.
        * @param {function} callback Callback function which is called with the result value.
        * @api protocol.elements
+       * @internal
        */
-      elementIdElements(id, using, value, callback = function() {}) {
-        ProtocolActions.validateElementId(id, 'elementIdElements');
+      elementIdElements(webElementId, using, value, callback = function() {}) {
+        const commandName = 'elementIdElements';
 
-        const elem = Element.createFromSelector(value, using);
-
-        if (LocateStrategy.isValid(elem.locateStrategy)) {
-          return this.Transport.locateElementFromParent(id, elem)
-            .then(result => {
-              callback(result);
-
-              return result;
-            })
-            .catch(err => {
-              callback(err);
-
-              throw err;
-            });
+        if (webElementId instanceof Element) {
+          return this.findElements({
+            parentElement: webElementId,
+            callback,
+            using,
+            value,
+            commandName
+          });
         }
+
+        ProtocolActions.validateElementId(webElementId, 'elementIdElements');
+        LocateStrategy.validate(using, 'elementIdElements');
+
+        return this.findElements({
+          id: webElementId, using, value, commandName, callback
+        });
       },
 
       /**
-       * Get the element on the page that currently has focus. The element will be returned as a web element JSON object.
+       * Get the element on the page that currently has focus. The element will be returned as a [Web Element](https://www.w3.org/TR/webdriver1/#dfn-web-elements) JSON object.
        *
        * @example
        * module.exports = {
        *  'demo Test' : function(browser) {
-       *     browser.elementActive('<ID>', 'css selector', 'ul li', function(result) {
+       *     browser.elementActive(function(result) {
        *       console.log(result.value)
        *     });
        *   }
        * }
        *
+       * @editline L866
        * @link /#get-active-element
        * @param {function} callback Callback function which is called with the result value.
        * @api protocol.elementstate
+       * @internal
        */
       elementActive(callback) {
         return this.TransportActions.getActiveElement(callback);
@@ -801,174 +1115,215 @@ module.exports = class ProtocolActions {
        * Get the value of an element's attribute.
        *
        * @link /#get-element-attribute
-       * @param {string} id ID of the element to route the command to.
+       * @param {string} webElementId ID of the element to route the command to.
        * @param {string} attributeName The attribute name
        * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
+       * @api protocol.elementinternal
+       * @internal
        */
-      elementIdAttribute(id, attributeName, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdAttribute');
+      elementIdAttribute(webElementId, attributeName, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdAttribute');
 
-        return this.TransportActions.getElementAttribute(id, attributeName, callback);
+        return this.TransportActions.getElementAttribute(webElementId, attributeName, callback);
       },
 
       /**
        * Retrieve the computed value of the given CSS property of the given element.
        *
-       *
        * The CSS property to query should be specified using the CSS property name, not the JavaScript property name (e.g. background-color instead of backgroundColor).
        *
        * @link /#get-element-css-value
-       * @param {string} id The web element ID of the element to route the command to.
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
        * @param {string} cssPropertyName
        * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
+       * @api protocol.elementinternal
+       * @internal
        */
-      elementIdCssProperty(id, cssPropertyName, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdCssProperty');
+      elementIdCssProperty(webElementId, cssPropertyName, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdCssProperty');
 
-        return this.TransportActions.getElementCSSValue(id, cssPropertyName, callback);
+        return this.TransportActions.getElementCSSValue(webElementId, cssPropertyName, callback);
       },
 
-      /**
-       * Determine if an element is currently displayed.
-       *
-       * @link
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
-       */
-      elementIdDisplayed(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdDisplayed');
-
-        return this.TransportActions.isElementDisplayed(id, callback);
-      },
-
-      /**
-       * Determine if an element is currently enabled.
-       *
-       * @link /#is-element-enabled
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
-       */
-      elementIdEnabled(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdEnabled');
-
-        return this.TransportActions.isElementEnabled(id, callback);
-      },
-
-      /**
-       * Retrieve the qualified tag name of the given element.
-       *
-       * @link /#get-element-tag-name
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
-       */
-      elementIdName(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdName');
-
-        return this.TransportActions.getElementTagName(id, callback);
-      },
-
-      /**
-       * Determine if an OPTION element, or an INPUT element of type checkbox or radio button is currently selected.
-       *
-       * @link /#is-element-selected
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
-       */
-      elementIdSelected(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdSelected');
-
-        return this.TransportActions.isElementSelected(id, callback);
-      },
-
-      /**
-       * Determine an element's size in pixels. The size will be returned as a JSON object with width and height properties.
-       *
-       * @link
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
-       */
-      elementIdSize(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdSize');
-
-        return this.TransportActions.getElementSize(id, callback);
-      },
-
-      /**
-       * Returns the visible text for the element.
-       *
-       * @link /#get-element-text
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementstate
-       */
-      elementIdText(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdText');
-
-        return this.TransportActions.getElementText(id, callback);
-      },
-
-      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-      // Element Interaction
-      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       /**
        * Scrolls into view a submittable element excluding buttons or editable element, and then attempts to clear its value, reset the checked state, or text content.
        *
-       * @link /#element-clear
-       * @param {string} id The web element ID of the element to route the command to.
+       * @link /#dfn-element-clear
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
-       * @api protocol.elementinteraction
+       * @api protocol.elementinternal
+       * @internal
        */
-      elementIdClear(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdClear');
+      elementIdClear(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdClear');
 
-        return this.TransportActions.clearElementValue(id, callback);
+        return this.TransportActions.clearElementValue(webElementId, callback);
       },
 
       /**
        * Scrolls into view the element and clicks the in-view center point. If the element is not pointer-interactable, an <code>element not interactable</code> error is returned.
        *
        * @link /#element-click
-       * @param {string} id The web element ID of the element to route the command to.
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
-       * @api protocol.elementinteraction
+       * @api protocol.elementinternal
+       * @internal
        */
-      elementIdClick(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdClick');
+      elementIdClick(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdClick');
 
-        return this.TransportActions.clickElement(id, callback);
+        return this.TransportActions.clickElement(webElementId, callback);
+      },
+
+      /**
+       * Determine if an element is currently displayed.
+       *
+       * @link /#element-displayedness
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.elementinternal
+       * @internal
+       */
+      elementIdDisplayed(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdDisplayed');
+
+        return this.TransportActions.isElementDisplayed(webElementId, callback);
+      },
+
+      /**
+       * Determine if an element is currently enabled.
+       *
+       * @link /#is-element-enabled
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.elementinternal
+       * @internal
+       */
+      elementIdEnabled(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdEnabled');
+
+        return this.TransportActions.isElementEnabled(webElementId, callback);
+      },
+
+      /**
+       * Determine an element's location on the screen once it has been scrolled into view.
+       *
+       * @link
+        * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} [callback] Optional callback function to be called when the command finishes.
+       * @api protocol.elementinternal
+       */
+      elementIdLocationInView(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdLocationInView');
+
+        return this.TransportActions.isElementLocationInView(webElementId, callback);
+      },
+
+      /**
+       * Determine an element's location on the page. The point (0, 0) refers to the upper-left corner of the page.
+       *
+       * The element's coordinates are returned as a JSON object with x and y properties.
+       *
+       * @link
+        * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.elementinternal
+       * @returns {object} The X and Y coordinates for the element on the page.
+       */
+      elementIdLocation(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdLocation');
+
+        return this.TransportActions.getElementLocation(webElementId, callback);
+      },
+
+      /**
+       * Retrieve the qualified tag name of the given element.
+       *
+       * @link /#get-element-tag-name
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.elementinternal
+       * @internal
+       */
+      elementIdName(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdName');
+
+        return this.TransportActions.getElementTagName(webElementId, callback);
+      },
+
+      /**
+       * Determine if an OPTION element, or an INPUT element of type checkbox or radio button is currently selected.
+       *
+       * @link /#is-element-selected
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.elementinternal
+       * @internal
+       */
+      elementIdSelected(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdSelected');
+
+        return this.TransportActions.isElementSelected(webElementId, callback);
+      },
+
+      /**
+       * Determine an element's size in pixels. The size will be returned as a JSON object with width and height properties.
+       *
+       * @link
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.elementinternal
+       * @internal
+       */
+      elementIdSize(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdSize');
+
+        return this.TransportActions.getElementSize(webElementId, callback);
+      },
+
+      /**
+       * Returns the visible text for the element.
+       *
+       * @link /#get-element-text
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.elementinternal
+       * @internal
+       */
+      elementIdText(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdText');
+
+        return this.TransportActions.getElementText(webElementId, callback);
       },
 
       /**
        * Scrolls into view the form control element and then sends the provided keys to the element, or returns the current value of the element. In case the element is not keyboard interactable, an <code>element not interactable error</code> is returned.
        *
        * @link /#element-send-keys
-       * @param {string} id The web element ID of the element to route the command to.
+       * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
        * @param {string|array|none} [value] Value to send to element in case of a POST
        * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementinteraction
+       * @api protocol.elementinternal
+       * @internal
        */
-      elementIdValue(id, value, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdValue');
+      elementIdValue(webElementId, value, callback) {
+        ProtocolActions.validateElementId(webElementId, 'elementIdValue');
 
         if (arguments.length === 1 || typeof arguments[1] == 'function') {
           callback = arguments[1] || function () {};
 
-          return this.TransportActions.getElementAttribute(id, 'value', callback);
+          return this.TransportActions.getElementAttribute(webElementId, 'value', callback);
         }
 
-        return this.TransportActions.setElementValue(id, value, callback);
+        return this.TransportActions.setElementValue(webElementId, value, callback);
       },
 
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+      // Element Interaction
+      /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       /**
        * Send a sequence of key strokes to the active element. The sequence is defined in the same format as the `sendKeys` command.
-       * An object map with available keys and their respective UTF-8 characters, as defined on [W3C WebDriver draft spec](http://www.w3.org/TR/webdriver/#character-types), is loaded onto the main Nightwatch instance as `client.Keys`.
+       * An object map with available keys and their respective UTF-8 characters, as defined on [W3C WebDriver draft spec](https://www.w3.org/TR/webdriver/#character-types), is loaded onto the main Nightwatch instance as `client.Keys`.
        *
        * Rather than the `setValue`, the modifiers are not released at the end of the call. The state of the modifier keys is kept between calls, so mouse interactions can be performed while modifier keys are depressed.
        *
@@ -985,69 +1340,27 @@ module.exports = class ProtocolActions {
         return this.TransportActions.sendKeys(keysToSend, callback);
       },
 
-      /**
-       * Submit a FORM element. The submit command may also be applied to any element that is a descendant of a FORM element.
-       *
-       * @link
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} [callback] Optional callback function to be called when the command finishes.
-       * @api protocol.elementinteraction
-       */
-      submit(id, callback) {
-        ProtocolActions.validateElementId(id, 'submit');
-
-        return this.TransportActions.elementSubmit(id, callback);
-      },
-
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Element Location
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
       /**
-       * Determine an element's location on the screen once it has been scrolled into view.
+       * Submit a FORM element. The submit command may also be applied to any element that is a descendant of a FORM element.
        *
        * @link
-       * @param {string} id The web element ID of the element to route the command to.
+        * @param {string} webElementId The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) of the element to route the command to.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
-       * @api protocol.elementlocation
+       * @api protocol.elementinternal
        */
-      elementIdLocationInView(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdLocationInView');
+      submit(webElementId, callback) {
+        ProtocolActions.validateElementId(webElementId, 'submit');
 
-        return this.TransportActions.isElementLocationInView(id, callback);
-      },
-
-      /**
-       * Determine an element's location on the page. The point (0, 0) refers to the upper-left corner of the page.
-       *
-       * The element's coordinates are returned as a JSON object with x and y properties.
-       *
-       * @link
-       * @param {string} id The web element ID of the element to route the command to.
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.elementlocation
-       * @returns {object} The X and Y coordinates for the element on the page.
-       */
-      elementIdLocation(id, callback) {
-        ProtocolActions.validateElementId(id, 'elementIdLocation');
-
-        return this.TransportActions.getElementLocation(id, callback);
+        return this.TransportActions.elementSubmit(webElementId, callback);
       },
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Document Handling
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-      /**
-       * Returns a string serialisation of the DOM of the current page.
-       *
-       * @link /#getting-page-source
-       * @param {function} callback Callback function which is called with the result value.
-       * @api protocol.document
-       */
-      source(callback) {
-        return this.TransportActions.getPageSource(callback);
-      },
 
       /**
        * Inject a snippet of JavaScript into the page for execution in the context of the currently selected frame. The executed script is assumed to be synchronous.
@@ -1122,6 +1435,17 @@ module.exports = class ProtocolActions {
         return this.executeScriptHandler(...args);
       },
 
+      /**
+       * Returns a string serialisation of the DOM of the current page.
+       *
+       * @link /#getting-page-source
+       * @param {function} callback Callback function which is called with the result value.
+       * @api protocol.document
+       */
+      source(callback) {
+        return this.TransportActions.getPageSource(callback);
+      },
+
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       // Cookies
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1166,7 +1490,7 @@ module.exports = class ProtocolActions {
       // User Actions
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
       /**
-       * Double-clicks at the current mouse coordinates (set by .moveto()).
+       * Double-clicks at the current mouse coordinates (set by `.moveTo()`).
        *
        * @param {function} [callback] Optional callback function to be called when the command finishes.
        * @api protocol.useractions
@@ -1176,7 +1500,7 @@ module.exports = class ProtocolActions {
       },
 
       /**
-       * Click at the current mouse coordinates (set by moveto).
+       * Click at the current mouse coordinates (set by `.moveTo()`).
        *
        * The button can be (0, 1, 2) or ('left', 'middle', 'right'). It defaults to left mouse button.
        *
@@ -1213,7 +1537,7 @@ module.exports = class ProtocolActions {
       },
 
       /**
-       * Click and hold the left mouse button (at the coordinates set by the last moveto command). Note that the next mouse-related command that should follow is `mouseButtonUp` . Any other mouse command (such as click or another call to buttondown) will yield undefined behaviour.
+       * Click and hold the left mouse button (at the coordinates set by the last `moveTo` command). Note that the next mouse-related command that should follow is `mouseButtonUp` . Any other mouse command (such as click or another call to buttondown) will yield undefined behaviour.
        *
        * Can be used for implementing drag-and-drop. The button can be (0, 1, 2) or ('left', 'middle', 'right'). It defaults to left mouse button, and if you don't pass in a button but do pass in a callback, it will handle it correctly.
        *
@@ -1241,31 +1565,26 @@ module.exports = class ProtocolActions {
       },
 
       /**
-       * Move the mouse by an offset of the specified element. If no element is specified, the move is relative to the current mouse cursor. If an element is provided but no offset, the mouse will be moved to the center of the element.
+       * Move the mouse by an offset of the specified [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) or relative to the current mouse cursor, if no element is specified. If an element is provided but no offset, the mouse will be moved to the center of the element.
        *
-       * If the element is not visible, it will be scrolled into view.
+       * If an element is provided but no offset, the mouse will be moved to the center of the element. If the element is not visible, it will be scrolled into view.
        *
-       * @link
-       * @param {string} element The web element ID assigned to the element to move to. If not specified or is null, the offset is relative to current position of the mouse.
+       * @example
+       * this.demoTest = function (browser) {
+       *   browser.moveTo(null, 110, 100);
+       * };
+       *
+       * @syntax .moveTo([webElementId], xoffset, yoffset, [callback])
+       * @syntax .moveTo(null, xoffset, yoffset, [callback])
+       * @editline L1335
+       * @param {string} [webElementId] The [Web Element ID](https://www.w3.org/TR/webdriver1/#dfn-web-elements) assigned to the element to move to. If not specified or is null, the offset is relative to current position of the mouse.
        * @param {number} xoffset X offset to move to, relative to the top-left corner of the element. If not specified, the mouse will move to the middle of the element.
        * @param {number} yoffset Y offset to move to, relative to the top-left corner of the element. If not specified, the mouse will move to the middle of the element.
        * @param {function} [callback] Optional callback function to be called when the command finishes.
        * @api protocol.useractions
        */
-      moveTo(id, xoffset, yoffset, callback) {
-        let data = {};
-
-        if (typeof id == 'string') {
-          data.element = id;
-        }
-        if (typeof xoffset == 'number') {
-          data.xoffset = xoffset;
-        }
-        if (typeof yoffset == 'number') {
-          data.yoffset = yoffset;
-        }
-
-        return this.TransportActions.moveTo(data, callback);
+      moveTo(webElementId, xoffset, yoffset, callback) {
+        return this.TransportActions.moveTo(webElementId, xoffset, yoffset, callback);
       },
 
       /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1405,37 +1724,75 @@ module.exports = class ProtocolActions {
 
   /*!
    *
-   * @param {Promise} promise
-   * @param {Element} elem
-   * @param {function} callback
+   * @param {Element} [element]
+   * @param {Element} [parentElement]
+   * @param {String} [id]
+   * @param {String} using
+   * @param {String} value
+   * @param {function} [callback]
+   *
    * @return {Promise}
    */
-  filterElements(elem, commandName, callback = function () {}) {
-    if (!LocateStrategy.isValid(elem.locateStrategy)) {
-      let list = LocateStrategy.getList();
-
-      throw new Error(`Provided locating strategy "${elem.locateStrategy}" is not supported. It must be one of the following: ${list}.`);
+  findElements({element, parentElement, id, using, value, commandName, callback = function() {}}) {
+    if (!(element instanceof Element)) {
+      try {
+        element = Element.createFromSelector(value, using);
+      } catch (err) {
+        return Promise.reject(err);
+      }
     }
 
-    return this.findElements(elem, commandName).then(result => {
-      if (this.Transport.isResultSuccess(result) && Array.isArray(result.value) && Element.requiresFiltering(elem)) {
-        return this.Transport.filterElements(elem, result);
+    if (!element.usingRecursion) {
+      LocateStrategy.validate(element.locateStrategy, commandName);
+    }
+
+    return this.locate({id, element, parentElement, commandName})
+      .then(result => {
+        return ProtocolActions.makePromise(callback, this.nightwatchInstance.api, result);
+      });
+  }
+
+  /*!
+   *
+   * @param {Element} element
+   * @param {string} protocolCommand either "elements"(multiple) or "element"(single)
+   */
+  async locate({id, element, parentElement, commandName}) {
+    let transportAction;
+
+    switch (commandName) {
+      case 'element':
+        transportAction = 'locateSingleElement';
+        break;
+      case 'elements':
+        transportAction = 'locateMultipleElements';
+        break;
+      case 'elementIdElements':
+        transportAction = 'locateMultipleElementsByElementId';
+        break;
+      case 'elementIdElement':
+        transportAction = 'locateSingleElementByElementId';
+        break;
+    }
+
+    if (element.usingRecursion) {
+      return this.elementLocator.findElement({element, transportAction});
+    }
+
+    if (parentElement) {
+      let elementResponse = await this.elementLocator.findElement({element: parentElement});
+      if (!elementResponse.value) {
+        return {
+          value: null,
+          status: -1,
+          err: new Error(`No element found for ${parentElement}.`)
+        };
       }
 
-      return result;
-    }).catch(result => {
-      Logger.error(`Error while running .${commandName}() protocol action: ${result.message || 'Unknown error.'}\n`);
+      id = elementResponse.value;
+    }
 
-      if (result instanceof Error) {
-        Logger.error(result.stack);
-      }
-
-      return result;
-    }).then(result => {
-      callback.call(this.nightwatchInstance.api, result);
-
-      return result;
-    });
+    return this.elementLocator.executeProtocolAction({id, element, transportAction, commandName});
   }
 
   /*!
@@ -1465,12 +1822,6 @@ module.exports = class ProtocolActions {
     }
 
     return this.TransportActions[method](fn, args, callback);
-  }
-
-  findElements(elem, commandName) {
-    let transportAction = commandName === 'elements' ? 'locateMultipleElements' : 'locateSingleElement';
-
-    return this.TransportActions[transportAction](elem.locateStrategy, elem.selector, function () {});
   }
 
   /*!

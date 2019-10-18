@@ -1,7 +1,6 @@
 const TestSource = require('./test-source.js');
 const Walker = require('./folder-walk.js');
 const DefaultRunner = require('./test-runners/default.js');
-const MochaRunner = require('./test-runners/mocha.js');
 
 class Runner {
   static get DEFAULT_RUNNER() {
@@ -86,8 +85,11 @@ class Runner {
       case Runner.DEFAULT_RUNNER:
         return new DefaultRunner(settings, argv, addtOpts);
 
-      case Runner.MOCHA_RUNNER:
+      case Runner.MOCHA_RUNNER: {
+        const MochaRunner = require('./test-runners/mocha.js');
+
         return new MochaRunner(settings, argv, addtOpts);
+      }
     }
   }
 }

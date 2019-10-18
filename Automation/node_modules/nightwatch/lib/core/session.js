@@ -1,21 +1,23 @@
 const EventEmitter = require('events');
 const CommandQueue = require('./queue.js');
+const BrowserName = require('../util/browsername.js');
 
 class Session extends EventEmitter {
   static get DEFAULT_CAPABILITIES() {
     return {
-      browserName: 'firefox',
+      browserName: BrowserName.FIREFOX,
       acceptSslCerts: true,
       platform: 'ANY'
     };
   }
 
-  constructor(opts = {}) {
+  constructor(nightwatchInstance) {
     super();
 
-    this.options = opts;
+    this.settings = nightwatchInstance.settings;
     this.sessionId = 0;
-    this.__protocol = null;
+
+    this.__protocol = nightwatchInstance.transport;
 
     this.setDesiredCapabilities();
     this.createCommandQueue();
@@ -25,16 +27,16 @@ class Session extends EventEmitter {
     return this.__commandQueue;
   }
 
-  get transportProtocol() {
+  get transport() {
     return this.__protocol;
   }
 
   get startSessionEnabled() {
-    return this.options.start_session;
+    return this.settings.start_session;
   }
 
   get endSessionOnFail() {
-    return this.options.end_session_on_fail;
+    return this.settings.end_session_on_fail;
   }
 
   getSessionId() {
@@ -52,13 +54,7 @@ class Session extends EventEmitter {
   setDesiredCapabilities() {
     this.desiredCapabilities = Object.assign({}, Session.DEFAULT_CAPABILITIES);
 
-    Object.assign(this.desiredCapabilities, this.options.desiredCapabilities);
-
-    return this;
-  }
-
-  setTransportProtocol(protocol) {
-    this.__protocol = protocol;
+    Object.assign(this.desiredCapabilities, this.settings.desiredCapabilities);
 
     return this;
   }
@@ -81,7 +77,7 @@ class Session extends EventEmitter {
    */
   create() {
     return new Promise((resolve, reject) => {
-      this.transportProtocol.once('transport:session.error', (err) => {
+      this.transport.once('transport:session.error', (err) => {
         reject(err);
       }).once('transport:session.create', (data, req, res) => {
         this.sessionId = data.sessionId;
@@ -97,7 +93,7 @@ class Session extends EventEmitter {
       return Promise.resolve();
     }
 
-    return this.transportProtocol.closeSession()
+    return this.transport.closeSession()
       .then(data => {
         this.finished(reason);
 

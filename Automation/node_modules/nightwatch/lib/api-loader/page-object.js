@@ -34,10 +34,10 @@ class PageObjectLoader extends BaseCommandLoader {
 
   define() {
     if (this.module) {
-      let parent = this.api.page;
+      const parent = this.api.page;
       let namespace;
-      if (this.namespace) {
-        namespace = parent[this.namespace] = parent[this.namespace] || {};
+      if (Array.isArray(this.namespace) && this.namespace.length > 0) {
+        namespace = BaseCommandLoader.unflattenNamespace(parent, this.namespace.slice());
       }
 
       this.module.name = this.commandName;

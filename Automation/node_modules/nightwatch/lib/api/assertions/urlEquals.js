@@ -3,7 +3,7 @@
  *
  * ```
  *    this.demoTest = function (client) {
- *      browser.assert.urlEquals('http://www.google.com');
+ *      browser.assert.urlEquals('https://www.google.com');
  *    };
  * ```
  *
@@ -15,7 +15,6 @@
 
 const util = require('util');
 exports.assertion = function(expected, msg) {
-
   this.message = msg || util.format('Testing if the URL equals "%s".', expected);
   this.expected = expected;
 

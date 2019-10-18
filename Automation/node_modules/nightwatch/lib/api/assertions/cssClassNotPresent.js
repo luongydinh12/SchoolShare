@@ -16,11 +16,10 @@
 
 const util = require('util');
 exports.assertion = function(selector, className, msg) {
-
-  let MSG_ELEMENT_NOT_FOUND = 'Testing if element <%s> does not have css class: "%s". ' +
+  const MSG_ELEMENT_NOT_FOUND = 'Testing if element <%s> does not have css class: "%s". ' +
     'Element could not be located.';
 
-  this.message = msg || util.format('Testing if element <%s> does not have css class: "%s".', selector, className);
+  this.message = msg || util.format('Testing if element <%s> does not have css class: "%s".', this.elementSelector, className);
 
   this.expected = function() {
     return 'without ' + className;
@@ -36,7 +35,7 @@ exports.assertion = function(selector, className, msg) {
     let failed = result === false || result && result.status === -1;
 
     if (failed) {
-      this.message = msg || util.format(MSG_ELEMENT_NOT_FOUND, selector, className);
+      this.message = msg || util.format(MSG_ELEMENT_NOT_FOUND, this.elementSelector, className);
     }
 
     return failed;
