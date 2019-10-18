@@ -140,16 +140,28 @@ export default () => {
           <MenuIcon />
         </IconButton>
         <RouterLink to="/dashboard">
+<<<<<<< HEAD
         <img
           width="200"
           alt="Logo"
           src="/images/logos/logo--white.png"
         />
+=======
+          {/* <img
+          width="200"
+          alt="School Share"
+          src="/images/logos/logo--white.png"
+          /> */}
+>>>>>>> 67647026e6d6fdea2a95ce48121d9b1a48a5b462
         </RouterLink>
           <Typography variant="h6" className={classes.title}>
 
           </Typography>
+<<<<<<< HEAD
           <Link to="/groups" className="btn waves-effect waves-light hoverable white" style={{
+=======
+          {/* <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
+>>>>>>> 67647026e6d6fdea2a95ce48121d9b1a48a5b462
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
