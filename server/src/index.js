@@ -10,6 +10,7 @@ import profile from "./routes/api/profile"
 import groups from "./routes/api/groups"
 import posts from "./routes/api/posts"
 import friends from "./routes/api/friends"
+import calendarevents from "./routes/api/calendar"
 
 import keys from "./config/keys"
 
@@ -59,6 +60,7 @@ app.use("/api/profile", profile);
 app.use('/api/groups',groups);
 app.use('/api/posts',posts);
 app.use('/api/friends',friends)
+app.use('/api/calendar',calendarevents);
 
 
 const port = process.env.PORT || 5000;

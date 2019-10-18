@@ -40,6 +40,10 @@ const UserSchema = new Schema({
   messageId: [{
     type: Schema.Types.ObjectId,
     ref: 'messages'
+  }],
+  calendarEvents: [{
+    type: Schema.Types.ObjectId,
+    ref: 'calendarevents'
   }]
 });
 UserSchema.methods.getUserProfile= function(cb){ //if cb is null,returns promise
