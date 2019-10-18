@@ -140,28 +140,16 @@ export default () => {
           <MenuIcon />
         </IconButton>
         <RouterLink to="/dashboard">
-<<<<<<< HEAD
-        <img
-          width="200"
-          alt="Logo"
-          src="/images/logos/logo--white.png"
-        />
-=======
           {/* <img
           width="200"
           alt="School Share"
           src="/images/logos/logo--white.png"
           /> */}
->>>>>>> mellis
         </RouterLink>
           <Typography variant="h6" className={classes.title}>
 
           </Typography>
-<<<<<<< HEAD
-          <Link to="/groups" className="btn waves-effect waves-light hoverable white" style={{
-=======
           {/* <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
->>>>>>> mellis
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
