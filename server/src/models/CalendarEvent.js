@@ -6,13 +6,12 @@ const CalendarEventSchema = new Schema({
     type: String,
     required: true
   },
-  description:{
+  desc: {
     type: String,
-    required: false
   },
   date: {
     type: Date,
-    default: Date.now
+    required: true
   },
   allDay: {
     type: Boolean,

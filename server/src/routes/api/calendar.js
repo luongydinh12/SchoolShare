@@ -16,7 +16,10 @@ router.get('/', (req, res)=>{
 // @returns Array of Object(s)
 router.get('/getallevents', (req, res) => {
     const user = req.query.user || undefined;
-    if(!user) return console.error('No user specified');
+    if(!user){
+      console.error('No user specified');
+      res.sendStatus(403)
+    }
 
     CalendarEvent.find({ user: user}).then(data => {
         res.send({data});
@@ -30,14 +33,14 @@ router.get('/getallevents', (req, res) => {
 // @returns String and msg data(details)
 router.post('/newevent', (req, res) => {
   console.log({body: req.body})
-  const { title, discription, date, allDay, user } = req.body
+  const { title, start,desc, allDay, user } = req.body
 
   const newEvent = new CalendarEvent({
-    title,
-    discription,
-    date,
-    allDay,
-    user
+    title: title,
+    desc:desc,
+    date:start,
+    allDay:allDay,
+    user:user
   })
 
   newEvent

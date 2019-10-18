@@ -29,23 +29,16 @@ class Calendar extends React.Component {
   componentDidMount = () => {
     axios.get('/api/calendar/getallevents?user=' + this.props.auth.user.id)
         .then(result => {
+          console.log(result.data.data)
             this.setState({ calendarEvents: result.data.data })
         })
         .catch(err => {
+          console.log(err)
             //this.setState({ loading: false, error: true })
         })
   }
  
-  joinGroup = e => {
-    const id = this.props.location.pathname.split('/')[3]
-    axios.get('/api/groups/joingroup?user=' + this.props.auth.user.id + '&id=' + id + '&name=' + this.props.auth.user.name)
-        .then(result => {
-            this.fetchChats();
-        })
-        .catch(err => {
-            console.log('Something went wrong')
-        })
-  } 
+  
   handleSubmit = e => {
     this.setState({  // add new event data
       calendarEvents: this.state.calendarEvents.concat({ // creates a new array
@@ -56,15 +49,36 @@ class Calendar extends React.Component {
       }),
       show: false
     }) 
-    axios.get('/api/calendar/newevent?title='+ this.state.title + 'desc='+this.state.desc+'start='+this.state.date+ 'allDay='+this.state.allDay+ 'user=' + this.props.auth.user.id)
+    console.log(this.state)  
+    //console.log('this.state.title')
+    axios.post('/api/calendar/newevent',{
+      title:this.state.title,
+      start: this.state.date,
+      desc:this.state.desc,
+      allDay:this.state.allDay,
+      user: this.props.auth.user.id
+        })
         .then(result => {
             
         })
         .catch(err => {
             console.log('Something went wrong')
         })
+
+        /**
+         * axios.post('/user', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+         */
     
-  }
+}
   render() {
     
     //const classes = useStyles();
@@ -83,7 +97,7 @@ class Calendar extends React.Component {
           <Modal.Body>
             <label>           
               Title: &nbsp; 
-              <input id="event_title" type="text"  onBlur={this.handleTitleOnBlur.bind(this)}/>
+              <input id="event_title" type="text"  onChange={this.handleTitleOnBlur.bind(this)}/>
             </label>
             
             <br/><br/>
@@ -136,9 +150,6 @@ class Calendar extends React.Component {
       show: false
     });
   }
-  
-
-  
 
   handleClick = (event) => {
     this.setState({ 
@@ -152,7 +163,8 @@ class Calendar extends React.Component {
         allDay: arg.allDay,  
         show: true
       })
-    }   
+    } 
+    console.log(this.state.title)  
   } 
   
   handleDescOnBlur(event) {
