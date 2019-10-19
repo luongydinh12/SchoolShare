@@ -21,7 +21,6 @@ const options = [
 class Dashboard extends Component {
 
   onLogoutClick = e => {
-    alert("test logout");
     e.preventDefault();
     this.props.logoutUser();
   };
