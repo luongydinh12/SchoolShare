@@ -29,12 +29,14 @@ class CommandQueue extends EventEmitter {
     return this.currentNode.started && allChildNodesDone;
   }
 
-  add(nodeName, commandFn, context, args, stackTrace, namespace) {
+  add({commandName, commandFn, context, args, stackTrace, namespace, deferred, isES6Async}) {
     const node = new Node({
-      name       : nodeName,
-      namespace  : namespace,
-      stackTrace : stackTrace,
-      parent     : this.currentNode,
+      name: commandName,
+      parent: this.currentNode,
+      namespace,
+      stackTrace,
+      deferred,
+      isES6Async
     });
     node.setCommand(commandFn, context, args);
 
@@ -45,6 +47,8 @@ class CommandQueue extends EventEmitter {
     if (this.currentNode.done || !this.currentNode.started || initialChildNode) {
       this.scheduleTraverse(node);
     }
+
+    return node;
   }
 
   scheduleTraverse(node) {

@@ -14,12 +14,11 @@
  */
 
 const util = require('util');
+const MSG_ELEMENT_NOT_FOUND = 'Testing if element <%s> is hidden. ' +
+  'Element could not be located.';
+
 exports.assertion = function(selector, msg) {
-
-  let MSG_ELEMENT_NOT_FOUND = 'Testing if element <%s> is hidden. ' +
-    'Element could not be located.';
-
-  this.message = msg || util.format('Testing if element <%s> is hidden.', selector);
+  this.message = msg || util.format('Testing if element <%s> is hidden.', this.elementSelector);
   this.expected = true;
 
   this.pass = function(value) {
@@ -29,7 +28,7 @@ exports.assertion = function(selector, msg) {
   this.failure = function(result) {
     let failed = result === false || result && result.status === -1;
     if (failed) {
-      this.message = msg || util.format(MSG_ELEMENT_NOT_FOUND, selector);
+      this.message = msg || util.format(MSG_ELEMENT_NOT_FOUND, this.elementSelector);
     }
 
     return failed;

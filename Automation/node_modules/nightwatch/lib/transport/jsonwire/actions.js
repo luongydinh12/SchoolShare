@@ -52,6 +52,8 @@ module.exports = {
       });
     },
 
+    getTimeouts: '/timeouts',
+
     ///////////////////////////////////////////////////////////
     // Session log
     ///////////////////////////////////////////////////////////
@@ -124,6 +126,18 @@ module.exports = {
       return TransportActions.post(`/window/${windowHandle}/maximize`);
     },
 
+    minimizeWindow() {
+      return TransportActions.post('/window/minimize');
+    },
+
+    fullscreenWindow() {
+      return TransportActions.post('/window/fullscreen');
+    },
+
+    openNewWindow() {
+      return TransportActions.post('/window/new');
+    },
+
     setWindowPosition(windowHandle, offsetX, offsetY) {
       return TransportActions.post({
         path: `/window/${windowHandle}/position`,
@@ -148,18 +162,29 @@ module.exports = {
       });
     },
 
+    // windowRect commands are not available in JsonWire protocol but are used in W3C Webdriver actions
+    // defining them here removes the need for error handlers in the case of JsonWire
+    getWindowRect: '/window/rect',
+
+    setWindowRect(data) {
+      return TransportActions.post({
+        path: '/window/rect',
+        data
+      });
+    },
+
     ///////////////////////////////////////////////////////////
     // Frames
     ///////////////////////////////////////////////////////////
     switchToFrame(frameId) {
       if (frameId === undefined) {
-        return TransportActions.post('/frame');
+        frameId = null;
       }
 
       return TransportActions.post({
         path: '/frame',
         data: {
-          id: String(frameId)
+          id: frameId
         }
       });
     },
@@ -171,22 +196,22 @@ module.exports = {
     ///////////////////////////////////////////////////////////
     // Elements
     ///////////////////////////////////////////////////////////
-    locateSingleElement(strategy, selector) {
+    locateSingleElement({using, value}) {
       return TransportActions.post({
         path: '/element',
         data: {
-          using: strategy,
-          value: selector
+          using,
+          value
         }
       });
     },
 
-    locateMultipleElements(strategy, selector) {
+    locateMultipleElements({using, value}) {
       return TransportActions.post({
         path: '/elements',
         data: {
-          using: strategy,
-          value: selector
+          using,
+          value
         }
       });
     },
@@ -195,22 +220,22 @@ module.exports = {
       return `/element/${id}/equals/${otherId}`;
     },
 
-    locateSingleElementByElementId(id, strategy, selector) {
+    locateSingleElementByElementId({id, using, value}) {
       return TransportActions.post({
         path: `/element/${id}/element`,
         data: {
-          using: strategy,
-          value: selector
+          using,
+          value
         }
       });
     },
 
-    locateMultipleElementsByElementId(id, strategy, selector) {
+    locateMultipleElementsByElementId({id, using, value}) {
       return TransportActions.post({
         path: `/element/${id}/elements`,
         data: {
-          using: strategy,
-          value: selector
+          using,
+          value
         }
       });
     },
@@ -380,10 +405,24 @@ module.exports = {
       });
     },
 
-    moveTo(data) {
+    moveTo(id, xoffset, yoffset) {
+      const data = {};
+
+      if (typeof id == 'string') {
+        data.element = id;
+      }
+
+      if (typeof xoffset == 'number') {
+        data.xoffset = xoffset;
+      }
+
+      if (typeof yoffset == 'number') {
+        data.yoffset = yoffset;
+      }
+
       return TransportActions.post({
         path: '/moveto',
-        data: data
+        data
       });
     },
 

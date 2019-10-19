@@ -2,12 +2,19 @@ const Logger = require('../util/logger.js');
 const Utils = require('../util/utils.js');
 const AssertionError = require('assertion-error');
 
-class NightwatchAssertError extends AssertionError {}
+class NightwatchAssertError extends AssertionError {
+  constructor(message) {
+    super(message);
+
+    this.name = 'NightwatchAssertError';
+  }
+}
 
 class NightwatchAssertion {
   constructor(message) {
     this.__err = new NightwatchAssertError(message);
     this.__stackTraceTitle = message;
+    this.__abortOnFailure = true;
 
     this.failureMessage = '';
 
@@ -29,6 +36,15 @@ class NightwatchAssertion {
 
   get stackTraceTitle() {
     return this.__stackTraceTitle;
+  }
+
+  set abortOnFailure(value) {
+    this.__abortOnFailure = value;
+    this.__err.abortOnFailure = value;
+  }
+
+  get abortOnFailure() {
+    return this.__abortOnFailure;
   }
 
   buildStackTrace() {
@@ -129,4 +145,3 @@ class NightwatchAssertion {
 
 module.exports = NightwatchAssertion;
 module.exports.AssertionError = NightwatchAssertError;
-

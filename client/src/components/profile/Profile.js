@@ -1,37 +1,44 @@
+import Axios from "axios";
 import React, { Component } from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
-import { getProfileByHandle } from "../../actions/profileActions";
-import ProfileHeader from "./ProfileHeader";
-import ProfileAbout from "./ProfileAbout";
-
 import Spinner from "../common/Spinner";
-
+import FriendButton from './FriendButton';
+import ProfileAbout from "./ProfileAbout";
+import ProfileHeader from "./ProfileHeader";
 class Profile extends Component {
+  state={
+    profile:null
+  }
   componentDidMount() {
-    if (this.props.match.params.handle) {
-      this.props.getProfileByHandle(this.props.match.params.handle);
-    }
+
+    const handle=this.props.location.pathname.split('/')[2]
+    console.log(handle)
+    Axios.get(`/api/profile/handle/${handle}`).then((res)=>{
+      console.log(res.data)
+      this.setState({profile:res.data})
+    }).catch((err)=>{
+      console.log(err)
+      this.props.history.push("/not-found")
+    })
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.profile.profile === null && this.props.profile.loading) {
-      this.props.history.push("/not-found");
+  FriendButton = () => {
+    if (this.state.profile._id) {
+      return <FriendButton profileId={this.state.profile._id} />
     }
   }
 
   render() {
-    const { profile, loading } = this.props.profile;
+    const profile=this.state.profile
     let profileContent;
 
-    if (profile === null || loading) {
+    if (profile === null) {
       profileContent = <Spinner />;
     } else {
       profileContent = (
         <div>
           <div className="row">
-            <div className="col-md-6">
+            <div className="col s6">
               <Link
                 to="/dashboard"
                 className="btn btn-large waves-effect waves-light hoverable green accent-3"
@@ -39,7 +46,9 @@ class Profile extends Component {
                 Back to Dashboard
               </Link>
             </div>
-            <div className="col-md-6" />
+            <div className="col s1 offset-s4" >
+              <this.FriendButton />
+            </div>
           </div>
           <ProfileHeader profile={profile} />
           <ProfileAbout profile={profile} />
@@ -59,16 +68,4 @@ class Profile extends Component {
   }
 }
 
-Profile.propTypes = {
-  profile: PropTypes.object.isRequired,
-  getProfileByHandle: PropTypes.func.isRequired
-};
-
-const mapStateToProps = state => ({
-  profile: state.profile
-});
-
-export default connect(
-  mapStateToProps,
-  { getProfileByHandle }
-)(Profile);
+export default Profile

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const passport = require('passport');
+const jwt = require("jsonwebtoken");
 
 // Load Validation
 const validateProfileInput = require('../../validation/profile')
@@ -9,7 +10,7 @@ const validateClassInput = require('../../validation/class');
 
 
 // Load Profile Model
-const Profile = require('../../models/Profile');
+import Profile from "../../models/Profile";
 // Load User Model
 const User = require('../../models/User');
 
@@ -229,21 +230,20 @@ router.delete(
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Profile.findOneAndRemove({ user: req.user.id }).then(() => {
-      User.findOneAndRemove({ _id: req.user.id }).then(() =>
-        res.json({ success: true })
-      );
-    });
-  }
-);
+      return User.findOneAndRemove({ _id: req.user.id })
+    }).then(() =>
+      res.json({ success: true })
+    ).catch((err) => {
+      console.log(`${err}`)
+      res.status(400)
+      return res.send(`${err}`)
+    })
+  })
 
 
 router.get('/listAllProfiles', auth,
   (req, res) => {
-    Profile.find((err, profiles) => {
-      if (err) {
-        console.log(err)
-        res.status(500)
-      }
+    Profile.find().then((profiles) => {
       const profList = profiles.map((profile) => {
         return {
           id: profile._id,
@@ -251,7 +251,20 @@ router.get('/listAllProfiles', auth,
         }
       })
       res.json(profList)
+    }).catch((err) => {
+      console.log(err)
+      res.sendStatus(500)
     })
   })
+  
+
+router.get('/findUserProfile', auth,
+  (req, res) => {
+    const tokenUser = jwt.decode(req.header("Authorization").split(' ')[1])
+    Profile.findByUserId(tokenUser.id).then((profile) => {
+      res.json(profile)
+    })
+  })
+
 
 module.exports = router;

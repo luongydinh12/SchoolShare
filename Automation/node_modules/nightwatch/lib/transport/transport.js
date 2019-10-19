@@ -1,42 +1,20 @@
 const EventEmitter = require('events');
 const BrowserName = require('../util/browsername.js');
-const ElementsByRecursion = require('../api/element-commands/_elementsByRecursion.js');
-const SingleElementByRecursion = require('../api/element-commands/_elementByRecursion.js');
 const HttpRequest = require('../http/request.js');
 const Actions = require('./actions.js');
 const Utils = require('../util/utils.js');
-const Element = require('../page-object/element.js');
-const Logger = require('../util/logger.js');
 
 class Transport extends EventEmitter {
+  static get WEB_ELEMENT_ID () {
+    return 'element-6066-11e4-a52e-4f735466cecf';
+  }
+
   static get DO_NOT_LOG_ERRORS() {
     return [
       'Unable to locate element',
       '{"errorMessage":"Unable to find element',
       'no such element'
     ];
-  }
-
-  static get MAX_CONCURRENT_PROMISES() {
-    return 8;
-  }
-
-  /**
-   * @param {Array<Promise>} promises
-   */
-  static runPromises(promises) {
-    let allResults = [];
-    function handleResult(result) {
-      allResults.push(result);
-    }
-
-    return Utils.processAsyncQueue(Transport.MAX_CONCURRENT_PROMISES, promises, function(promise, index, next) {
-      promise.then(handleResult).catch(handleResult).then(function () {
-        next(index);
-      });
-    }).then(function() {
-      return allResults;
-    });
   }
 
   constructor(nightwatchInstance) {
@@ -106,14 +84,18 @@ class Transport extends EventEmitter {
   }
 
   staleElementReference(result) {
-    return result.errorStatus === this.Errors.StatusCode.STALE_ELEMENT_REFERENCE;
+    return [result.error, result.errorStatus].includes(this.Errors.StatusCode.STALE_ELEMENT_REFERENCE);
+  }
+
+  invalidWindowReference(result) {
+    return [result.error, result.errorStatus].includes(this.Errors.StatusCode.NO_SUCH_WINDOW);
   }
 
   invalidSessionError(result) {
     return result.errorStatus === this.Errors.StatusCode.NO_SUCH_SESSION;
   }
 
-  handleErrorResponse(data = null) {
+  handleSessionCreateError(data = null) {
     let err = new Error('An error occurred while retrieving a new session');
     let addtMsg = '';
 
@@ -121,6 +103,7 @@ class Transport extends EventEmitter {
       switch (data.code) {
         case 'ECONNREFUSED':
           err.sessionConnectionRefused = true;
+          err.incrementErrorsNo = true;
           addtMsg = `Connection refused to ${data.address}:${data.port}`;
           break;
         default:
@@ -162,24 +145,22 @@ class Transport extends EventEmitter {
       body.desiredCapabilities = this.desiredCapabilities;
     }
 
-    const request = this.createProtocolAction({
+    const request = this.createHttpRequest({
       path : '/session',
       data : body
     });
 
     request
-      .on('error', err => {
-        this.handleErrorResponse(err);
-      })
+      .on('error', err => this.handleSessionCreateError(err))
       .on('success', (data, response, isRedirect) => {
-        let sessionData = this.parseSessionResponse(data);
+        const sessionData = this.parseSessionResponse(data);
 
         if (sessionData.sessionId) {
           this.emit('transport:session.create', sessionData, request, response);
         } else if (isRedirect) {
           this.followRedirect(request, response);
         } else {
-          this.handleErrorResponse(data);
+          this.handleSessionCreateError(data);
         }
       })
       .post();
@@ -195,7 +176,7 @@ class Transport extends EventEmitter {
     });
   }
 
-  createProtocolAction(requestOptions) {
+  createHttpRequest(requestOptions) {
     const request = new HttpRequest(requestOptions);
     request.on('response', this.formatCommandResponseData.bind(this));
 
@@ -217,7 +198,7 @@ class Transport extends EventEmitter {
   }
 
   mapWebElementIds(result) {
-    if (result.value) {
+    if (Array.isArray(result.value)) {
       result.value = result.value.reduce((prev, item) => {
         prev.push(this.getElementId(item));
 
@@ -226,60 +207,6 @@ class Transport extends EventEmitter {
     }
 
     return result;
-  }
-
-  resolveElement(result, element, multipleElements) {
-    if (!this.isResultSuccess(result)) {
-      return null;
-    }
-
-    let value = result.value;
-
-    if (multipleElements && Array.isArray(value) && value.length > 0) {
-      if (value.length > 1) {
-        let message = `More than one element (${value.length}) found for <${element.toString()}> with selector: "${element.selector}".`;
-
-        if (this.settings.globals.throwOnMultipleElementsReturned) {
-          throw new Error(message);
-        }
-
-        if (this.settings.output) {
-          console.warn(Logger.colors.green(`  Warning: ${message} Only the first one will be used.`));
-        }
-      }
-      value = value[0];
-    } else if (Array.isArray(value) && value.length === 0) {
-      value = null;
-    }
-
-    let parsedValue = value && this.getElementId(value);
-
-    return {
-      status: 0,
-      // for recursive lookups, the value is already parsed
-      value: typeof parsedValue == 'undefined' ? value : parsedValue
-    };
-  }
-
-  /**
-   * Selects a subset of elements if the result requires filtering.
-   *
-   * @param {Element} element
-   * @param {object} result
-   * @return {*}
-   */
-  filterElements(element, result) {
-    let filtered = Element.applyFiltering(element, result.value);
-
-    if (filtered) {
-      result.value = filtered;
-
-      return result;
-    }
-
-    result = this.getElementNotFoundResult(result);
-
-    throw result;
   }
 
   getElementNotFoundResult(result) {
@@ -298,164 +225,25 @@ class Transport extends EventEmitter {
   }
 
   /**
-   * Used by waitForElement commands
-   *
-   * @param {Element} element
-   * @return {Promise}
-   */
-  locateMultipleElements(element) {
-    if (element.usingRecursion) {
-      return this.locateElementsUsingRecursion(element);
-    }
-
-    return this.executeProtocolAction('locateMultipleElements', [element.locateStrategy, element.selector])
-      .then(result => {
-        if (this.isResultSuccess(result) && Element.requiresFiltering(element)) {
-          return this.filterElements(element, result);
-        }
-
-        return result;
-      })
-      .catch(result => {
-        if (this.invalidSessionError(result)) {
-          return new Error(`An error occurred while running ".locateMultipleElements()": ${this.getErrorMessage(result)}.`);
-        }
-
-        return [];
-      });
-  }
-
-  /**
-   * @param {Element} element
-   * @return {Promise}
-   */
-  locateElementsUsingRecursion(element) {
-    let recursion = new ElementsByRecursion(this.nightwatchInstance);
-
-    return recursion.locateElements(element.selector);
-  }
-
-  locateSingleElementUsingRecursion(element) {
-    let recursion = new SingleElementByRecursion(this.nightwatchInstance);
-
-    return recursion.locateElement(element.selector);
-  }
-
-  /**
-   * Used by expect element assertions
-   *
-   * @param {Element} element
-   * @return {Promise}
-   */
-  locateElement(element) {
-    if (element.usingRecursion) {
-      return Element.requiresFiltering(element) ?
-        this.locateElementsUsingRecursion(element):
-        this.locateSingleElementUsingRecursion(element);
-    }
-
-    let elementAction = Transport.getElementAction(element);
-
-    return this.callElementLocateAction(element, elementAction, [element.locateStrategy, element.selector]);
-  }
-
-  /**
-   * Used by recursive lookup command for multi elements (in page objects)
-   *
-   * @param {Object} result
-   * @param {Element} element
-   * @return {Promise}
-   */
-  locateMultipleElementsFromParent(result, element) {
-    let promises = [];
-
-    result.value.forEach(elementId => {
-      promises.push(this.locateElementFromParent(elementId, element));
-    });
-
-    return Transport.runPromises(promises).then(results => {
-      if (results.length === 1 && results[0] instanceof Error) {
-        throw results[0];
-      }
-
-      let failed = 0;
-      let elementResult = results.reduce((prev, item) => {
-        // In case we have multiple matches on the same element, only add once
-        if (this.isResultSuccess(item) && prev.value.indexOf(item.value) < 0) {
-          prev.value.push(item.value);
-        } else {
-          if (item instanceof Error) {
-            Logger.error(item.stack);
-          }
-
-          failed++;
-        }
-
-        return prev;
-      }, {value: [], status: 0});
-
-      if (failed === results.length) {
-        elementResult = this.getElementNotFoundResult(elementResult);
-      }
-
-      return elementResult;
-    });
-  }
-
-  /**
-   * Used by recursive lookup command for a single element
-   *
-   * @param {string} parentElementId
-   * @param {Element} element
-   * @return {Promise}
-   */
-  locateElementFromParent(parentElementId, element) {
-    return this.callElementLocateAction(element, 'locateMultipleElementsByElementId', [parentElementId, element.locateStrategy, element.selector], true);
-  }
-
-  /**
-   * Helper method
-   *
-   * @param {Element} element
-   * @param {String} elementAction
-   * @param {Array} args
-   * @param {Boolean} multipleElements
-   */
-  callElementLocateAction(element, elementAction, args, multipleElements = false) {
-    return this.executeProtocolAction(elementAction, args)
-      .then(result => {
-        if (this.isResultSuccess(result) && Element.requiresFiltering(element)) {
-          return this.filterElements(element, result);
-        }
-
-        return result;
-      })
-      .then(result => {
-        let elementResult = this.resolveElement(result, element, Element.requiresFiltering(element) || multipleElements);
-        if (elementResult) {
-          return elementResult;
-        }
-
-        throw result;
-      });
-  }
-
-  /**
    * Helper method
    *
    * @param {String} protocolAction
-   * @param {Array} args
+   * @param {Object} args
    * @return {Promise}
    */
   executeProtocolAction(protocolAction, args) {
     return this.Actions.session[protocolAction]({
-      args: args,
+      args,
       sessionId: this.api.sessionId,
       sessionRequired: true
     });
   }
 
   shouldRegisterError(errorResult) {
+    return Transport.shouldRegisterError(errorResult);
+  }
+
+  static shouldRegisterError(errorResult) {
     let errorMessage = typeof errorResult == 'string' ? errorResult : (errorResult.error || errorResult.message);
 
     return !Transport.DO_NOT_LOG_ERRORS.some(function(item) {
@@ -490,7 +278,7 @@ class Transport extends EventEmitter {
     }
 
     if (!settings.webdriver.use_legacy_jsonwire && !usingSeleniumServer) {
-      settings.capabilities = settings.desiredCapabilities;
+      settings.capabilities = Object.assign({}, settings.desiredCapabilities);
     }
   }
 
@@ -527,19 +315,6 @@ class Transport extends EventEmitter {
     const WebdriverProtocol = require('./webdriver.js');
 
     return new WebdriverProtocol(nightwatchInstance);
-  }
-
-  /**
-   *
-   * @param {Element} element
-   * @param {Boolean} usingParent
-   * @return {*}
-   */
-  static getElementAction(element, usingParent = false) {
-    let multipleElements = Element.requiresFiltering(element);
-
-    return multipleElements ? (usingParent ? 'locateMultipleElementsByElementId' : 'locateMultipleElements') :
-      (usingParent ? 'locateSingleElementByElementId' : 'locateSingleElement');
   }
 }
 

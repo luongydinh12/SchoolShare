@@ -6,6 +6,7 @@ const Message = require("../../models/Messages");
 const User = require("../../models/User");
 const Thread = require("../../models/Thread");
 const Comment = require("../../models/Comment");
+const CommentLike = require("../../models/CommentLike");
 const router = express.Router();
 const mongoose = require('mongoose');
 
@@ -199,6 +200,8 @@ router.get('/getComments', (req, res) => {
 
   Comment.find({ parent: id })
   .populate('author', 'name')
+  .populate('likes')
+  .exec()
   .then(data => {
     res.send(data)
   })
@@ -244,6 +247,37 @@ router.post('/restoreComment', (req, res) => {
   .then(data => {
     res.send(data)
   }).catch(err =>  console.log(err))
+})
+
+// @route GET api/posts/likeComment
+// @desc create like for a comment
+// @access Users
+// @returns an Object
+router.post('/likeComment', (req, res) => {
+  const commentId = req.body.commentId
+  const userId = req.body.userId
+
+  const newLike = new CommentLike({
+    user: userId,
+    comment: commentId
+  })
+
+  newLike
+  .save()
+  .then(data => {
+    Comment.findById({_id: data.comment})
+    .then(comment => {
+      comment.likes.push(data._id)
+      comment.save()
+      console.log(comment)
+    })
+    .catch(err => {
+      console.log(err)
+      res.sendStatus(404)
+    })
+    res.send(data)
+  })
+  .catch(err =>  console.log(err))
 })
 
 module.exports = router;

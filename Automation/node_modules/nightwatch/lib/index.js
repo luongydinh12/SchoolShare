@@ -5,11 +5,16 @@ const Session = require('./core/session.js');
 const Logger = require('./util/logger.js');
 const Settings = require('./settings/settings.js');
 const Transport = require('./transport/transport.js');
-const LocateStrategy = require('./util/locatestrategy.js');
+const LocateStrategy = require('./element/strategy.js');
+const ElementLocator = require('./element/locator.js');
 const ApiLoader = require('./api-loader/api.js');
 const Utils = require('./util/utils.js');
 
 class NightwatchAPI {
+  get WEBDRIVER_ELEMENT_ID() {
+    return Transport.WEB_ELEMENT_ID;
+  }
+
   toString() {
     return 'Nightwatch API';
   }
@@ -34,13 +39,16 @@ class NightwatchClient extends EventEmitter {
     this.settings = settings;
     Settings.setDefaults(this.settings);
 
+    this.isES6AsyncTestcase = false;
+
     // backwards compatibility
     this.options = settings;
 
     this.__locateStrategy = null;
     this.__httpOpts = HttpOptions.global;
-    this.__session = new Session(settings);
     this.__transport = Transport.create(this);
+    this.__session = new Session(this);
+    this.__elementLocator = new ElementLocator(this);
     this.__reporter = null;
 
     this.__api = new NightwatchAPI(this.sessionId, settings);
@@ -50,7 +58,6 @@ class NightwatchClient extends EventEmitter {
       .setScreenshotOptions()
       .setLocateStrategy()
       .setSessionOptions()
-      .initTransport()
       .setHttpOptions();
   }
 
@@ -78,6 +85,10 @@ class NightwatchClient extends EventEmitter {
     return this.__transport;
   }
 
+  get elementLocator() {
+    return this.__elementLocator;
+  }
+
   get httpOpts() {
     return this.__httpOpts;
   }
@@ -94,14 +105,17 @@ class NightwatchClient extends EventEmitter {
     return this.__reporter || {};
   }
 
-  /**
-   * @deprecated
-   */
   get client() {
+    const {settings, api, locateStrategy, reporter, sessionId, elementLocator} = this;
+
     return {
-      options: this.settings,
-      api: this.api,
-      locateStrategy: this.locateStrategy
+      options: settings,
+      settings,
+      api,
+      locateStrategy,
+      reporter,
+      sessionId,
+      elementLocator
     };
   }
 
@@ -364,12 +378,6 @@ class NightwatchClient extends EventEmitter {
   //////////////////////////////////////////////////////////////////////////////////////////
   // Session
   //////////////////////////////////////////////////////////////////////////////////////////
-  initTransport() {
-    this.session.setTransportProtocol(this.transport);
-
-    return this;
-  }
-
   /**
    * @return {Promise}
    */
