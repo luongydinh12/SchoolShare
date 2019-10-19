@@ -1,19 +1,16 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { logoutUser, deleteUser } from "../../actions/authActions";
 import moment from 'moment'; //npm install moment --save (CLIENT)
-import { Link } from 'react-router-dom'
-import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
-import Spinner from '../common/Spinner'
-import ProfileActions from './ProfileActions'
-
-// for calendar
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link } from 'react-router-dom';
+import { deleteUser, logoutUser } from "../../actions/authActions";
+import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
+import Spinner from '../common/Spinner';
 //test
-import NavBar from './NavBar'
+import NavBar from './NavBar';
+import ProfileActions from './ProfileActions';
+
+
 
 const options = [
   'EDIT PROFILE',
