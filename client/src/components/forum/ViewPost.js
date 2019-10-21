@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { Row, Textarea } from 'react-materialize';
+import { Row, Textarea, ProgressBar } from 'react-materialize';
 import { connect } from 'react-redux';
 import ThreadComments from "./ThreadComments";
 
@@ -83,7 +83,7 @@ class ViewPost extends Component {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -140,7 +140,7 @@ class ViewPost extends Component {
     if (!this.state.displayEditTitle) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -195,7 +195,7 @@ class ViewPost extends Component {
     if (!this.state.displayEditDesc) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -250,7 +250,7 @@ class ViewPost extends Component {
     if (!this.state.displayDeleteConfirm) return undefined;
     if (this.state.postingDelete) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Deleting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -355,7 +355,7 @@ class ViewPost extends Component {
       postHTML = <h4>an error occured...</h4>;
     }
     if (loading) {
-      postHTML = <h4>Loading</h4>;
+      postHTML = <ProgressBar/>;
     }
 
     return (
