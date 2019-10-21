@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react'
 import Axios from 'axios'
 import { Link } from 'react-router-dom'
 import FriendButton from './FriendButton'
+import Spinner from "../common/Spinner"
 
 class FriendsList extends Component {
     state = {
@@ -36,7 +37,7 @@ class FriendsList extends Component {
                 </div>
             </div>)
         }
-        return (<div>Error</div>)
+        return (<Spinner />)
     }
 
 }
