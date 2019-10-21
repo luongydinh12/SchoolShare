@@ -42,6 +42,36 @@ class Utils {
     return typeof value == Utils.PrimitiveTypes.UNDEFINED;
   }
 
+  static isES6AsyncFn(fn) {
+    return Utils.isFunction(fn) && fn.constructor.name === 'AsyncFunction';
+  }
+
+  static enforceType(value, type) {
+    type = type.toLowerCase();
+
+    switch (type) {
+      case Utils.PrimitiveTypes.STRING:
+      case Utils.PrimitiveTypes.BOOLEAN:
+      case Utils.PrimitiveTypes.NUMBER:
+      case Utils.PrimitiveTypes.FUNCTION:
+        if (typeof value != type) {
+          throw new Error(`Invalid type ${typeof value} for value "${value}". Expecting "${type}" instead.`);
+        }
+
+        return;
+    }
+
+    throw new Error(`Invalid type ${type} for ${value}`);
+  }
+
+  static convertBoolean(value) {
+    if (Utils.isString(value) && (!value || value === 'false' || value === '0')) {
+      return false;
+    }
+
+    return Boolean(value);
+  }
+
   static get symbols() {
     let ok = String.fromCharCode(10004);
     let fail = String.fromCharCode(10006);
@@ -147,57 +177,6 @@ class Utils {
     });
   }
 
-  static processAsyncQueue(concurrency, items, fn) {
-    let maxWorkers = Math.min(concurrency, items.length);
-    let queue = items.slice(0);
-    let workers = 0;
-    let index = 0;
-    let finished = false;
-
-    const isQueueEmpty = function(queue) {
-      return queue.reduce(function(prev, val) {
-        if (val) {
-          prev++;
-        }
-
-        return prev;
-      }, 0) === 0;
-    };
-
-    const next = function(done = function() {}, currentIndex) {
-      queue[currentIndex] = null;
-
-      if (isQueueEmpty(queue)) {
-        done();
-        finished = true;
-      } else if (!finished) {
-        workers -= 1;
-        process();
-      }
-    };
-
-    const process = function(done) {
-      while (workers < maxWorkers) {
-        workers += 1;
-
-        if (queue[index]) {
-          let item = queue[index];
-          fn(item, index, function(idx) {
-            next(done, idx);
-          });
-          index++;
-        }
-
-      }
-    };
-
-    return new Promise(function(resolve, reject) {
-      process(function() {
-        resolve();
-      });
-    });
-  }
-
   static getModuleKey(filePath, srcFolders, fullPaths) {
     let modulePathParts = filePath.split(path.sep);
     let diffInFolder = '';
@@ -252,18 +231,27 @@ class Utils {
     }
 
     const colors = require('./logger.js').colors;
-    let headline = err.message || err.name;
+    let headline = err.message ? `${err.name}: ${err.message}` : err.name;
     if (err.detailedErr) {
       headline += `\n ${err.detailedErr}`;
     }
 
     headline = colors.red(headline.replace(indentRegex, '  '));
 
-    let stackTrace = err.stack.split('\n').slice(1);
-    stackTrace = Utils.stackTraceFilter(stackTrace);
+    let stackTrace = Utils.filterStack(err);
     stackTrace = colors.stack_trace(stackTrace.replace(indentRegex, '   '));
 
     return `${headline}\n${stackTrace}`;
+  }
+
+  static filterStack(err) {
+    if (err instanceof Error) {
+      const stackTrace = err.stack.split('\n').slice(1);
+
+      return Utils.stackTraceFilter(stackTrace);
+    }
+
+    return '';
   }
 
   static showStackTrace(stack) {
@@ -337,6 +325,30 @@ class Utils {
     });
   }
 
+  /**
+   *
+   * @param {string} sourcePath
+   * @param {Array} namespace
+   * @param {function} loadFn
+   */
+  static readFolderRecursively(sourcePath, namespace = [], loadFn) {
+    const resources = fs.readdirSync(sourcePath);
+    resources.forEach(resource => {
+      const isFolder = fs.lstatSync(path.join(sourcePath, resource)).isDirectory();
+
+      if (isFolder) {
+        const pathFolder = path.join(sourcePath, resource);
+        let ns = namespace.slice(0);
+        ns.push(resource);
+        Utils.readFolderRecursively(pathFolder, ns, loadFn);
+
+        return;
+      }
+
+      loadFn(sourcePath, resource, namespace);
+    });
+  }
+
   static getConfigFolder(argv) {
     if (!argv || !argv.config) {
       return '';
@@ -404,7 +416,7 @@ class Utils {
   /**
    * Strips out all control characters from a string
    * However, excludes newline and carriage return
-   * 
+   *
    * @param {string} input String to remove invisible chars from
    * @returns {string} Initial input string but without invisible chars
    */
@@ -414,6 +426,32 @@ class Utils {
       /[\x00-\x09\x0B-\x0C\x0E-\x1F\x7F-\x9F]/g,
       ''
     );
+  }
+
+  static relativeUrl(url) {
+    return !(url.includes('://'));
+  }
+
+  static uriJoin(baseUrl, uriPath) {
+    let result = baseUrl;
+
+    if (baseUrl.endsWith('/')) {
+      result = result.substring(0, result.length - 1);
+    }
+
+    if (!uriPath.startsWith('/')) {
+      result = result + '/';
+    }
+
+    return result + uriPath;
+  }
+
+  static replaceParams(url, params = {}) {
+    return Object.keys(params).reduce(function(prev, param) {
+      prev = prev.replace(`:${param}`, params[param]);
+
+      return prev;
+    }, url);
   }
 }
 

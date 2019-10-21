@@ -14,21 +14,23 @@
  */
 
 const util = require('util');
-exports.assertion = function(selector, msg) {
+const Element = require('../../element/element.js');
 
-  this.message = msg || util.format('Testing if element <%s> is not present.', selector);
+exports.assertion = function(selector, msg) {
   this.expected = 'not present';
+  this.element = Element.createFromSelector(selector, this.client.locateStrategy);
+  this.message = msg || util.format('Testing if element <%s> is not present.', this.element);
 
   this.pass = function(value) {
     return value === 'not present';
   };
 
   this.value = function(result) {
-    return (result.status !== 0 || result.value.length === 0) ? 'not present' : 'present';
+    return result.value && result.value.length > 0 ? 'present' : 'not present';
   };
 
   this.command = function(callback) {
-    return this.api.elements(this.client.locateStrategy, selector, callback);
+    return this.api.elements(this.client.locateStrategy, this.element, callback);
   };
 
 };

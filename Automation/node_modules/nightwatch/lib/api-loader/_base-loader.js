@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const EventEmitter = require('events');
 const Utils = require('../util/utils.js');
-const Element = require('../page-object/element.js');
+const Element = require('../element/element.js');
 
 const VALID_FILENAME_EXT = '.js';
 
@@ -43,26 +43,16 @@ class BaseLoader extends EventEmitter {
     return originalStackTrace;
   }
 
-  static isFileNameValid(fileName) {
-    return Utils.isFileNameValid(fileName);
-  }
+  static unflattenNamespace(target, namespace, value) {
+    const key = namespace.shift();
+    if (key) {
+      target[key] = target[key] || {};
+      value = target[key];
 
-  static serializePageObjectElement(element) {
-    if (!(element instanceof Element)) {
-      return {};
+      return BaseLoader.unflattenNamespace(target[key], namespace, value);
     }
 
-    const result = {
-      selector: element.selector,
-      locateStrategy: element.locateStrategy,
-      name: element.name
-    };
-
-    if (Element.requiresFiltering(element)) {
-      result.index = element.index;
-    }
-
-    return result;
+    return value;
   }
 
   get loadSubDirectories() {
@@ -77,6 +67,10 @@ class BaseLoader extends EventEmitter {
     return this.nightwatchInstance.api;
   }
 
+  get elementLocator() {
+    return this.nightwatchInstance.elementLocator;
+  }
+
   get transport() {
     return this.nightwatchInstance.transport;
   }
@@ -87,6 +81,10 @@ class BaseLoader extends EventEmitter {
 
   get module() {
     return this.__module;
+  }
+
+  set module(val) {
+    this.__module = val;
   }
 
   get commandName() {
@@ -148,21 +146,21 @@ class BaseLoader extends EventEmitter {
   }
 
   loadModule(dirPath, fileName) {
-    // TODO: add support for namespaces
     if (!this.loadSubDirectories && fs.lstatSync(path.join(dirPath, fileName)).isDirectory()) {
       return this;
     }
 
-    if (!BaseLoader.isFileNameValid(fileName) || fileName.startsWith('_') && this.ignoreUnderscoreLeadingNames) {
+    if (!Utils.isFileNameValid(fileName) || fileName.startsWith('_') && this.ignoreUnderscoreLeadingNames) {
       return this;
     }
 
     this.commandName = path.basename(fileName, VALID_FILENAME_EXT);
+    this.fileName = path.join(dirPath, fileName);
 
     try {
-      this.__module = require(path.join(dirPath, fileName));
+      this.module = require(path.join(dirPath, fileName));
     } catch (err) {
-      throw new Error(`There was an error while trying to load the file ${fileName}:\n${err.stack}`);
+      throw new Error(`There was an error while trying to load the file ${fileName}: ${err.message}`);
     }
 
     return this;
@@ -178,19 +176,15 @@ class BaseLoader extends EventEmitter {
     return this;
   }
 
-  updateElementSelector(args) {
+  resolveElementSelector(args) {
     if ((args[0] instanceof Element) && this.isUserDefined) {
-      if (args[0].usingRecursion) {
-        return this.transport.locateElement(args[0]).then(response => {
-          const element = args[0].selector[args[0].selector.length - 1];
-          const result = BaseLoader.serializePageObjectElement(element);
-          result.response = response;
+      const element = args[0];
 
-          return result;
-        });
+      if (element.usingRecursion) {
+        return this.elementLocator.resolveElementRecursively({element});
       }
 
-      return Promise.resolve(BaseLoader.serializePageObjectElement(args[0]));
+      return Promise.resolve(element);
     }
 
     return Promise.resolve();
@@ -220,20 +214,30 @@ class BaseLoader extends EventEmitter {
 
     const commandName = this.commandName;
     const args = [function commandFn(...args) {
-      let originalStackTrace = BaseLoader.getOriginalStackTrace(commandFn);
+      const stackTrace = BaseLoader.getOriginalStackTrace(commandFn);
 
-      this.commandQueue.add(commandName, this.commandFn, this, args, originalStackTrace, namespace);
+      this.commandQueue.add({
+        commandName,
+        commandFn: this.commandFn,
+        context: this,
+        args,
+        stackTrace,
+        namespace
+      });
 
       return this.api;
     }.bind(this)];
 
-    let namespace = this.getTargetNamespace(parent);
+    const namespace = this.getTargetNamespace(parent);
 
     if (namespace) {
       args.unshift(namespace);
     }
 
     this.nightwatchInstance.setApiMethod(this.commandName, ...args);
+    if (this.module && this.module.AliasName) {
+      this.nightwatchInstance.setApiMethod(this.module.AliasName, ...args);
+    }
 
     return this;
   }

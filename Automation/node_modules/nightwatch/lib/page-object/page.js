@@ -12,10 +12,11 @@ class Page extends BaseObject {
   constructor(options, commandLoader, client) {
     super();
 
-    this.__options = options;
     this.commandLoader = commandLoader;
-    this.client = client;
 
+    this.__options = options;
+    this.__client = client;
+    this.__api = Object.assign({}, client.api);
     this.__props = Page.createProps(this, options.props);
     this.__elements = Page.createElements(this, options.elements);
     this.__sections = Page.createSections(this, options.sections);
@@ -23,10 +24,15 @@ class Page extends BaseObject {
     Page.addCommands(this, options.commands || []);
 
     CommandWrapper.addWrappedCommands(this, this.commandLoader);
+    CommandWrapper.wrapProtocolCommands(this, this.api, BaseObject.WrappedProtocolCommands);
   }
 
   get api() {
-    return this.client.api;
+    return this.__api;
+  }
+
+  get client() {
+    return this.__client;
   }
 
   get name() {
@@ -67,7 +73,7 @@ class Page extends BaseObject {
    *  If the supplied url is a function, it invokes that function with the page as its context.
    *
    * @method getUrl
-   * @param {function|string} url
+   * @param {function|string|object} url
    * @return {function}
    */
   get getUrl() {
@@ -81,6 +87,10 @@ class Page extends BaseObject {
 
       if (Utils.isString(url)) {
         return url;
+      }
+
+      if (Utils.isObject(url) && this.url) {
+        return Utils.replaceParams(this.url, url);
       }
 
       return null;
@@ -101,6 +111,15 @@ class Page extends BaseObject {
     return (url, callback) => {
       let goToUrl = this.getUrl(url || this.url);
 
+      if (Utils.relativeUrl(goToUrl)) {
+        if (!this.client.settings.launch_url) {
+          throw new Error(`Invalid URL in "${this.name}" page object. When using relative uris, you must ` +
+            'define a "launch_url" setting in your config which serves as the base url.');
+        }
+
+        goToUrl = Utils.uriJoin(this.client.settings.launch_url, goToUrl);
+      }
+
       if (goToUrl === null) {
         throw new Error('Invalid URL: You must either add a url property to "' +
           this.name + '" or provide a url as an argument');
@@ -109,7 +128,7 @@ class Page extends BaseObject {
       this.api.url(goToUrl, callback);
 
       return this;
-    }
+    };
   }
 }
 

@@ -1,5 +1,5 @@
-import React, { Component, Fragment } from 'react';
 import axios from 'axios';
+import React, { Component, Fragment } from 'react';
 import { Link } from "react-router-dom";
 
 class GroupList extends Component {
@@ -25,7 +25,7 @@ class GroupList extends Component {
         }
         else{
             const results=this.props.groupSearchResults
-            if(results==-1){
+            if(results===-1){
                 console.log("no search results")
                 this.setState({groups:null, loading:false,error:false,zeroSearchResults:true})
             }
@@ -39,7 +39,7 @@ class GroupList extends Component {
     componentDidUpdate=(prevProps)=>{ //if it's already displaying a groupslist component
         if (this.props.groupSearchResults!== prevProps.groupSearchResults) {//prevents loop on setstate
             const results=this.props.groupSearchResults
-            if(results==-1){
+            if(results===-1){
                 this.setState({groups:null, loading:false,error:false,zeroSearchResults:true})
             }
             else{

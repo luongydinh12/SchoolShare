@@ -145,7 +145,19 @@ class Dashboard extends Component {
               <Link to="/profilelist" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
               </Link>  */}
               <Link to="/calendar" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                  width: "150px",
+
+                  borderRadius: "3px",
+                  letterSpacing: "1.5px",
+                  marginTop: "2rem",
+                  marginBottom: "1.4rem",
+                  marginLeft: 16,
+                }}>
+                View Calendar
+              </Link>
+              </div>
+
+              <Link to="/profilelist" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
+
                   borderRadius: "3px",
                   letterSpacing: "1.5px",
                   marginTop: "2rem",
@@ -154,10 +166,6 @@ class Dashboard extends Component {
                 }}>
                 View Users
               </Link>
-              </div>
-
-
-
 
 
               <button

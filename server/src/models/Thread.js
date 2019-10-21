@@ -15,6 +15,10 @@ const ThreadSchema = new Schema({
   },
   category: {
     type: String
+  },
+  deleted: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 var Thread = mongoose.model("thread", ThreadSchema)
