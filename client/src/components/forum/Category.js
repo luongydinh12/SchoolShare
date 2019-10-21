@@ -119,7 +119,7 @@ class Category extends Component {
             </div>
           </div>
           <div className="row" style={{display: "inline", verticalAlign:"middle"}}>
-            <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
             <TextInput
               s={10}
              m={10}
@@ -131,7 +131,6 @@ class Category extends Component {
              onChange={e => {this.setState({ currentSearch: e.target.value, page: 1}); 
                  this.getPosts(e.target.value, this.state.searchOption, 1)}}
                />
-            </Row>
             <Select 
               name="searchOptions"
               onChange = {e => {this.setState({searchOption: e.target.value}); console.log(e.target.value)}}>
@@ -142,17 +141,19 @@ class Category extends Component {
                     Search by Author
                   </option>
               </Select>
+            </Row>
             <div className="col s12" style={{ marginTop: "2rem" }}>
               {postList}
             </div>
           </div>
-          {this.state.totalPages ? (
+          {this.state.totalPages && !this.state.error ? (
             <Pagination className="pageList"
               activePage={this.state.page}
               items={this.state.totalPages}
               maxButtons={5}
               onSelect = {e =>
                 {this.setState({page: e});
+                  console.log(this.state.totalPosts);
                  this.getPosts(this.state.currentSearch, this.state.searchOption, e)}
               }
             />

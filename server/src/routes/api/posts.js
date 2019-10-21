@@ -28,9 +28,8 @@ router.get('/getpostsforcat', (req, res) => {
   if(!catId) return console.error('No category specified');
 
   if(!searchTerm || searchTerm == ""){
-  Thread.count({category: catId}).then(count => {
-    Thread.find({ category: catId})
-    .where('deleted').ne(true)
+  Thread.count({category: catId, deleted: {$ne: true}}).then(count => {
+    Thread.find({ category: catId, deleted: {$ne: true}})
     .populate('author' , '_id name')
     .sort({ _id: -1})
     .limit(10)
@@ -45,9 +44,8 @@ router.get('/getpostsforcat', (req, res) => {
     .catch(err =>  console.log(err))
   }).catch(err =>  console.log(err))
   } else if(searchOption == 1) {
-    Thread.count({category: catId, title: new RegExp(searchTerm, 'i')}).then(count => {
-      Thread.find({ category: catId, title: new RegExp(searchTerm, 'i')})
-      .where('deleted').ne(true)
+    Thread.count({category: catId, deleted: {$ne: true}, title: new RegExp(searchTerm, 'i')}).then(count => {
+      Thread.find({ category: catId, deleted: {$ne: true}, title: new RegExp(searchTerm, 'i')})
       .populate('author' , '_id name')
       .sort({ _id: -1})
       .limit(10)
@@ -64,9 +62,8 @@ router.get('/getpostsforcat', (req, res) => {
   } else if(searchOption == 2) {
     User.find({name: new RegExp(searchTerm, 'i')}).select("_id").exec()
       .then(function(userList){
-        Thread.count({category: catId, author: {$in: userList}}).then(count => {
-          Thread.find({ category: catId, author: {$in: userList}})
-          .where('deleted').ne(true)
+        Thread.count({category: catId, deleted: {$ne: true}, author: {$in: userList}}).then(count => {
+          Thread.find({ category: catId, deleted: {$ne: true}, author: {$in: userList}})
           .populate('author' , '_id name')
           .sort({ _id: -1})
           .limit(10)
@@ -80,7 +77,7 @@ router.get('/getpostsforcat', (req, res) => {
           })
           .catch(err =>  console.log(err))
         }).catch(err =>  console.log(err))
-      });
+      }).catch(err =>  console.log(err));
   }
 
 })
