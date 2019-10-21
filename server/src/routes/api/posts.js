@@ -62,25 +62,25 @@ router.get('/getpostsforcat', (req, res) => {
       .catch(err =>  console.log(err))
     }).catch(err =>  console.log(err))
   } else if(searchOption == 2) {
-
-    const userList = axios.get("/api/users/listAllUsers").then()
-
-    Thread.count({category: catId, author:{$in:userList}}).then(count => {
-      Thread.find({ category: catId, author:{$in:userList}}).select()
-      .where('deleted').ne(true)
-      .populate('author' , '_id name')
-      .sort({ _id: -1})
-      .limit(10)
-      .skip(page * 10)
-      .then(data => {
-        res.send({
-          totalPosts: count,
-          totalPages: Math.ceil(count/10),
-          posts: data
-        });
-      })
-      .catch(err =>  console.log(err))
-    }).catch(err =>  console.log(err))
+    User.find({name: new RegExp(searchTerm, 'i')}).select("_id").exec()
+      .then(function(userList){
+        Thread.count({category: catId, author: {$in: userList}}).then(count => {
+          Thread.find({ category: catId, author: {$in: userList}})
+          .where('deleted').ne(true)
+          .populate('author' , '_id name')
+          .sort({ _id: -1})
+          .limit(10)
+          .skip(page * 10)
+          .then(data => {
+            res.send({
+              totalPosts: count,
+              totalPages: Math.ceil(count/10),
+              posts: data
+            });
+          })
+          .catch(err =>  console.log(err))
+        }).catch(err =>  console.log(err))
+      });
   }
 
 })

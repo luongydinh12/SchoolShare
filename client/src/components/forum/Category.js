@@ -1,4 +1,4 @@
-import { TextInput, Row, RadioGroup, Pagination, ProgressBar} from 'react-materialize';
+import { TextInput, Row, Select, Pagination, ProgressBar} from 'react-materialize';
 import axios from "axios";
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
@@ -132,11 +132,16 @@ class Category extends Component {
                  this.getPosts(e.target.value, this.state.searchOption, 1)}}
                />
             </Row>
-            <RadioGroup 
-              name="searchOptions" label="Search By:"
-              value = "1"
-              options = {[{label: "Title", value:"1"},{label: "Author", value:"2"}]}
-              onChange = {e => {this.setState({searchOption: e.target.value}); console.log(e.target.value)}}/>
+            <Select 
+              name="searchOptions"
+              onChange = {e => {this.setState({searchOption: e.target.value}); console.log(e.target.value)}}>
+                  <option value="1">
+                    Search by Title
+                  </option>
+                  <option value="2">
+                    Search by Author
+                  </option>
+              </Select>
             <div className="col s12" style={{ marginTop: "2rem" }}>
               {postList}
             </div>
