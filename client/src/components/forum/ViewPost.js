@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { Row, Textarea } from 'react-materialize';
+import { Row, Textarea, ProgressBar } from 'react-materialize';
 import { connect } from 'react-redux';
 import ThreadComments from "./ThreadComments";
 
@@ -33,6 +33,8 @@ class ViewPost extends Component {
     this.postDeleteClick = this.postDeleteClick.bind(this);
     this.closeAll = this.closeAll.bind(this);
     this.showCommentManagement = this.showCommentManagement.bind(this);
+    this.savePost = this.savePost.bind(this);
+    this.renderSave = this.renderSave.bind(this);
   }
 
   componentDidMount = () => {
@@ -78,12 +80,55 @@ class ViewPost extends Component {
       </>
     );
   }
+
+  renderSave(post){
+    console.log(this.props.auth.user.id)
+    console.log(post.saves)
+    return(
+      <>
+          <div>
+          {!post.saves.find(user => user._id === this.props.auth.user.id) ? (
+                <h6
+                  style={{ color: "rgb(44, 127, 252)" }}
+                  href="/"
+                  onClick={e => this.savePost(post)}
+                >
+                 Save
+                </h6>
+              ) : <h6 style={{ color: "rgb(44, 127, 252)" }}
+              href="/"
+              // onClick={e => this.unsavePost(post)}
+            >
+             UnSave
+            </h6> }
+          </div> 
+          </>
+    );
+  }
+  savePost (post) {
+    //e.preventDefault();
+    const userId = this.props.auth.user.id;
+    const postId = post._id;
+    
+    const data = {
+      postId: postId,
+      userId: userId
+    }
+    console.log("MY DATA BEFORE postID "+data.postId)
+    console.log("MY DATA BEFORE UserID "+data.userId)
+    
+    axios
+    .post('/api/posts/saveThread', data)
+    .then(post => {
+
+  })
+  }
   
   renderPostReplyBox() {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -140,7 +185,7 @@ class ViewPost extends Component {
     if (!this.state.displayEditTitle) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -195,7 +240,7 @@ class ViewPost extends Component {
     if (!this.state.displayEditDesc) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -250,7 +295,7 @@ class ViewPost extends Component {
     if (!this.state.displayDeleteConfirm) return undefined;
     if (this.state.postingDelete) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Deleting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -346,16 +391,17 @@ class ViewPost extends Component {
     const id = this.props.location.pathname.split("/")[3];
 
     let postHTML = <h4>Loading...</h4>;
-
+    let renderSave = <h4></h4>;
     const { post, loading, error } = this.state;
     if (post) {
       postHTML = this.renderPost(post);
+      renderSave = this.renderSave(post);
     }
     if (error) {
       postHTML = <h4>an error occured...</h4>;
     }
     if (loading) {
-      postHTML = <h4>Loading</h4>;
+      postHTML = <ProgressBar/>;
     }
 
     return (
@@ -395,10 +441,17 @@ class ViewPost extends Component {
             </div>
           </div>
 
+          
+
+
           <div className="row">
             <div className="col s12">{postHTML}</div>
+            <p style={{
+                  marginTop: "3rem",
+                  marginLeft: "30px"
+                }} >{renderSave}</p>
           </div>
-
+          
           {this.state.loading ||
           this.state.postingReply ||
           this.state.commentCount === 0 ? (
