@@ -17,11 +17,11 @@
 
 const util = require('util');
 exports.assertion = function(selector, attribute, expected, msg) {
-  let DEFAULT_MSG = 'Testing if attribute %s of <%s> equals "%s".';
-  let MSG_ELEMENT_NOT_FOUND = `${DEFAULT_MSG} Element could not be located.`;
-  let MSG_ATTR_NOT_FOUND = `${DEFAULT_MSG} Element does not have a ${attribute} attribute.`;
+  const DEFAULT_MSG = 'Testing if attribute %s of <%s> equals "%s".';
+  const MSG_ELEMENT_NOT_FOUND = `${DEFAULT_MSG} Element could not be located.`;
+  const MSG_ATTR_NOT_FOUND = `${DEFAULT_MSG} Element does not have a ${attribute} attribute.`;
 
-  this.message = msg || util.format(DEFAULT_MSG, attribute, selector, expected);
+  this.message = msg || util.format(DEFAULT_MSG, attribute, this.elementSelector, expected);
 
   this.expected = function() {
     return expected;
@@ -41,7 +41,7 @@ exports.assertion = function(selector, attribute, expected, msg) {
       if (result && result.value === null) {
         defaultMsg = MSG_ATTR_NOT_FOUND;
       }
-      this.message = msg || util.format(defaultMsg, attribute, selector, expected);
+      this.message = msg || util.format(defaultMsg, attribute, this.elementSelector, expected);
     }
 
     return failed;

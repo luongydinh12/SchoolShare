@@ -1,8 +1,9 @@
+const EventEmitter = require('events');
 const Logger = require('../util/logger.js');
 const TreeNode = require('./treenode.js');
 const Utils = require('../util/utils.js');
 
-class AsyncTree {
+class AsyncTree extends EventEmitter{
   get started() {
     return this.rootNode.started;
   }
@@ -16,6 +17,7 @@ class AsyncTree {
   }
 
   constructor() {
+    super();
     this.createRootNode();
   }
 
@@ -71,13 +73,17 @@ class AsyncTree {
 
     return node.run()
       .then(result => {
+        let abortOnFailure = false;
+
+        if (result instanceof Error) {
+          node.reject(result);
+          abortOnFailure = result.abortOnFailure || Utils.isUndefined(result.abortOnFailure);
+        } else {
+          node.resolve(result);
+        }
+
         Logger.log(`${Logger.colors.green('→')} Completed command ${Logger.colors.light_green(node.fullName)}` +
           ` (${AsyncTree.printArguments(node)}) (${node.elapsedTime}ms)`);
-
-        let abortOnFailure = false;
-        if (result instanceof Error) {
-          abortOnFailure = result.abortOnFailure || Utils.isUndefined(result.abortOnFailure);
-        }
 
         if (abortOnFailure) {
           return this.done(result);
@@ -102,6 +108,7 @@ class AsyncTree {
   }
 
   done(err = null) {
+    this.emit('asynctree:finished', this);
     this.empty();
     this.createRootNode();
 
@@ -126,8 +133,27 @@ class AsyncTree {
     return false;
   }
 
+  static get argFilters() {
+    return {
+      setValue(...args) {
+        if (args.length === 4) {
+          args[2] = '<redacted>';
+        } else if (args.length === 3) {
+          args[1] = '<redacted>';
+        }
+
+        return args;
+      }
+    };
+  }
+
   static printArguments(node) {
-    return node.args.map(function(arg) {
+    let args = node.args ? node.args.slice(0) : [];
+    if (AsyncTree.argFilters[node.name]) {
+      args = AsyncTree.argFilters[node.name](...args);
+    }
+
+    return args.map(function(arg) {
       if (arg === null || arg === undefined) {
         return arg;
       }
@@ -138,7 +164,7 @@ class AsyncTree {
         case 'string':
           return `'${arg}'`;
         case 'object':
-          return `{${Object.keys(arg).join(', ')}`;
+          return `{${Object.keys(arg).join(', ')}}`;
         default:
           return arg.toString();
       }
