@@ -78,7 +78,11 @@ router.get('/getpostbyid', (req, res) => {
   const postID = req.query.id || undefined;
   if(!postID) return console.error('No post specified');
 
-  Thread.findById(postID).populate('author', 'name').then(post => {
+  Thread.findById(postID)
+  .populate('author', 'name')
+  .populate('saves')
+  .exec()
+  .then(post => {
     if(post){
       Comment.count({thread: postID}).then(count => {
         res.send({...post._doc, commentCount: count}); 
@@ -203,5 +207,47 @@ router.post('/likeComment', (req, res) => {
   })
   .catch(err =>  console.log(err))
 })
+
+router.post('/saveThread', (req,res) => {
+  const postId = req.body.postId
+  const userId = req.body.userId
+
+  Thread.findById({_id: postId})
+  .then(thread => {
+    User.findById({_id: userId})
+    .then(user => {
+      thread.saves.push(user)
+      thread.save()
+    })
+    res.send(thread)
+  })
+  .catch(err => {
+    console.log(err)
+    res.sendStatus(404)
+  })
+
+})
+
+
+router.get('/getmyposts', (req, res) => {
+  const user = req.query.user || undefined;
+  if(!user) return console.error('No user specified');
+  let myPosts = [];
+  Thread.find()
+  .then(data => {
+    data.map(g=>{
+      // console.log({g})
+      if(g.saves.indexOf(user) != -1) {
+        myPosts.push(g._id);
+      }
+    });
+    Thread.find({ _id: { $in: myPosts }}).then(data => {
+      console.log(data)
+      res.send({data});
+    }).catch(err =>  console.log(err))
+
+  })
+  .catch(err =>  console.log(err))
+})  
 
 module.exports = router;

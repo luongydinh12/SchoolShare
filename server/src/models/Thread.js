@@ -15,7 +15,11 @@ const ThreadSchema = new Schema({
   },
   category: {
     type: String
-  }
+  },
+  saves:[{
+    type: Schema.Types.ObjectId,
+    ref: 'users'
+  }]
 }, { timestamps: true });
 var Thread = mongoose.model("thread", ThreadSchema)
 module.exports = Thread

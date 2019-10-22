@@ -24,6 +24,8 @@ class ViewPost extends Component {
     this.postReplyClick = this.postReplyClick.bind(this);
     this.closeReplyClick = this.closeReplyClick.bind(this);
     this.showCommentManagement = this.showCommentManagement.bind(this);
+    this.savePost = this.savePost.bind(this);
+    this.renderSave = this.renderSave.bind(this);
   }
 
   componentDidMount = () => {
@@ -60,10 +62,52 @@ class ViewPost extends Component {
           <p>{post.content}</p>
           {this.showCommentManagement(post.author._id)}
           {this.renderPostReplyBox()}{" "}
-
         </div>
       </>
     );
+  }
+
+  renderSave(post){
+    console.log(this.props.auth.user.id)
+    console.log(post.saves)
+    return(
+      <>
+          <div>
+          {!post.saves.find(user => user._id === this.props.auth.user.id) ? (
+                <h6
+                  style={{ color: "rgb(44, 127, 252)" }}
+                  href="/"
+                  onClick={e => this.savePost(post)}
+                >
+                 Save
+                </h6>
+              ) : <h6 style={{ color: "rgb(44, 127, 252)" }}
+              href="/"
+              // onClick={e => this.unsavePost(post)}
+            >
+             UnSave
+            </h6> }
+          </div> 
+          </>
+    );
+  }
+  savePost (post) {
+    //e.preventDefault();
+    const userId = this.props.auth.user.id;
+    const postId = post._id;
+    
+    const data = {
+      postId: postId,
+      userId: userId
+    }
+    console.log("MY DATA BEFORE postID "+data.postId)
+    console.log("MY DATA BEFORE UserID "+data.userId)
+    
+    axios
+    .post('/api/posts/saveThread', data)
+    .then(post => {
+
+  })
   }
   
   renderPostReplyBox() {
@@ -159,10 +203,11 @@ class ViewPost extends Component {
     const id = this.props.location.pathname.split("/")[3];
 
     let postHTML = <h4>Loading...</h4>;
-
+    let renderSave = <h4></h4>;
     const { post, loading, error } = this.state;
     if (post) {
       postHTML = this.renderPost(post);
+      renderSave = this.renderSave(post);
     }
     if (error) {
       postHTML = <h4>an error occured...</h4>;
@@ -208,10 +253,17 @@ class ViewPost extends Component {
             </div>
           </div>
 
+          
+
+
           <div className="row">
             <div className="col s12">{postHTML}</div>
+            <p style={{
+                  marginTop: "3rem",
+                  marginLeft: "30px"
+                }} >{renderSave}</p>
           </div>
-
+          
           {this.state.loading ||
           this.state.postingReply ||
           this.state.commentCount == 0 ? (
