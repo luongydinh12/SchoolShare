@@ -22,12 +22,6 @@ import { Link, Link as RouterLink } from 'react-router-dom';
 
 
 const drawerWidth = 240;
-const options = [
-  'EDIT PROFILE',
-  'DELETE',
-  'CALENDER',
-  'LOG OUT',
-];
 
 const useStyles = makeStyles(theme => ({
   root: {

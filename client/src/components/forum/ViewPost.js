@@ -309,7 +309,7 @@ class ViewPost extends Component {
     this.setState({ displayReplyBox: false, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: false});
   }
   showCommentManagement=(post)=> {
-    if((this.props.auth.user.id != post.author._id) || post.deleted) return (
+    if((this.props.auth.user.id !== post.author._id) || post.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
       </a></p>)

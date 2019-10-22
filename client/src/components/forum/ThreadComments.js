@@ -218,7 +218,7 @@ class RenderComment extends Component {
   }
 
   showCommentManagement(e){
-    if(this.props.auth.user.id != e || this.props.c.deleted) return (
+    if(this.props.auth.user.id !== e || this.props.c.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
       </a></p>)

@@ -76,14 +76,16 @@ class Dashboard extends Component {
           <div className="row">
             <div className="col s12 center-align ">
 
-              <img id="userAvatar" style={{
-                verticalAlign: "middle",
-                borderRadius: "50%",
-                width: "150px",
-                height: "150px",
-                textAlign: "center",
-                marginTop: "25px"
-              }} src={user.avatar} />
+              <img id="userAvatar"
+                  alt=""
+                  style={{
+                  verticalAlign: "middle",
+                  borderRadius: "50%",
+                  width: "150px",
+                  height: "150px",
+                  textAlign: "center",
+                  marginTop: "25px"
+                }} src={user.avatar} />
 
               <p className="userName" style={{
                 fontWeight: "bold",
@@ -112,26 +114,26 @@ class Dashboard extends Component {
 
               </div>
               <div className='section'>
-                  <Link to="/profilelist">
-                    <button className="btn btn-large waves-effect waves-light hoverable green accent-3">
-                      View Users
+                <Link to="/profilelist">
+                  <button className="btn btn-large waves-effect waves-light hoverable green accent-3">
+                    View Users
                 </button>
-                  </Link>
+                </Link>
 
 
-                  <button
-                    onClick={this.onLogoutClick}
-                    className="btn btn-large waves-effect waves-light hoverable green accent-3"
-                  >
-                    Logout
+                <button
+                  onClick={this.onLogoutClick}
+                  className="btn btn-large waves-effect waves-light hoverable green accent-3"
+                >
+                  Logout
             </button>
 
-                  <button
-                    onClick={this.onDeleteClick}
-                    className="btn btn-large waves-effect waves-light hoverable green accent-3">
-                    Delete Account
+                <button
+                  onClick={this.onDeleteClick}
+                  className="btn btn-large waves-effect waves-light hoverable green accent-3">
+                  Delete Account
             </button>
-            
+
               </div>
             </div>
           </div>

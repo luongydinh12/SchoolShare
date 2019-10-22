@@ -33,7 +33,7 @@ class Category extends Component {
     const page = _page ? _page : this.state.page;
     axios
       .get(
-        (!searchTerm || searchTerm == "")?
+        (!searchTerm || searchTerm === "")?
         encodeURI("/api/posts/getpostsforcat?catId=" + id + "&page=" + page)
         : encodeURI("/api/posts/getpostsforcat?catId=" + id + "&page=" + page +"&search=" + searchTerm)
         )
@@ -135,7 +135,6 @@ class Category extends Component {
               <h4
                 className="center-text"
                 style={{
-                  marginLeft: "10px",
                   fontFamily: "Urbana",
                   marginLeft: "15px"
                 }}
