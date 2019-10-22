@@ -19,27 +19,13 @@ class ViewPost extends Component {
       displayDeleteConfirm: false
     };
 
-    this.getPost = this.getPost.bind(this);
-    this.renderPost = this.renderPost.bind(this);
-    this.renderPostReplyBox = this.renderPostReplyBox.bind(this);
-    this.renderEditTitleBox = this.renderEditTitleBox.bind(this);
-    this.submitPostReply = this.submitPostReply.bind(this);
-    this.submitPostEditTitle = this.submitPostEditTitle.bind(this);
-    this.submitPostEditDesc = this.submitPostEditDesc.bind(this);
-    this.submitPostDelete = this.submitPostDelete.bind(this);
-    this.postReplyClick = this.postReplyClick.bind(this);
-    this.editTitleClick = this.editTitleClick.bind(this);
-    this.editDescClick = this.editDescClick.bind(this);
-    this.postDeleteClick = this.postDeleteClick.bind(this);
-    this.closeAll = this.closeAll.bind(this);
-    this.showCommentManagement = this.showCommentManagement.bind(this);
   }
 
   componentDidMount = () => {
     this.getPost();
   };
 
-  getPost() {
+  getPost=()=>{
     this.setState({ loading: true });
 
     const id = this.props.location.pathname.split("/")[3];
@@ -59,7 +45,7 @@ class ViewPost extends Component {
       });
   }
 
-  renderPost(post) {
+  renderPost=(post)=> {
     return (
       <>
         <div className="postContent">
@@ -79,7 +65,7 @@ class ViewPost extends Component {
     );
   }
   
-  renderPostReplyBox() {
+  renderPostReplyBox=()=> {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
       return (
@@ -110,7 +96,7 @@ class ViewPost extends Component {
     );
   }
 
-  submitPostReply(e) {
+  submitPostReply=(e)=> {
     e.preventDefault();
     this.setState({ postingReply: true });
     console.log({ state: this.state });
@@ -136,7 +122,7 @@ class ViewPost extends Component {
       });
   }
   
-  renderEditTitleBox() {
+  renderEditTitleBox=()=> {
     if (!this.state.displayEditTitle) return undefined;
     if (this.state.postingReply) {
       return (
@@ -167,7 +153,7 @@ class ViewPost extends Component {
     );
   }
 
-  submitPostEditTitle(e) {
+  submitPostEditTitle=(e)=> {
     e.preventDefault();
     this.setState({ postingReply: true });
     console.log({ state: this.state });
@@ -179,7 +165,10 @@ class ViewPost extends Component {
         newtitle: this.state.postReplyValue
       })
       .then(({ data }) => {
-        this.state.post.title = this.state.postReplyValue;
+        var p=this.state.post
+        p.title=this.state.postReplyValue
+        this.setState({post:p})
+        //this.state.post.title = this.state.postReplyValue;
       })
       .catch(err => {})
       .finally(() => {
@@ -191,7 +180,7 @@ class ViewPost extends Component {
       });
   }
 
-  renderEditDescBox() {
+  renderEditDescBox=()=> {
     if (!this.state.displayEditDesc) return undefined;
     if (this.state.postingReply) {
       return (
@@ -222,7 +211,7 @@ class ViewPost extends Component {
     );
   }
 
-  submitPostEditDesc(e) {
+  submitPostEditDesc=(e)=> {
     e.preventDefault();
     this.setState({ postingReply: true });
     console.log({ state: this.state });
@@ -234,7 +223,10 @@ class ViewPost extends Component {
         newdesc: this.state.postReplyValue
       })
       .then(({ data }) => {
-        this.state.post.content = this.state.postReplyValue;
+        var p=this.state.post
+        p.content=this.state.postReplyValue
+        this.setState({post:p})
+       // this.state.post.content = this.state.postReplyValue;
       })
       .catch(err => {})
       .finally(() => {
@@ -246,7 +238,7 @@ class ViewPost extends Component {
       });
   }
 
-  renderDeleteConfirmation() {
+  renderDeleteConfirmation=()=> {
     if (!this.state.displayDeleteConfirm) return undefined;
     if (this.state.postingDelete) {
       return (
@@ -270,7 +262,7 @@ class ViewPost extends Component {
     );
   }
 
-  submitPostDelete(e) {
+  submitPostDelete=(e)=> {
     e.preventDefault();
     this.setState({ postingReply: true });
     console.log({ state: this.state });
@@ -281,7 +273,10 @@ class ViewPost extends Component {
         id: thread
       })
       .then(({ data }) => {
-        this.state.post.deleted = true;
+        var p=this.state.post
+        p.deleted=true
+        this.setState({post:p})
+//        this.state.post.deleted = true;
       })
       .catch(err => {})
       .finally(() => {
@@ -293,7 +288,7 @@ class ViewPost extends Component {
       });
   }
 
-  postReplyClick(e) {
+  postReplyClick=(e)=> {
     e.preventDefault();
     this.setState({ displayReplyBox: true, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: false, postReplyValue: ""});
   }
@@ -301,19 +296,19 @@ class ViewPost extends Component {
     e.preventDefault();
     this.setState({ displayReplyBox: false, displayEditTitle: true, displayEditDesc: false, displayDeleteConfirm: false, postReplyValue: this.state.post.title});
   }
-  editDescClick(e) {
+  editDescClick=(e)=> {
     e.preventDefault();
     this.setState({ displayReplyBox: false, displayEditTitle: false, displayEditDesc: true, displayDeleteConfirm: false, postReplyValue: this.state.post.content});
   }
-  postDeleteClick(e) {
+  postDeleteClick=(e)=> {
     e.preventDefault();
     this.setState({ displayReplyBox: false, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: true});
   }
-  closeAll(e) {
+  closeAll=(e)=> {
     e.preventDefault();
     this.setState({ displayReplyBox: false, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: false});
   }
-  showCommentManagement(post){
+  showCommentManagement=(post)=> {
     if((this.props.auth.user.id != post.author._id) || post.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply

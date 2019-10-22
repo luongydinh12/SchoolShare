@@ -10,12 +10,6 @@ import NavBar from './NavBar';
 
 
 
-const options = [
-  'EDIT PROFILE',
-  'DELETE',
-  'CALENDER',
-  'LOG OUT',
-];
 class Dashboard extends Component {
 
   onLogoutClick = e => {
