@@ -3,32 +3,17 @@ import { oAuthLogin } from "../../actions/authActions"
 import { connect } from "react-redux";
 import io from 'socket.io-client'
 
-// const local="http://localhost"
-// const remote="https://schoolshare.me"
-const socket = io("https://schoolshare.me")
-//const socket=io(remote+":5050")
+const local = "http://localhost"
+const socket = io("http://localhost:5050/")
+
 
 
 export class OAuth extends Component {
-  constructor() {
-    super();
-    this.sendSocketIO = this.sendSocketIO.bind(this);
-    this.receiveSocketIo = this.receiveSocketIo.bind(this);
-    this.startAuthGoogle = this.startAuthGoogle.bind(this);
-    this.openPopupGoogle = this.openPopupGoogle.bind(this);
-    this.startAuthFacebook = this.startAuthFacebook.bind(this);
-    this.openPopupFacebook = this.openPopupFacebook.bind(this);
-    this.oAuthLogin = oAuthLogin;
-  }
-  componentDidMount() {
-    //console.log("oauth.js props: ",this.props.history.test)
-  }
-
-  sendSocketIO() {
+  sendSocketIO = () => {
     socket.emit('example_message', 'demo');
     this.receiveSocketIo();
   }
-  receiveSocketIo() {
+  receiveSocketIo = () => {
     socket.on('google', (response) => {
       oAuthLogin(response);
       window.location.reload();
@@ -38,50 +23,32 @@ export class OAuth extends Component {
       window.location.reload();
     });
   }
-  startAuthGoogle() {
+  startAuth = (e) => {
     this.setState({ popup: true })
-    this.openPopupGoogle();
+    //console.log(e.target.value)
+    this.openPopup(e.target.value)
   }
-  startAuthFacebook() {
-    this.setState({ popup: true })
-    this.openPopupFacebook();
-  }
-  openPopupGoogle() {
+ 
+  openPopup = (provider) => {
     const width = 600, height = 600
     const left = (window.innerWidth / 2) - (width / 2)
     const top = (window.innerHeight / 2) - (height / 2)
     console.log(socket.id);
     this.sendSocketIO();
-    const url = `http://SchoolShare.me:5000/api/users/google?socketId=${socket.id}`;
-  //  const url=remote+`:5000/api/users/google?socketId=${socket.id}`;
+    const url = local + `:5000/api/users/${provider}?socketId=${socket.id}`
+    //const url = `http://SchoolShare.me:5000/api/users/google?socketId=${socket.id}`;
     return window.open(url, '',
       `toolbar=no, location=no, directories=no, status=no, menubar=no, 
         scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
         height=${height}, top=${top}, left=${left}`
     )
   }
-  openPopupFacebook() {
-    const width = 600, height = 600
-    const left = (window.innerWidth / 2) - (width / 2)
-    const top = (window.innerHeight / 2) - (height / 2)
-    console.log(socket.id);
-    this.sendSocketIO();
-    const url = `https://schoolshare.me/api/users/facebook?socketId=${socket.id}`;
-   // const url=remote+`:5000/api//users/facebook?socketId=${socket.id}`;
-    return window.open(url, '',
-      `toolbar=no, location=no, directories=no, status=no, menubar=no, 
-        scrollbars=no, resizable=no, copyhistory=no, width=${width}, 
-        height=${height}, top=${top}, left=${left}`
-    )
-  }
-
-
-
 
   render() {
     return (
       <div>
-        <button onClick={this.startAuthGoogle}
+        <button onClick={this.startAuth}
+          value={"google"}
           style={{
             marginLeft: "0rem",
             width: "150px",
@@ -94,7 +61,8 @@ export class OAuth extends Component {
         >
           Google
     </button>
-        <button onClick={this.startAuthFacebook}
+        <button onClick={this.startAuth}
+          value={"facebook"}
           style={{
             marginLeft: "2rem",
             width: "150px",
