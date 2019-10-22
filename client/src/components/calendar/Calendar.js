@@ -16,7 +16,7 @@ class Calendar extends React.Component {
     this.state = {
       calendarWeekends: true,
       calendarEvents: [],
-      date: null,
+      date: '',
       allDay: null,
       title: 'def',
       desc: '',
