@@ -1,8 +1,8 @@
-import React, { Component, Fragment } from 'react';
 import axios from 'axios';
+import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import NavBar from '../dashboard/NavBar'
+import NavBar from '../dashboard/NavBar';
 class MySaves extends Component {
     state = {
         posts: null,
@@ -22,7 +22,7 @@ class MySaves extends Component {
 
     render() {
         let postList = <h4 style ={{fontFamily: "Urbana",}}>Loading...</h4>
-        console.log(posts)
+        //console.log(posts)
         const { posts, error } = this.state;
         if (posts) {
             postList = posts.map(post => {
