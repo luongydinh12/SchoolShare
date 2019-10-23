@@ -46,7 +46,7 @@ class Profile extends Component {
                 Back to Dashboard
               </Link>
             </div>
-            <div className="col s1 offset-s4" >
+            <div className="col s4 offset-s2" >
               <this.FriendButton />
             </div>
           </div>
