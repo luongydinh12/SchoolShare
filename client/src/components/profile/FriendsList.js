@@ -27,7 +27,7 @@ class FriendsList extends Component {
     FriendSearch = () => {
         return (
             <div className="search">
-                <input id="search" placeholder="Name"
+                <input id="search" placeholder="Search"
                     onChange={this.handleSearch}
                     required type="text" />
             </div>)
