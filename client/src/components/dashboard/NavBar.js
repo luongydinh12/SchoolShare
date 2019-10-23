@@ -38,12 +38,12 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import clsx from 'clsx';
 
 const drawerWidth = 240;
-const options = [
-  'EDIT PROFILE',
-  'DELETE',
-  'CALENDER',
-  'LOG OUT',
-];
+// const options = [
+//   'EDIT PROFILE',
+//   'DELETE',
+//   'CALENDER',
+//   'LOG OUT',
+// ];
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -148,18 +148,18 @@ export default () => {
           <Typography variant="h6" className={classes.title}>
             School Share
           </Typography>
-          {/* <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
+          <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             marginTop: "2rem",
             marginBottom: "1.4rem",
-            color:"black"
+            // color:"black"
           }}>
             Groups
-              </Link> */}
+              </Link>
 
-          {/* <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
+          <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
@@ -168,7 +168,7 @@ export default () => {
             marginLeft: 16,
           }}>
             FORUM
-              </Link> */}
+              </Link>
           <Link to="/calendar" className="btn waves-effect waves-light hoverable green accent-3" style={{
             width: "150px",
             borderRadius: "3px",
@@ -196,45 +196,48 @@ export default () => {
           </IconButton>
         </div>
         <Divider />
+        
         <List>
-          {['Edit profile', 'View calender', 'Log out', 'Delete'].map((text, index) => (
+          {['Edit', 'View calender', 'Log out', 'Delete'].map((text, index) => (
 
-<Link to="/Edit profile" className= " accent-3" style={{
+<Link to="/edit-profile" className= " accent-3" style={{
   width: "200px",
   borderRadius: "3px",
   letterSpacing: "1.5px",
   marginTop: "2rem"
 }}>
-
-<Link to="/Log out" className= " accent-3" style={{
+{/*
+ <Link to="/Log out" className= " accent-3" style={{
   width: "200px",
   borderRadius: "3px",
   letterSpacing: "1.5px",
   marginTop: "2rem",
   marginLeft: "1rem"
-}}>
+}}></Link>
+
 <Link to="/Delete " className= " accent-3" style={{
   width: "200px",
   borderRadius: "3px",
   letterSpacing: "1.5px",
   marginTop: "2rem",
   marginLeft: "1rem"
-}}>
+}}> */}
 
             <ListItem button key={text}>
               <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
             </Link>
-            </Link>
-            </Link>
+            // </Link>
+            // </Link>
           ))}
         </List>
         <Divider />
-        <List>
-          {['Group', 'Forum', 'Calender'].map((text, index) => (
+        {/* <List>
+          {['Edit', 'View calender', 'Log out', 'Delete'].map((text, index) => (
+            
 
-         <Link to="/groups" className= " accent-3" style={{
+         <Link to="/Forum" className= " accent-3" style={{
           width: "150px",
           borderRadius: "3px",
           letterSpacing: "1.5px",
@@ -242,22 +245,23 @@ export default () => {
           marginBottom: "1.4rem",
           marginLeft: 16,
         }}>
-          <Link to="/forum" className=" accent-3" style={{
+          <Link to="/Log out" className=" accent-3" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             marginTop: "2rem",
             marginBottom: "1.4rem",
             marginLeft: 16,
+            
           }}>
-            {/* <Link to="/Calender" className=" accent-3" style={{
+            <Link to="/Delete" className=" accent-3" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
             marginTop: "2rem",
             marginBottom: "1.4rem",
             marginLeft: 16,
-          }}></Link> */}
+          }}></Link>
             
          
             <ListItem button key={text}>
@@ -267,7 +271,7 @@ export default () => {
             </Link>
             </Link>
           ))}
-        </List>
+        </List> */}
       </Drawer>
     </div>
   );
