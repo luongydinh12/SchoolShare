@@ -19,7 +19,9 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import clsx from 'clsx';
 import React from 'react';
 import { Link, Link as RouterLink } from 'react-router-dom';
-
+import EditIcon from '@material-ui/icons/Edit';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 const drawerWidth = 240;
 // const options = [
@@ -106,64 +108,71 @@ export default () => {
   const classes = useStyles();
   return (
     <div className={classes.root}>
-    <CssBaseline />
-    <AppBar
-      position="fixed"
-      className={clsx(classes.appBar, {
-        [classes.appBarShift]: open,
-      })}
-    >
-      <Toolbar>
-        <IconButton
-          color="inherit"
-          aria-label="open drawer"
-          onClick={handleDrawerOpen}
-          edge="start"
-          className={clsx(classes.menuButton, open && classes.hide)}
-        >
-          <MenuIcon />
-        </IconButton>
-        <RouterLink to="/dashboard">
-        <img
-          width="200"
-          alt="Logo"
-          src="/images/logos/logo--white.png"
-        />
-        </RouterLink>
-          <Typography variant="h6" className={classes.title}>
-
-          </Typography>
-          <Link to="/groups" className="btn waves-effect waves-light hoverable white" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            // color:"black"
-          }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        className={clsx(classes.appBar, {
+          [classes.appBarShift]: open
+        })}
+      >
+        <Toolbar>
+          <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            onClick={handleDrawerOpen}
+            edge="start"
+            className={clsx(classes.menuButton, open && classes.hide)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <div></div>
+          <RouterLink to="/dashboard" >
+            <img width="200" alt="Logo" src="/images/logos/logo--white.png" />
+          </RouterLink>
+          <Typography variant="h6" className={classes.title}></Typography>
+          <Link
+            to="/groups"
+            className="btn waves-effect waves-light hoverable green accent-3"
+            style={{
+              width: "150px",
+              borderRadius: "3px",
+              letterSpacing: "1.5px",
+              marginTop: "2rem",
+              marginBottom: "1.4rem"
+              // color:"black"
+            }}
+          >
             Groups
-              </Link>
+          </Link>
 
-          <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            marginLeft: 16,
-          }}>
+          <Link
+            to="/forum"
+            className="btn waves-effect waves-light hoverable green accent-3"
+            style={{
+              width: "150px",
+              borderRadius: "3px",
+              letterSpacing: "1.5px",
+              marginTop: "2rem",
+              marginBottom: "1.4rem",
+              marginLeft: 16
+            }}
+          >
             FORUM
-              </Link>
-          <Link to="/calendar" className="btn waves-effect waves-light hoverable green accent-3" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            marginLeft: 16,
-          }}>
+          </Link>
+          <Link
+            to="/calendar"
+            className="btn waves-effect waves-light hoverable green accent-3"
+            style={{
+              width: "150px",
+              borderRadius: "3px",
+              letterSpacing: "1.5px",
+              marginTop: "2rem",
+              marginBottom: "1.4rem",
+              marginLeft: 16
+            }}
+          >
             CALENDAR
-              </Link>
+          </Link>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -172,50 +181,46 @@ export default () => {
         anchor="left"
         open={open}
         classes={{
-          paper: classes.drawerPaper,
+          paper: classes.drawerPaper
         }}
       >
         <div className={classes.drawerHeader}>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {theme.direction === "ltr" ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
           </IconButton>
         </div>
         <Divider />
 
         <List>
-          {['Edit', 'View calender', 'Log out', 'Delete'].map((text, index) => (
+          <ListItem button component="a" href="/edit-profile" >
+            {/* <Link to="/edit-profile" className= " accent-3" style={{ }}> Edit Profile </Link> */}
+            <ListItemIcon>
+             <EditIcon /> 
+             </ListItemIcon>
+          <ListItemText primary={"Edit Profile"} />
+          </ListItem>
 
-<Link to="/edit-profile" className= " accent-3" style={{
-  width: "200px",
-  borderRadius: "3px",
-  letterSpacing: "1.5px",
-  marginTop: "2rem"
-}}>
-{/*
- <Link to="/Log out" className= " accent-3" style={{
-  width: "200px",
-  borderRadius: "3px",
-  letterSpacing: "1.5px",
-  marginTop: "2rem",
-  marginLeft: "1rem"
-}}></Link>
 
-<Link to="/Delete " className= " accent-3" style={{
-  width: "200px",
-  borderRadius: "3px",
-  letterSpacing: "1.5px",
-  marginTop: "2rem",
-  marginLeft: "1rem"
-}}> */}
+          <ListItem button key={"text1"}>
+            <ListItemIcon>
+              <DeleteForeverIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Delete Account"} />
+          </ListItem>
 
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-            </Link>
-            // </Link>
-            // </Link>
-          ))}
+
+          <ListItem button key={"text2"}>
+            <ListItemIcon>
+              <ExitToAppIcon />
+            </ListItemIcon>
+            <ListItemText primary={"Logout"} />
+          </ListItem>
+
+
         </List>
         <Divider />
         {/* <List>

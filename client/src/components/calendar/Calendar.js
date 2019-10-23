@@ -7,7 +7,7 @@ import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from "@fullcalendar/interaction";
 import axios from 'axios';
 import M from 'materialize-css'
-
+import NavBar from '../dashboard/NavBar'
 
 class Calendar extends React.Component {
   calendarComponentRef = React.createRef()
@@ -61,6 +61,9 @@ class Calendar extends React.Component {
   render() {
     return (
       <div>
+        <div style={{marginBottom: "4rem",}}>
+          <NavBar />
+        </div>
         <div className='modal'>
           <div className='modal-content'>
             <h4>Event</h4>

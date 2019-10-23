@@ -13,7 +13,7 @@ class Forum extends Component {
     console.log(this.props.match);
     return (
       <div>
-      <NavBar/>
+        <NavBar/>
         <div className="container" style={{}}>
           <Link
             to="/dashboard"
