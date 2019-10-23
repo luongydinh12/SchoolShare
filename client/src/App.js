@@ -31,9 +31,6 @@ import Forum from "./components/forum/Forum";
 import Calendar from "./components/calendar/Calendar";
 import MySaves from "./components/forum/MySaves";
 
-// import io from 'socket.io-client'
-// const keys = require("../package.json");
-// const socket=io("https://localhost:5050")
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
   // Set auth token header auth
@@ -59,40 +56,10 @@ class App extends Component {
       <Provider store={store}>
         <Router>
           <div className="App">
-            <Navbar />
-            <Route exact path="/" component={Landing} />
-            <Route exact path="/register" component={Register} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/oauth" component={OAuth} />
-            <Route path="/forum" component={Forum} />
-            <Route exact path="/profile/:handle" component={Profile} />
-            <Route exact path="/profilelist" component={ProfilesList} />
-            <Route exact path="/friendslist" component={FriendsList} />
-            <Route path="/groups" component={Groups} />
-            <Route path="/calendar" component={Calendar} />
-            <Route path="/mygroups" component={MyGroups} />
-            <Route path="/mysaves" component={MySaves} />
-            <Route path="/create-category" exact component={CreateCategory} />
             <Switch>
-              <PrivateRoute exact path="/dashboard" component={Dashboard} />
+              <Route exact path={['/login', '/register', '/not-found', '', '/']} component={LandingContainer} />
+              <Route component={DefaultContainer} />
             </Switch>
-
-            <Switch>
-              <PrivateRoute
-                exact
-                path="/create-profile"
-                component={CreateProfile}
-              />
-            </Switch>
-            <Switch>
-              <PrivateRoute
-                exact
-                path="/edit-profile"
-                component={EditProfile}
-              />
-            </Switch>
-
-            <Route exact path="/not-found" component={NotFound} />
           </div>
         </Router>
       </Provider>
@@ -100,4 +67,35 @@ class App extends Component {
   }
 }
 
+const LandingContainer = () => {
+  return (
+    <div className='container'>
+      <Route exact path="/" component={Landing} />
+      <Route exact path="/register" component={Register} />
+      <Route exact path="/login" component={Login} />
+      <Route exact path="/not-found" component={NotFound} />
+    </div>)
+}
+const DefaultContainer = () => {
+  return (
+    <div className='container'>
+      <Navbar />
+      <Switch>
+        <PrivateRoute path="/forum" component={Forum} />
+        <PrivateRoute exact path="/profile/:handle" component={Profile} />
+        <PrivateRoute exact path="/profilelist" component={ProfilesList} />
+        <PrivateRoute exact path="/friendslist" component={FriendsList} />
+        <PrivateRoute path="/groups" component={Groups} />
+        <PrivateRoute path="/calendar" component={Calendar} />
+        <PrivateRoute path="/mygroups" component={MyGroups} />
+        <PrivateRoute path="/mysaves" component={MySaves} />
+        <PrivateRoute path="/create-category" exact component={CreateCategory} />
+        <PrivateRoute exact path="/dashboard" component={Dashboard} />
+        <PrivateRoute exact path="/create-profile" component={CreateProfile} />
+        <PrivateRoute exact path="/edit-profile" component={EditProfile} />
+        <Route exact path="/not-found" component={NotFound} />
+      </Switch>
+    </div>
+  )
+}
 export default App;
