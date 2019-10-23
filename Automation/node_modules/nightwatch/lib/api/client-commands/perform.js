@@ -48,12 +48,12 @@
 const EventEmitter = require('events');
 
 class Perform extends EventEmitter {
-  command(callback) {
+  command(callback = function() {}) {
     let doneCallback;
     let asyncHookTimeout = this.client.settings.globals.asyncHookTimeout;
 
-    this.timeoutId = setTimeout(function() {
-      throw new Error(`Timeout while waiting (${asyncHookTimeout}ms) for the .perform() command callback to be called.`);
+    this.timeoutId = setTimeout(() => {
+      this.emit('error', new Error(`Timeout while waiting (${asyncHookTimeout}ms) for the .perform() command callback to be called.`));
     }, asyncHookTimeout);
 
     if (callback.length === 0) {

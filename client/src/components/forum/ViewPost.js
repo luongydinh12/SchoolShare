@@ -1,9 +1,8 @@
-import React, { Component } from 'react';
 import axios from 'axios';
+import React, { Component } from 'react';
+import { Row, Textarea, ProgressBar } from 'react-materialize';
 import { connect } from 'react-redux';
-import { Textarea, Row, Button } from 'react-materialize';
 import ThreadComments from "./ThreadComments";
-import Modal from 'react-materialize/lib/Modal';
 
 class ViewPost extends Component {
   constructor(props) {
@@ -14,23 +13,19 @@ class ViewPost extends Component {
       commentCount: 0,
       loading: true,
       error: false,
-      displayReplyBox: false
+      displayReplyBox: false,
+      displayEditTitle: false,
+      displayEditDesc: false,
+      displayDeleteConfirm: false
     };
 
-    this.getPost = this.getPost.bind(this);
-    this.renderPost = this.renderPost.bind(this);
-    this.renderPostReplyBox = this.renderPostReplyBox.bind(this);
-    this.submitPostReply = this.submitPostReply.bind(this);
-    this.postReplyClick = this.postReplyClick.bind(this);
-    this.closeReplyClick = this.closeReplyClick.bind(this);
-    this.showCommentManagement = this.showCommentManagement.bind(this);
   }
 
   componentDidMount = () => {
     this.getPost();
   };
 
-  getPost() {
+  getPost=()=>{
     this.setState({ loading: true });
 
     const id = this.props.location.pathname.split("/")[3];
@@ -50,27 +45,74 @@ class ViewPost extends Component {
       });
   }
 
-  renderPost(post) {
+  renderPost=(post)=> {
     return (
       <>
         <div className="postContent">
           <p style={{ color: "#2BB673", fontWeight: 600 }}>
             {post.author.name}:
           </p>
-          <p>{post.content}</p>
-          {this.showCommentManagement(post.author._id)}
-          {this.renderPostReplyBox()}{" "}
+          <p style={post.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{post.deleted?"[Post Deleted]":post.content}</p>
+          {this.showCommentManagement(post)}
+          {this.renderPostReplyBox()}
+          {this.renderEditTitleBox()}
+          {this.renderEditDescBox()}
+          {this.renderDeleteConfirmation()}
+          {" "}
 
         </div>
       </>
     );
   }
+
+  renderSave(post){
+    console.log(this.props.auth.user.id)
+    console.log(post.saves)
+    return(
+      <>
+          <div>
+          {!post.saves.find(user => user._id === this.props.auth.user.id) ? (
+                <h6
+                  style={{ color: "rgb(44, 127, 252)" }}
+                  href="/"
+                  onClick={e => this.savePost(post)}
+                >
+                 Save
+                </h6>
+              ) : <h6 style={{ color: "rgb(44, 127, 252)" }}
+              href="/"
+              // onClick={e => this.unsavePost(post)}
+            >
+             UnSave
+            </h6> }
+          </div> 
+          </>
+    );
+  }
+  savePost (post) {
+    //e.preventDefault();
+    const userId = this.props.auth.user.id;
+    const postId = post._id;
+    
+    const data = {
+      postId: postId,
+      userId: userId
+    }
+    console.log("MY DATA BEFORE postID "+data.postId)
+    console.log("MY DATA BEFORE UserID "+data.userId)
+    
+    axios
+    .post('/api/posts/saveThread', data)
+    .then(post => {
+
+  })
+  }
   
-  renderPostReplyBox() {
+  renderPostReplyBox=()=> {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -90,14 +132,14 @@ class ViewPost extends Component {
           Reply
         </a>
         {"\t | \t"}
-        <a href="/" onClick={this.closeReplyClick}>
+        <a href="/" onClick={this.closeAll}>
           Cancel Reply
         </a>
       </div>
     );
   }
 
-  submitPostReply(e) {
+  submitPostReply=(e)=> {
     e.preventDefault();
     this.setState({ postingReply: true });
     console.log({ state: this.state });
@@ -122,16 +164,195 @@ class ViewPost extends Component {
         });
       });
   }
-  postReplyClick(e) {
-    e.preventDefault();
-    this.setState({ displayReplyBox: true });
+  
+  renderEditTitleBox=()=> {
+    if (!this.state.displayEditTitle) return undefined;
+    if (this.state.postingReply) {
+      return (
+        <ProgressBar/>
+      );
+    }
+    return (
+      <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
+        <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          <Textarea
+            s={12}
+            m={12}
+            l={12}
+            xl={12}
+            placeholder={"Type your new thread title here"}
+            value={this.state.postReplyValue}
+            onChange={e => this.setState({ postReplyValue: e.target.value })}
+          />
+        </Row>
+        <a href="/" onClick={this.submitPostEditTitle}>
+          Edit
+        </a>
+        {"\t | \t"}
+        <a href="/" onClick={this.closeAll}>
+          Cancel
+        </a>
+      </div>
+    );
   }
-  closeReplyClick(e) {
+
+  submitPostEditTitle=(e)=> {
     e.preventDefault();
-    this.setState({ displayReplyBox: false });
+    this.setState({ postingReply: true });
+    console.log({ state: this.state });
+
+    const thread = this.props.location.pathname.split("/")[3];
+    axios
+      .post("/api/posts/editTitle", {
+        id: thread,
+        newtitle: this.state.postReplyValue
+      })
+      .then(({ data }) => {
+        var p=this.state.post
+        p.title=this.state.postReplyValue
+        this.setState({post:p})
+        //this.state.post.title = this.state.postReplyValue;
+      })
+      .catch(err => {})
+      .finally(() => {
+        this.setState({
+          displayEditTitle: false,
+          postingReply: false,
+          postReplyValue: ""
+        });
+      });
   }
-  showCommentManagement(e){
-    if(this.props.auth.user.id != e) return (
+
+  renderEditDescBox=()=> {
+    if (!this.state.displayEditDesc) return undefined;
+    if (this.state.postingReply) {
+      return (
+        <ProgressBar/>
+      );
+    }
+    return (
+      <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
+        <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          <Textarea
+            s={12}
+            m={12}
+            l={12}
+            xl={12}
+            placeholder={"Type your new thread title here"}
+            value={this.state.postReplyValue}
+            onChange={e => this.setState({ postReplyValue: e.target.value })}
+          />
+        </Row>
+        <a href="/" onClick={this.submitPostEditTitle}>
+          Edit
+        </a>
+        {"\t | \t"}
+        <a href="/" onClick={this.closeAll}>
+          Cancel
+        </a>
+      </div>
+    );
+  }
+
+  submitPostEditDesc=(e)=> {
+    e.preventDefault();
+    this.setState({ postingReply: true });
+    console.log({ state: this.state });
+
+    const thread = this.props.location.pathname.split("/")[3];
+    axios
+      .post("/api/posts/editDesc", {
+        id: thread,
+        newdesc: this.state.postReplyValue
+      })
+      .then(({ data }) => {
+        var p=this.state.post
+        p.content=this.state.postReplyValue
+        this.setState({post:p})
+       // this.state.post.content = this.state.postReplyValue;
+      })
+      .catch(err => {})
+      .finally(() => {
+        this.setState({
+          displayEditDesc: false,
+          postingReply: false,
+          postReplyValue: ""
+        });
+      });
+  }
+
+  renderDeleteConfirmation=()=> {
+    if (!this.state.displayDeleteConfirm) return undefined;
+    if (this.state.postingDelete) {
+      return (
+        <ProgressBar/>
+      );
+    }
+    return (
+      <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>
+        <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+          Are you sure you want to delete this thread?{"\t"}
+          <a href="/" onClick={this.submitPostDelete}>
+            Delete
+          </a>
+          {"\t | \t"}
+          <a href="/" onClick={this.closeAll}>
+            Cancel
+          </a>
+        </Row>
+        
+      </div>
+    );
+  }
+
+  submitPostDelete=(e)=> {
+    e.preventDefault();
+    this.setState({ postingReply: true });
+    console.log({ state: this.state });
+
+    const thread = this.props.location.pathname.split("/")[3];
+    axios
+      .post("/api/posts/deleteThread", {
+        id: thread
+      })
+      .then(({ data }) => {
+        var p=this.state.post
+        p.deleted=true
+        this.setState({post:p})
+//        this.state.post.deleted = true;
+      })
+      .catch(err => {})
+      .finally(() => {
+        this.setState({
+          displayDeleteConfirm: false,
+          postingReply: false,
+          postReplyValue: ""
+        });
+      });
+  }
+
+  postReplyClick=(e)=> {
+    e.preventDefault();
+    this.setState({ displayReplyBox: true, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: false, postReplyValue: ""});
+  }
+  editTitleClick(e) {
+    e.preventDefault();
+    this.setState({ displayReplyBox: false, displayEditTitle: true, displayEditDesc: false, displayDeleteConfirm: false, postReplyValue: this.state.post.title});
+  }
+  editDescClick=(e)=> {
+    e.preventDefault();
+    this.setState({ displayReplyBox: false, displayEditTitle: false, displayEditDesc: true, displayDeleteConfirm: false, postReplyValue: this.state.post.content});
+  }
+  postDeleteClick=(e)=> {
+    e.preventDefault();
+    this.setState({ displayReplyBox: false, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: true});
+  }
+  closeAll=(e)=> {
+    e.preventDefault();
+    this.setState({ displayReplyBox: false, displayEditTitle: false, displayEditDesc: false, displayDeleteConfirm: false});
+  }
+  showCommentManagement=(post)=> {
+    if((this.props.auth.user.id !== post.author._id) || post.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
       </a></p>)
@@ -141,11 +362,15 @@ class ViewPost extends Component {
           Reply
         </a>
         {"\t | \t"}
-          <a href="/" onClick={this.postReplyClick}>
-            Edit
+          <a href="/" onClick={this.editTitleClick}>
+            Edit Title
           </a>
         {"\t | \t"}
-          <a href="/" onClick={this.postReplyClick}>
+          <a href="/" onClick={this.editDescClick}>
+            Edit Description
+          </a>
+        {"\t | \t"}
+          <a href="/" onClick={this.postDeleteClick}>
             Delete
           </a>
       </p>
@@ -159,16 +384,17 @@ class ViewPost extends Component {
     const id = this.props.location.pathname.split("/")[3];
 
     let postHTML = <h4>Loading...</h4>;
-
+    let renderSave = <h4> </h4>;
     const { post, loading, error } = this.state;
     if (post) {
       postHTML = this.renderPost(post);
+      renderSave = this.renderSave(post);
     }
     if (error) {
       postHTML = <h4>an error occured...</h4>;
     }
     if (loading) {
-      postHTML = <h4>Loading</h4>;
+      postHTML = <ProgressBar/>;
     }
 
     return (
@@ -208,13 +434,20 @@ class ViewPost extends Component {
             </div>
           </div>
 
+          
+
+
           <div className="row">
             <div className="col s12">{postHTML}</div>
+            <p style={{
+                  marginTop: "3rem",
+                  marginLeft: "30px"
+                }} >{renderSave}</p>
           </div>
-
+          
           {this.state.loading ||
           this.state.postingReply ||
-          this.state.commentCount == 0 ? (
+          this.state.commentCount === 0 ? (
             undefined
           ) : (
             <div className="row">

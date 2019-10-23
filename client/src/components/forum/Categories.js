@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import NavBar from '../dashboard/NavBar'
+import { Link } from "react-router-dom";
 
 class ForumCategories extends Component {
     render() {

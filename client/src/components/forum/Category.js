@@ -1,5 +1,6 @@
-import React, { Component, Fragment } from "react";
+import { TextInput, Row, Select, Pagination, ProgressBar} from 'react-materialize';
 import axios from "axios";
+import React, { Component } from "react";
 import { Link } from "react-router-dom";
 
 class Category extends Component {
@@ -12,25 +13,29 @@ class Category extends Component {
       totalPosts: 0,
       totalPages: 0,
       loading: true,
-      error: false
+      error: false,
+      currentSearch: "",
+      searchOption: 1,
     };
 
     this.getPosts = this.getPosts.bind(this);
-    this.nextPage = this.nextPage.bind(this);
-    this.previousPage = this.previousPage.bind(this);
   }
 
   componentDidMount = () => {
     this.getPosts();
   };
 
-  getPosts(_page = undefined) {
+  getPosts(searchTerm,searchOption = 1, _page = undefined) {
     this.setState({ loading: true });
 
     const id = this.props.location.pathname.split("/")[2];
     const page = _page ? _page : this.state.page;
     axios
-      .get("/api/posts/getpostsforcat?catId=" + id + "&page=" + page)
+      .get(
+        (!searchTerm || searchTerm === "")?
+        encodeURI("/api/posts/getpostsforcat?catId=" + id + "&page=" + page)
+        : encodeURI("/api/posts/getpostsforcat?catId=" + id + "&page=" + page +"&searchoption="+searchOption+"&search=" + searchTerm)
+        )
       .then(({ data }) => {
         this.setState({ ...data, loading: false, error: false });
       })
@@ -39,27 +44,10 @@ class Category extends Component {
       });
   }
 
-  nextPage() {
-    if (this.state.page < this.state.totalPages) {
-      const page = this.state.page + 1;
-      this.setState({ page });
-      this.getPosts(page);
-    }
-  }
-  previousPage() {
-    if (this.state.page > 0) {
-      const page = this.state.page - 1;
-      this.setState({ page });
-      this.getPosts(page);
-    }
-  }
-
   render() {
     console.log(this.props.match);
 
     let postList = <h4>Loading...</h4>;
-    let nextButton = null,
-      prevButton = null;
 
     const { posts, totalPosts, totalPages, loading, error } = this.state;
     if (posts && totalPosts) {
@@ -75,51 +63,11 @@ class Category extends Component {
     if (error) {
       postList = <h4>an error occured...</h4>;
     }
-    if (totalPosts == 0) {
-      postList = <h4>No posts yet in this category.</h4>;
+    if (totalPosts === 0) {
+      postList = <h4>No posts found in this category.</h4>;
     }
     if (loading) {
-      postList = <h4>Loading</h4>;
-    }
-    if (totalPages > 1 && this.state.page < totalPages) {
-      nextButton = (
-        <button
-          onClick={e => {
-            e.preventDefault();
-            this.nextPage();
-          }}
-          className="btn btn-large waves-effect waves-light hoverable green accent-3"
-          style={{
-            width: "170px",
-            borderRadius: "1px",
-            marginTop: "3rem",
-            marginLeft: "1rem",
-            marginBottom: "2rem"
-          }}
-        >
-          Next Page
-        </button>
-      );
-    }
-    if (totalPages > 1 && this.state.page > 1) {
-      prevButton = (
-        <button
-          onClick={e => {
-            e.preventDefault();
-            this.previousPage();
-          }}
-          className="btn btn-large waves-effect waves-light hoverable green accent-3"
-          style={{
-            width: "170px",
-            borderRadius: "1px",
-            marginTop: "3rem",
-            marginLeft: "1rem",
-            marginBottom: "2rem"
-          }}
-        >
-          Previous Page
-        </button>
-      );
+      postList = <ProgressBar/>;
     }
     return (
       <div className="container">
@@ -129,7 +77,6 @@ class Category extends Component {
               <h4
                 className="center-text"
                 style={{
-                  marginLeft: "10px",
                   fontFamily: "Urbana",
                   marginLeft: "15px"
                 }}
@@ -170,25 +117,45 @@ class Category extends Component {
               </Link>
             </div>
           </div>
-
-          <div className="row">
+          <div className="row" style={{display: "inline", verticalAlign:"middle"}}>
+          <Row style={{ boxShadow: "0px 0px 1px 0px darkseagreen" }}>
+            <TextInput
+              s={10}
+             m={10}
+             l={10}
+             xl={10}
+             className="searchBar"
+             placeholder={"Search"}
+             value={this.state.currentSearch}
+             onChange={e => {this.setState({ currentSearch: e.target.value, page: 1}); 
+                 this.getPosts(e.target.value, this.state.searchOption, 1)}}
+               />
+            <Select 
+              name="searchOptions"
+              onChange = {e => {this.setState({searchOption: e.target.value}); console.log(e.target.value)}}>
+                  <option value="1">
+                    Search by Title
+                  </option>
+                  <option value="2">
+                    Search by Author
+                  </option>
+              </Select>
+            </Row>
             <div className="col s12" style={{ marginTop: "2rem" }}>
               {postList}
             </div>
           </div>
-          {this.state.totalPages ? (
-            <div className="row">
-              <div
-                className="col s12"
-                style={{ marginTop: "2rem", textAlign: "right" }}
-              >
-                <p style={{ display: "inline", marginTop: "3rem" }}>
-                  Page: {this.state.page}
-                </p>
-                {prevButton}
-                {nextButton}
-              </div>
-            </div>
+          {this.state.totalPages && !this.state.error ? (
+            <Pagination className="pageList"
+              activePage={this.state.page}
+              items={this.state.totalPages}
+              maxButtons={5}
+              onSelect = {e =>
+                {this.setState({page: e});
+                  console.log(this.state.totalPosts);
+                 this.getPosts(this.state.currentSearch, this.state.searchOption, e)}
+              }
+            />
           ) : null}
         </div>
       </div>

@@ -163,9 +163,8 @@ class RenderComment extends Component {
     );
   }
 
-  likeComment (e, commentId) {
+  likeComment (e, commentId, userId) {
     e.preventDefault();
-    const userId = localStorage.getItem('userId')
     const data = {
       commentId: commentId,
       userId: userId
@@ -219,7 +218,7 @@ class RenderComment extends Component {
   }
 
   showCommentManagement(e){
-    if(this.props.auth.user.id != e || this.props.c.deleted) return (
+    if(this.props.auth.user.id !== e || this.props.c.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
       </a></p>)
@@ -317,10 +316,8 @@ class RenderComment extends Component {
   render() {
     console.log("RenderComment", { state: this.state });
     const { c: comment } = this.props;
-    const loggedInUserId = localStorage.getItem('userId');
-    console.log(comment._id, loggedInUserId, comment.content)
-    console.log("My current userID /localStorge "+loggedInUserId)
-    console.log("My current userID /auth.user "+this.props.auth.user.id)
+    const loggedInUserId = this.props.auth.user.id;
+    //console.log(comment._id, loggedInUserId, comment.content)
     return (
       <>
         <div className="row" style={{ marginBottom: 0 }}>
@@ -332,17 +329,28 @@ class RenderComment extends Component {
               <div style={{ color: "#2BB673", fontWeight: 600 }}>
                 {comment.author.name}:
               </div>
-              <p>{comment.deleted?"[comment deleted]":comment.content}</p>
+              <p style={comment.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{comment.deleted?"[comment deleted]":comment.content}</p>
               {this.showCommentManagement(comment.author._id)}
               {this.renderPostReplyBox()}
               {this.renderPostEditBox(comment._id)}
               {this.renderDeleteConfirmation()}
 
-              <span style={{color: 'rgb(44, 127, 252)', margin: '10px', width: 'fit-content'}}>Liked By {comment.likes.length}</span>
-
-              {!(comment.likes.find(el => el.user === loggedInUserId))?<a style={{color: 'rgb(44, 127, 252)', marginLeft: 20}} href="/" onClick={e => this.likeComment(e, comment._id)}>
-                  Like</a>:null}
+              <span style={{color: "rgb(44, 127, 252)", margin: "0px", width: "fit-content" }}>
+                {comment.likes.length}{" "}
+                {comment.likes.length >= 2 ? (<a style={{ color: "rgb(44, 127, 252)" }}>Likes</a>) : 
+                (<a style={{ color: "rgb(44, 127, 252)" }}>Like</a>)}
+              </span>
               
+              {!comment.likes.find(el => el.user === loggedInUserId) ? (
+                <a
+                  style={{ color: "rgb(44, 127, 252)", marginLeft: 15 }}
+                  href="/"
+                  onClick={e => this.likeComment(e, comment._id, loggedInUserId)}
+                >
+                  <img src="https://img.favpng.com/11/18/20/like-button-clip-art-facebook-portable-network-graphics-computer-icons-png-favpng-5iCL2atihCg2iTcgnC2n0NGg8.jpg" alt="Like" height="17" width="17"></img>
+                </a>
+              ) : null}
+
               {Array.isArray(this.state.comments) &&
               this.state.comments.length ? (
                 <ThreadComments id={comment._id} auth={this.props.auth} />

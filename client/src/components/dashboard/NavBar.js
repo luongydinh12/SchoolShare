@@ -1,41 +1,25 @@
 
-import React, { Component } from 'react';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import MenuIcon from '@material-ui/icons/Menu';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { logoutUser, deleteUser } from "../../actions/authActions";
-import moment from 'moment'; //npm install moment --save (CLIENT)
-import { Link } from 'react-router-dom';
-import { getCurrentProfile, deleteAccount } from '../../actions/profileActions';
-import Spinner from '../common/Spinner';
-import ProfileActions from './ProfileActions';
-import { Link as RouterLink } from 'react-router-dom';
-
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-// for calendar
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import List from '@material-ui/core/List';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import Drawer from '@material-ui/core/Drawer';
+import IconButton from '@material-ui/core/IconButton';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import MailIcon from '@material-ui/icons/Mail';
-import Drawer from '@material-ui/core/Drawer';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import MenuIcon from '@material-ui/icons/Menu';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
 import clsx from 'clsx';
+import React from 'react';
+import { Link, Link as RouterLink } from 'react-router-dom';
+
 
 const drawerWidth = 240;
 // const options = [
@@ -51,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   appBar: {
+    backgroundColor: "#2BB673",
     transition: theme.transitions.create(['margin', 'width'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
@@ -139,16 +124,16 @@ export default () => {
           <MenuIcon />
         </IconButton>
         <RouterLink to="/dashboard">
-          {/* <img
+        <img
           width="200"
-          alt="School Share"
+          alt="Logo"
           src="/images/logos/logo--white.png"
-          /> */}
+        />
         </RouterLink>
           <Typography variant="h6" className={classes.title}>
-            School Share
+
           </Typography>
-          <Link to="/groups" className="btn waves-effect waves-light hoverable green accent-3" style={{
+          <Link to="/groups" className="btn waves-effect waves-light hoverable white" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
@@ -196,7 +181,7 @@ export default () => {
           </IconButton>
         </div>
         <Divider />
-        
+
         <List>
           {['Edit', 'View calender', 'Log out', 'Delete'].map((text, index) => (
 
@@ -235,7 +220,7 @@ export default () => {
         <Divider />
         {/* <List>
           {['Edit', 'View calender', 'Log out', 'Delete'].map((text, index) => (
-            
+
 
          <Link to="/Forum" className= " accent-3" style={{
           width: "150px",
@@ -252,7 +237,7 @@ export default () => {
             marginTop: "2rem",
             marginBottom: "1.4rem",
             marginLeft: 16,
-            
+
           }}>
             <Link to="/Delete" className=" accent-3" style={{
             width: "150px",
@@ -262,14 +247,12 @@ export default () => {
             marginBottom: "1.4rem",
             marginLeft: 16,
           }}></Link>
-            
-         
+
+
             <ListItem button key={text}>
-            <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
-            </Link>
-            </Link>
           ))}
         </List> */}
       </Drawer>

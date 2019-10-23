@@ -21,6 +21,7 @@ import CreateProfile from "./components/profile/CreateProfile";
 import EditProfile from "./components/profile/EditProfile";
 import Profile from "./components/profile/Profile";
 import ProfilesList from "./components/profile/ProfilesList"
+import FriendsList from './components/profile/FriendsList'
 import NotFound from "./components/not-found/NotFound";
 
 import Groups from "./components/Groups/Groups";
@@ -28,6 +29,7 @@ import MyGroups from "./components/Groups/MyGroups";
 import CreateCategory from "./components/Groups/CreateCategory";
 import Forum from "./components/forum/Forum";
 import Calendar from "./components/calendar/Calendar";
+import MySaves from "./components/forum/MySaves";
 
 // import io from 'socket.io-client'
 // const keys = require("../package.json");
@@ -65,9 +67,11 @@ class App extends Component {
             <Route path="/forum" component={Forum} />
             <Route exact path="/profile/:handle" component={Profile} />
             <Route exact path="/profilelist" component={ProfilesList} />
+            <Route exact path="/friendslist" component={FriendsList} />
             <Route path="/groups" component={Groups} />
             <Route path="/calendar" component={Calendar} />
             <Route path="/mygroups" component={MyGroups} />
+            <Route path="/mysaves" component={MySaves} />
             <Route path="/create-category" exact component={CreateCategory} />
             <Switch>
               <PrivateRoute exact path="/dashboard" component={Dashboard} />
