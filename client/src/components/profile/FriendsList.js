@@ -16,7 +16,7 @@ class FriendsList extends Component {
         Axios.get('/api/friends/listFriends')
             .then((res) => {
                 this.setState({ friends: res.data })
-                this.search(document.querySelector('#search').value)
+                this.handleSearch()
             })
     }
 
@@ -24,24 +24,11 @@ class FriendsList extends Component {
         this.getFriendsList()
     }
 
-    FriendSearch = () => {
-        return (
-            <div className="search">
-                <input id="search" placeholder="Search"
-                    onChange={this.handleSearch}
-                    required type="text" />
-            </div>)
-    }
-
-    handleSearch = (e) => {
-        this.search(e.target.value)
-    }
-
-    search = (query) => {
-        if (query === null) return this.setState({ filteredFriends: null })
+    handleSearch = () => {
+        const query = document.querySelector('#search').value
         const friends = this.state.friends
-        const f = friends.filter((cur) => {
-            if (cur.friend.handle.includes(query)) return cur
+        const f = (query === null) ? null : friends.filter((cur) => {
+            if (cur.friend.handle.toUpperCase().includes(query.toUpperCase())) return cur
         })
         this.setState({ filteredFriends: f })
     }
@@ -58,7 +45,11 @@ class FriendsList extends Component {
                 <div className="card white" style={{ padding: 5 }}>
                     <h4 className="center-text"
                     >Friends List</h4>
-                    <this.FriendSearch />
+                    <div className="search">
+                        <input id="search" placeholder="Search"
+                            onChange={this.handleSearch}
+                            required type="text" />
+                    </div>
                     <ul className="collection">
                         {list}
                     </ul>
