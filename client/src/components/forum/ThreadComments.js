@@ -341,7 +341,7 @@ class RenderComment extends Component {
                 (<a style={{ color: "rgb(44, 127, 252)" }}>Like</a>)}
               </span>
               
-              {!comment.likes.find(el => el.user === loggedInUserId) ? (
+              {!comment.deleted&&!comment.likes.find(el => el.user === loggedInUserId) ? (
                 <a
                   style={{ color: "rgb(44, 127, 252)", marginLeft: 15 }}
                   href="/"
