@@ -27,6 +27,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexGrow: 1,
+    paddingBottom:150
   },
   appBar: {
     backgroundColor: "#2BB673",

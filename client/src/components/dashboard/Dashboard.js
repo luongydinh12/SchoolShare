@@ -6,7 +6,6 @@ import { Link } from 'react-router-dom';
 import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
-import NavBar from './NavBar';
 
 
 
@@ -71,7 +70,6 @@ class Dashboard extends Component {
 
     return (
       <div>
-        <NavBar />
         <div className="section">
           <div className="row">
             <div className="col s12 center-align ">
