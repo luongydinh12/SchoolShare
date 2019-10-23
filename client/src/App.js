@@ -70,10 +70,12 @@ class App extends Component {
 const LandingContainer = () => {
   return (
     <div className='container'>
-      <Route exact path="/" component={Landing} />
-      <Route exact path="/register" component={Register} />
-      <Route exact path="/login" component={Login} />
-      <Route exact path="/not-found" component={NotFound} />
+      <Switch>
+        <Route exact path="/" component={Landing} />
+        <Route exact path="/register" component={Register} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/not-found" component={NotFound} />
+      </Switch>
     </div>)
 }
 const DefaultContainer = () => {
