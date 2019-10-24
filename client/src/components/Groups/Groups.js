@@ -7,6 +7,7 @@ import GroupChat from './GroupChat';
 import { Link } from 'react-router-dom';
 import CreateGroup from './CreateGroup';
 import SearchGroups from './SearchGroups';
+import NavBar from '../dashboard/NavBar'
 
 class Groups extends Component {
     state={
@@ -22,6 +23,7 @@ class Groups extends Component {
     render() {
         return (
             <div >
+                <NavBar/>
                 <div className="container" style={{
                     marginLeft: "auto",
                     marginRight: "auto"

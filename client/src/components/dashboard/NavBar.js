@@ -132,7 +132,7 @@ export default () => {
           <Typography variant="h6" className={classes.title}></Typography>
           <Link
             to="/groups"
-            className="btn waves-effect waves-light hoverable green accent-3"
+            className="btn waves-effect waves-light hoverable blue accent-3"
             style={{
               width: "150px",
               borderRadius: "3px",
@@ -147,7 +147,7 @@ export default () => {
 
           <Link
             to="/forum"
-            className="btn waves-effect waves-light hoverable green accent-3"
+            className="btn waves-effect waves-light hoverable blue accent-3"
             style={{
               width: "150px",
               borderRadius: "3px",
@@ -161,7 +161,7 @@ export default () => {
           </Link>
           <Link
             to="/calendar"
-            className="btn waves-effect waves-light hoverable green accent-3"
+            className="btn waves-effect waves-light hoverable blue accent-3"
             style={{
               width: "150px",
               borderRadius: "3px",
