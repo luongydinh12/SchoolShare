@@ -207,7 +207,8 @@ export default () => {
 
           <ListItem button key={"text1"}>
             <ListItemIcon>
-              <DeleteForeverIcon />
+            <InboxIcon />
+              {/* <DeleteForeverIcon /> */}
             </ListItemIcon>
             <ListItemText primary={"Delete Account"} />
           </ListItem>
@@ -215,7 +216,8 @@ export default () => {
 
           <ListItem button key={"text2"}>
             <ListItemIcon>
-              <ExitToAppIcon />
+            <InboxIcon />
+              {/* <ExitToAppIcon /> */}
             </ListItemIcon>
             <ListItemText primary={"Logout"} />
           </ListItem>
