@@ -132,7 +132,7 @@ class Category extends Component {
                />
             <Select 
               name="searchOptions"
-              onChange = {e => {this.setState({searchOption: e.target.value}); console.log(e.target.value)}}>
+              onChange = {e => {this.setState({searchOption: e.target.value, page: 1}); this.getPosts(this.state.currentSearch, e.target.value, 1)}}>
                   <option value="1">
                     Search by Title
                   </option>
