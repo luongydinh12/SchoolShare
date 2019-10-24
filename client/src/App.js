@@ -30,6 +30,7 @@ import CreateCategory from "./components/Groups/CreateCategory";
 import Forum from "./components/forum/Forum";
 import Calendar from "./components/calendar/Calendar";
 import MySaves from "./components/forum/MySaves";
+import PrivateChat from './components/privateChat/PrivateChat'
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -95,6 +96,7 @@ const DefaultContainer = () => {
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/create-profile" component={CreateProfile} />
         <PrivateRoute exact path="/edit-profile" component={EditProfile} />
+        <PrivateRoute exact path="/private-chat" component={PrivateChat} />
         <Route exact path="/not-found" component={NotFound} />
       </Switch>
     </div>

@@ -6,7 +6,7 @@ import Spinner from "../common/Spinner"
 class FriendsList extends Component {
     state = {
         friends: null,
-        filteredFriends: null
+        displayedFriends: null,
     }
     componentDidMount = () => {
         this.getFriendsList()
@@ -15,8 +15,7 @@ class FriendsList extends Component {
     getFriendsList = () => {
         Axios.get('/api/friends/listFriends')
             .then((res) => {
-                this.setState({ friends: res.data })
-                this.handleSearch()
+                this.setState({ friends: res.data, displayedFriends:res.data })
             })
     }
 
@@ -27,17 +26,16 @@ class FriendsList extends Component {
     handleSearch = () => {
         const query = document.querySelector('#search').value
         const friends = this.state.friends
-        const f = (query === null) ? null : friends.filter((cur) => {
+        const f = (query === null) ? friends : friends.filter((cur) => {
             if (cur.friend.handle.toUpperCase().includes(query.toUpperCase())) return cur
         })
-        this.setState({ filteredFriends: f })
+        this.setState({ displayedFriends: f })
     }
 
     render() {
-        const { friends, filteredFriends } = this.state
-        if (friends) { //if friends list has been retrieved
-            const fr = filteredFriends ? filteredFriends : friends
-            const list = fr.map((f) => {
+        const { displayedFriends } = this.state
+        if (displayedFriends) { //if friends list has been retrieved
+            const list = displayedFriends.map((f) => {
                 return (<ProfileListItemFragment {...f} key={f.friend._id} cb={this.friendButtonCb} />)
             })
 
@@ -46,7 +44,7 @@ class FriendsList extends Component {
                     <h4 className="center-text"
                     >Friends List</h4>
                     <div className="search">
-                        <input id="search" placeholder="Search"
+                        <input id="search" placeholder="Search" autocomplete="off"
                             onChange={this.handleSearch}
                             required type="text" />
                     </div>
