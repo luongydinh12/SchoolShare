@@ -3,6 +3,7 @@ import Axios from 'axios'
 import { connect } from 'react-redux'
 import { Link } from "react-router-dom";
 import Spinner from "../common/Spinner"
+import CreateChat from './CreateChat'
 import FriendsList from '../profile/FriendsList';
 
 class PrivateChat extends Component {
@@ -41,7 +42,6 @@ class PrivateChat extends Component {
         const list = displayedChats ? displayedChats.map((c) => {
             return (
                 <Fragment key={c._id}>
-                    <div className="row">
                         <li className="collection-item">
                             <Link to={'/groups/chat/' + c._id}                    >
                                 <span className="title">{c.name}</span>
@@ -49,7 +49,6 @@ class PrivateChat extends Component {
                             <p>{c.desc}</p>
                             <p>Members: {c.membersName}</p>
                         </li>
-                    </div>
                 </Fragment>
             )
         })
@@ -69,10 +68,11 @@ class PrivateChat extends Component {
                     <h4 className="center-text"
                     >Chats</h4>
                     {content}
-                    <div className='row'>
+                    <CreateChat />
+                    {/* <div className='row'>
                         <div className='col'><button className="btn-floating btn-large waves-effect waves-light red"><i className="material-icons">add</i></button></div>
                         <div className='col'> <h5>Create New</h5></div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         )

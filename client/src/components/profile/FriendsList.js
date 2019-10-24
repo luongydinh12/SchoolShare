@@ -15,7 +15,7 @@ class FriendsList extends Component {
     getFriendsList = () => {
         Axios.get('/api/friends/listFriends')
             .then((res) => {
-                this.setState({ friends: res.data, displayedFriends:res.data })
+                this.setState({ friends: res.data, displayedFriends: res.data })
             })
     }
 
@@ -61,6 +61,7 @@ class FriendsList extends Component {
 class ProfileListItemFragment extends Component {
     render() {
         const friend = this.props.friend
+        const dontShowFriendButton = this.props.dontShowFriendButton
         return (
             <Fragment >
                 <div className="row">
@@ -69,17 +70,15 @@ class ProfileListItemFragment extends Component {
                             <img src={friend.avatar} alt="" className="circle" />
                             <Link to={'/profile/' + friend.handle}                    >
                                 <span className="title">{friend.handle}</span>                </Link>
-
                             <p>{friend.description}
                             </p>
                         </li>
                     </div>
-                    <div className="col s2">
-                        <FriendButton profileId={friend._id} cb={this.props.cb} />
-                    </div>
+                    {(dontShowFriendButton) ? null : <div className="col s2"><FriendButton profileId={friend._id} cb={this.props.cb} />     </div>}
                 </div>
             </Fragment>
         )
     }
 }
 export default FriendsList
+export { ProfileListItemFragment }
