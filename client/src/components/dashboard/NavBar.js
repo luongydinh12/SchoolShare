@@ -22,6 +22,7 @@ import { Link, Link as RouterLink } from 'react-router-dom';
 import EditIcon from '@material-ui/icons/Edit';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import {LogOutButton, DeleteUserButton} from './NavBarButtons'
 
 const drawerWidth = 240;
 // const options = [
@@ -214,55 +215,21 @@ export default () => {
           </ListItem>
 
 
-          <ListItem button key={"text2"}>
+          {/* <ListItem button key={"text2"}>
             <ListItemIcon>
             <InboxIcon />
-              {/* <ExitToAppIcon /> */}
+               <ExitToAppIcon /> 
             </ListItemIcon>
             <ListItemText primary={"Logout"} />
-          </ListItem>
+          </ListItem> */}
 
+          <LogOutButton />
+          <DeleteUserButton />
 
         </List>
         <Divider />
-        {/* <List>
-          {['Edit', 'View calender', 'Log out', 'Delete'].map((text, index) => (
-
-
-         <Link to="/Forum" className= " accent-3" style={{
-          width: "150px",
-          borderRadius: "3px",
-          letterSpacing: "1.5px",
-          marginTop: "2rem",
-          marginBottom: "1.4rem",
-          marginLeft: 16,
-        }}>
-          <Link to="/Log out" className=" accent-3" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            marginLeft: 16,
-
-          }}>
-            <Link to="/Delete" className=" accent-3" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            marginLeft: 16,
-          }}></Link>
-
-
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List> */}
       </Drawer>
     </div>
   );
 }
+
