@@ -17,13 +17,13 @@ import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import clsx from 'clsx';
-import React from 'react';
+import React,{Component} from 'react';
 import { Link, Link as RouterLink } from 'react-router-dom';
 import EditIcon from '@material-ui/icons/Edit';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import {LogOutButton, DeleteUserButton} from './NavBarButtons'
-
+import {connect} from 'react-redux'
+import { logoutUser } from "../../actions/authActions"
 const drawerWidth = 240;
 // const options = [
 //   'EDIT PROFILE',
@@ -224,7 +224,6 @@ export default () => {
           </ListItem> */}
 
           <LogOutButton />
-          <DeleteUserButton />
 
         </List>
         <Divider />
@@ -233,3 +232,28 @@ export default () => {
   );
 }
 
+
+
+class LogOutButton extends Component {
+  onLogoutClick = e => {
+      e.preventDefault()
+      this.props.logoutUser()
+  }
+  render() {
+      return (
+          <ListItem button key={"text1"} onClick={this.onLogoutClick}>
+              <ListItemIcon>
+                  <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Log Out"} />
+          </ListItem>
+      )
+  }
+}
+
+LogOutButton = connect(
+  (state) => ({
+      auth: state.auth
+  }),
+  { logoutUser }
+)(LogOutButton)
