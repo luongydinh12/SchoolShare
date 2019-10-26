@@ -66,8 +66,6 @@ class ViewPost extends Component {
   }
 
   renderSave(post){
-    console.log(this.props.auth.user.id)
-    console.log(post.saves)
     return(
       <>
           <div>
@@ -75,13 +73,13 @@ class ViewPost extends Component {
                 <h6
                   style={{ color: "rgb(44, 127, 252)" }}
                   href="/"
-                  onClick={e => this.savePost(post)}
+                  onClick={e => this.savePost(e, post)}
                 >
                  Save
                 </h6>
               ) : <h6 style={{ color: "rgb(44, 127, 252)" }}
               href="/"
-              // onClick={e => this.unsavePost(post)}
+              // onClick={e => this.unsavePost(e, post)}
             >
              UnSave
             </h6> }
@@ -89,8 +87,8 @@ class ViewPost extends Component {
           </>
     );
   }
-  savePost (post) {
-    //e.preventDefault();
+  savePost = (e, post) => {
+    e.preventDefault();
     const userId = this.props.auth.user.id;
     const postId = post._id;
     
@@ -98,13 +96,11 @@ class ViewPost extends Component {
       postId: postId,
       userId: userId
     }
-    console.log("MY DATA BEFORE postID "+data.postId)
-    console.log("MY DATA BEFORE UserID "+data.userId)
-    
+
     axios
     .post('/api/posts/saveThread', data)
-    .then(post => {
-
+    .then(res => {
+      this.getPost();
   })
   }
   
@@ -376,8 +372,6 @@ class ViewPost extends Component {
       </p>
     );
   }
-
-  // DELETE THREAD ()
 
   render() {
     console.log(this.props.match);
