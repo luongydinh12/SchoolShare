@@ -6,6 +6,9 @@ import FriendsList, { ProfileListItemFragment } from '../profile/FriendsList'
 class CreateChat extends Component {
     state = {
         friends: null,
+        chatName: '',
+        chatDesc: '',
+        checkedFriends: []
     }
     componentDidMount = () => {
         Axios.get('/api/friends/listFriends')
@@ -21,17 +24,44 @@ class CreateChat extends Component {
         console.log(e.target.value)
         console.log(e.target.checked)
     }
+    handleSubmit = (e) => {
+        e.preventDefault()
+        Axios.post('/api/groupchat/create',
+            {
+                chatName: this.state.chatName,
+                chatDesc: this.state.chatDesc,
+                checkedFriends: this.state.checkedFriends
+            }).then((res) => {
+                console.log(res)
+            })
+    }
+    handleCheckFriend = (e) => {
+        const val = e.target.value
+        const { checkedFriends } = this.state
+        const newCheckedFriends = (e.target.checked) ? [...checkedFriends, e.target.value] : checkedFriends.filter((f) => {
+            return (f._id === val)
+        })
+        this.setState({ checkedFriends: newCheckedFriends })
+    }
+    handleNameOnChange = (e) => {
+        const val = e.target.value
+        this.setState({ chatName: val })
+    }
+    handleDescOnChange = (e) => {
+        const val = e.target.value
+        this.setState({ chatDesc: val })
+    }
     render() {
         const { friends } = this.state
         if (friends) {
             const list = friends.map((f) => {
-                
-                if (f.status==='approved') return (
+
+                if (f.status === 'approved') return (
                     <div className='row' key={f.friend._id}>
                         <div className='col s10'>
-                            <ProfileListItemFragment {...f}  dontShowFriendButton={true} className='col s3'/>
+                            <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
                         </div>
-                        <label className='col s2'> 
+                        <label className='col s2'>
                             <input onChange={this.handleCheckFriend} value={f.friend._id} type="checkbox" />
                             <span>Add</span>
                         </label>
@@ -47,11 +77,11 @@ class CreateChat extends Component {
                     <div className='modal-content'>
                         <h4>New Chat</h4>
                         <div className="input-field col s6">
-                            <input id="chat_name" type="text" onChange={this.handleTitleOnChange} />
+                            <input id="chat_name" type="text" value={this.state.chatName} onChange={this.handleNameOnChange} />
                             <label htmlFor="chat_name">Chat Name</label>
                         </div>
                         <div className="input-field col s6">
-                            <textarea id="chat_desc" className="materialize-textarea" onChange={this.handleDescOnChange} />
+                            <textarea id="chat_desc" className="materialize-textarea" value={this.state.chatDesc} onChange={this.handleDescOnChange} />
                             <label htmlFor="chat_desc">Chat Description</label>
                         </div>
                     </div>

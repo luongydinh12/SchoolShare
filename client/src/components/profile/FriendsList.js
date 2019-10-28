@@ -44,7 +44,7 @@ class FriendsList extends Component {
                     <h4 className="center-text"
                     >Friends List</h4>
                     <div className="search">
-                        <input id="search" placeholder="Search" autocomplete="off"
+                        <input id="search" placeholder="Search" autoComplete="off"
                             onChange={this.handleSearch}
                             required type="text" />
                     </div>

@@ -62,7 +62,7 @@ app.use('/api/groups',groups);
 app.use('/api/posts',posts);
 app.use('/api/friends',friends)
 app.use('/api/calendar',calendarevents);
-app.use('/api/groupChat', groupChat)
+app.use('/api/groupchat', groupChat)
 
 const port = process.env.PORT || 5000;
 app.listen(port,() => console.log( ` TEst Server started on port ${port}`));

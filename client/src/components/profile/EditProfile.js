@@ -17,9 +17,6 @@ class CreateProfile extends Component {
       //email: '',
       errors: {}
     };
-
-    this.onChange = this.onChange.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -47,7 +44,7 @@ class CreateProfile extends Component {
     }
   }
 
-  onSubmit(e) {
+  onSubmit=(e)=> {
     e.preventDefault();
 
     const profileData = {
@@ -62,7 +59,7 @@ class CreateProfile extends Component {
     this.props.createProfile(profileData, this.props.history);
   }
 
-  onChange(e) {
+  onChange=(e) =>{
     this.setState({ [e.target.name]: e.target.value });
   }
 

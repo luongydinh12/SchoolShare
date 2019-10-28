@@ -10,12 +10,12 @@ const GroupChatSchema = new Schema({
     },
     owner: {
         type: Schema.Types.ObjectId,
-        ref: 'users',
+        ref: 'profile',
         required: true
     },
     members: [{
         type: Schema.Types.ObjectId,
-        ref: 'users',
+        ref: 'profile',
         required: true
     }],
     membersCanAdd: {
@@ -23,6 +23,13 @@ const GroupChatSchema = new Schema({
         default: false,
     }
 })
-
+GroupChatSchema.statics.getProfileChats = function (profileId, cb) {
+    return this.find({
+      $or: [
+          {owner:profileId}, 
+          {members:{"$in":[profileId]}}
+      ]
+    },cb)
+  }
 var GroupChat = mongoose.model('groupChats', GroupChatSchema)
 module.exports = GroupChat
