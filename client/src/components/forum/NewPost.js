@@ -1,8 +1,7 @@
-import React, { Component } from "react";
 import axios from "axios";
+import React, { Component } from "react";
+import { Row, Textarea, TextInput } from "react-materialize";
 import { connect } from "react-redux";
-import { TextInput, Textarea, Row } from "react-materialize";
-import { Link } from "react-router-dom";
 
 class NewPost extends Component {
   state = {

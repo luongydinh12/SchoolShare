@@ -87,9 +87,8 @@ class GroupList extends Component {
                 }}>Create Group </Link>
 
                     <h4 className="center-text" 
-                    style= {{marginLeft: "10px",
+                    style= {{marginLeft: "15px",
                     fontFamily: "Urbana",
-                    marginLeft: "15px",
                     }}>List of Groups</h4>
                     <div className="row">
                         <div className="col l9" style= {{marginTop: "2rem"}}>

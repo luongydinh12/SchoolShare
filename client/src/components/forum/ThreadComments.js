@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
 import { Textarea, Row } from "react-materialize";
+import likeIcon from '../../icons/Like/likeicon.jpg';
 
 class ThreadComments extends Component {
   constructor(props) {
@@ -218,7 +219,7 @@ class RenderComment extends Component {
   }
 
   showCommentManagement(e){
-    if(this.props.auth.user.id != e || this.props.c.deleted) return (
+    if(this.props.auth.user.id !== e || this.props.c.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
       </a></p>)
@@ -347,7 +348,7 @@ class RenderComment extends Component {
                   href="/"
                   onClick={e => this.likeComment(e, comment._id, loggedInUserId)}
                 >
-                  <img src="https://img.favpng.com/11/18/20/like-button-clip-art-facebook-portable-network-graphics-computer-icons-png-favpng-5iCL2atihCg2iTcgnC2n0NGg8.jpg" alt="Like" height="17" width="17"></img>
+                  <img src={likeIcon} alt="Like" height="17" width="17"></img>
                 </a>
               ) : null}
 
