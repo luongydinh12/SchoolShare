@@ -99,7 +99,7 @@ const DefaultContainer = () => {
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/create-profile" component={CreateProfile} />
         <PrivateRoute exact path="/edit-profile" component={EditProfile} />
-        <PrivateRoute exact path="/private-chat" component={PrivateChat} />
+        <PrivateRoute path="/private-chat" component={PrivateChat} />
         <Route exact path="/not-found" component={NotFound} />
       </Switch>
     </div>

@@ -14,15 +14,10 @@ class CreateChat extends Component {
         Axios.get('/api/friends/listFriends')
             .then((res) => {
                 this.setState({ friends: res.data })
-                this.openModal()
             })
     }
     openModal = (e) => {
         M.Modal.init(document.querySelector('.modal')).open()
-    }
-    handleCheckFriend = (e) => {
-        console.log(e.target.value)
-        console.log(e.target.checked)
     }
     handleSubmit = (e) => {
         e.preventDefault()
@@ -32,7 +27,7 @@ class CreateChat extends Component {
                 chatDesc: this.state.chatDesc,
                 checkedFriends: this.state.checkedFriends
             }).then((res) => {
-                console.log(res)
+                if (this.props.cb) this.props.cb()
             })
     }
     handleCheckFriend = (e) => {
