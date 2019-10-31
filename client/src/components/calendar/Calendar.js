@@ -48,15 +48,28 @@ class Calendar extends React.Component {
     })
       .then(result => {
         this.setState({date:null,allDay:null,title:null,def:null})
+        this.updateCalendar()
       })
       .catch(err => {
         console.log('Something went wrong')
       })
 
-    this.updateCalendar()
+    //this.updateCalendar()
   }
   openModal = (e) => {
     M.Modal.init(document.querySelector('.modal')).open()
+    document.getElementById('event_title').value = ""
+    document.getElementById('event_desc').value = ""
+    
+  }
+  viewEvent = (e) => {
+    console.log(e)
+    var elems = document.querySelector('.modal') 
+    M.Modal.init(elems).open()
+    document.getElementById('event_title').value = e.event.title
+    document.getElementById('event_desc').value = e.event.extendedProps.desc
+    
+    
   }
   render() {
     return (
@@ -93,6 +106,7 @@ class Calendar extends React.Component {
           weekends={this.state.calendarWeekends}
           events={this.state.calendarEvents}
           dateClick={this.handleDateClick}
+          eventClick={this.viewEvent}
         />
       </div>
     )
