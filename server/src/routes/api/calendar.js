@@ -10,8 +10,8 @@ router.get('/', (req, res)=>{
   res.send('calendar');
 });
 
-// @route GET api/posts/getallgroupcat
-// @desc list group categories from latest to the oldest
+// @route GET api/posts/getallevents
+// @desc list of events created by user
 // @access Users
 // @returns Array of Object(s)
 router.get('/getallevents', (req, res) => {
@@ -27,14 +27,18 @@ router.get('/getallevents', (req, res) => {
 
   })
 
-// @route POST api/posts/newforumpost
-// @desc Create a new thread
+// @route POST api/posts/newevent
+// @desc Create a new event
 // @access Users
 // @returns String and msg data(details)
 router.post('/newevent', (req, res) => {
   console.log({body: req.body})
-  const { title, start,desc, allDay, user } = req.body
-
+  //const { title, start,desc, allDay, user } = req.body
+  const title = req.body.title
+  const start = req.body.start
+  const desc = req.body.desc
+  const user = req.body.user
+  const allDay = req.body.allDay
   const newEvent = new CalendarEvent({
     title: title,
     desc:desc,
@@ -54,4 +58,51 @@ router.post('/newevent', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+// @route POST api/posts/deleteevent
+// @desc Delete given event
+// @access Calendar
+// @returns String and msg data(details)
+router.post('/deleteevent', (req, res) => {
+  const title = req.body.title
+  const start = req.body.start
+  const desc = req.body.desc
+  const user = req.body.user
+  console.log(user)
+  CalendarEvent.findOne({title: title, desc: desc, user: user, date: start}, (err, event) => {
+    if(event) {
+      console.log(event)
+      event.remove()
+      CalendarEvent.find({ user: user}).then(data => {
+        res.send({data});})
+    } else {
+      console.log(err)
+      res.send(404)
+    }
+  }) 
+})
+
+
+// @route POST api/posts/editmsg
+// @desc Edit message
+// @access Users
+// @returns msg data(details)
+router.post('/editevent', (req, res) => {
+  console.log({body: req.body})
+  const title = req.body.title
+  const start = req.body.start
+  const desc = req.body.desc
+  const user = req.body.user
+  CalendarEvent.findOne({title: title, user: user, date: start}, (err, event) => {
+    if(event) {
+      event.title = title;
+      event.desc = desc;
+      event.save()
+      CalendarEvent.find({ user: user}).then(data => {
+        res.send({data});})
+    } else {
+      console.log(err)
+      res.send(404)
+    }
+  })
+})
 module.exports = router;
