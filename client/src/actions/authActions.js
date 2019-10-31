@@ -14,9 +14,10 @@ export const registerUser = (userData, history) => dispatch => {
       })
     );
 };
-export const oAuthLogin = token => {
+export const oAuthLogin = token  => {
   console.log("in authactions.js", token);
   localStorage.setItem("jwtToken", token);
+  const decoded = jwt_decode(token);
   // Set token to Auth header
   setAuthToken(token);
 };
@@ -27,16 +28,16 @@ export const loginUser = userData => dispatch => {
     .then(res => {
       // Save to localStorage
       // Set token to localStorage
-      const { token,userId } = res.data;
+      const { token, userId } = res.data;
       console.log(token);
       localStorage.setItem("jwtToken", token);
       localStorage.setItem("userId", userId);
       // Set token to Auth header
       setAuthToken(token);
       // Decode token to get user data
-      const decoded = jwt_decode(token);
+      // const decoded = jwt_decode(token);
       // Set current user
-      dispatch(setCurrentUser(decoded));
+      // dispatch(setCurrentUser(decoded));
     })
     .catch(err =>
       dispatch({
@@ -70,9 +71,9 @@ export const logoutUser = () => dispatch => {
 
 export const deleteUser = () => dispatch => {
   axios.post("api/users/delete")
-    // .then(res => {
-    //   //console.log(res.data)
-    // })
+  // .then(res => {
+  //   //console.log(res.data)
+  // })
   localStorage.removeItem("jwtToken");
   setAuthToken(false);
   dispatch(setCurrentUser({}));
