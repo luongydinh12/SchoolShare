@@ -128,7 +128,7 @@ export default () => {
           <Typography variant="h6" className={classes.title}>
 
           </Typography>
-          <Link to="/groups" className="btn waves-effect waves-light hoverable white" style={{
+          <Link to="/private-chat" className="btn waves-effect waves-light hoverable white" style={{
             width: "150px",
             borderRadius: "3px",
             letterSpacing: "1.5px",
@@ -136,7 +136,7 @@ export default () => {
             marginBottom: "1.4rem",
             color:"black"
           }}>
-            Groups
+            Private Chat
               </Link>
 
           <Link to="/forum" className="btn waves-effect waves-light hoverable green accent-3" style={{
