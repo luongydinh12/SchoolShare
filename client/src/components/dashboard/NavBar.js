@@ -24,6 +24,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import {connect} from 'react-redux'
 import { logoutUser } from "../../actions/authActions"
+import {EditProfileButton} from './NavBarButtons'
 const drawerWidth = 240;
 // const options = [
 //   'EDIT PROFILE',
@@ -197,14 +198,9 @@ export default () => {
         <Divider />
 
         <List>
-          <ListItem button component="a" href="/edit-profile" >
-            {/* <Link to="/edit-profile" className= " accent-3" style={{ }}> Edit Profile </Link> */}
-            <ListItemIcon>
-             <EditIcon /> 
-             </ListItemIcon>
-          <ListItemText primary={"Edit Profile"} />
-          </ListItem>
+          
 
+          <EditProfileButton />
 
           <ListItem button key={"text1"}>
             <ListItemIcon>
