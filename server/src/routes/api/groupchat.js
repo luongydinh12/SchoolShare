@@ -24,9 +24,11 @@ Router.get('/getChats', auth, (req, res) => {
 Router.get('/chat/:chatId', auth, (req, res) => {
     const chatId = req.params.chatId
     GroupChat.findById(chatId)
-        .then((chat)=>{
+        .populate('owner')
+        .populate('members')
+        .then((chat) => {
             res.send(chat)
-        }).catch((err)=>{
+        }).catch((err) => {
             res.sendStatus(500)
         })
 })

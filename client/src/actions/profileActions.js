@@ -19,7 +19,7 @@ export const getCurrentProfile = () => (dispatch) => {
   dispatch(setProfileLoading())
   // Getting profile
   axios
-    .get('api/profile')
+    .get('/api/profile')
     // Dispatch GET_PROFILE to reducer
     .then(res => dispatch({
       type: GET_PROFILE,
