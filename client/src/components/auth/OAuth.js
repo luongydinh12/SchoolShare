@@ -4,16 +4,18 @@ import { connect } from "react-redux";
 import io from 'socket.io-client'
 
 const local = "http://localhost"
-const socket = io("http://localhost:5050/")
+// const socket = io("http://localhost:5050/")
 
 
 
 export class OAuth extends Component {
   sendSocketIO = () => {
+    const socket=this.props.socket
     socket.emit('example_message', 'demo');
     this.receiveSocketIo();
   }
   receiveSocketIo = () => {
+    const socket=this.props.socket
     socket.on('google', (response) => {
       oAuthLogin(response);
       window.location.reload();
@@ -30,6 +32,7 @@ export class OAuth extends Component {
   }
  
   openPopup = (provider) => {
+    const socket=this.props.socket
     const width = 600, height = 600
     const left = (window.innerWidth / 2) - (width / 2)
     const top = (window.innerHeight / 2) - (height / 2)

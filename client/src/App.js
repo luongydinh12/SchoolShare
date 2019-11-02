@@ -14,7 +14,7 @@ import Landing from "./components/layout/Landing";
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import OAuth from "./components/auth/OAuth";
-import PrivateRoute from "./components/private-route/PrivateRoute";
+import PrivateRoute, {PropsRoute} from "./components/private-route/PrivateRoute";
 import Dashboard from "./components/dashboard/Dashboard";
 
 //import { clearCurrentProfile } from "./actions/profileActions";
@@ -32,6 +32,9 @@ import Forum from "./components/forum/Forum";
 import Calendar from "./components/calendar/Calendar";
 import MySaves from "./components/forum/MySaves";
 import PrivateChat from './components/privateChat/PrivateChat'
+
+import io from 'socket.io-client'
+const socket = io("http://localhost:5050/")
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -77,7 +80,7 @@ const LandingContainer = () => {
       <Switch>
         <Route exact path="/" component={Landing} />
         <Route exact path="/register" component={Register} />
-        <Route exact path="/login" component={Login} />
+        <PropsRoute exact path="/login" component={Login} socket={socket}/>
         <Route exact path="/not-found" component={NotFound} />
       </Switch>
     </div>)
@@ -99,7 +102,7 @@ const DefaultContainer = () => {
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/create-profile" component={CreateProfile} />
         <PrivateRoute exact path="/edit-profile" component={EditProfile} />
-        <PrivateRoute path="/private-chat" component={PrivateChat} />
+        <PrivateRoute path="/private-chat" component={PrivateChat} socket={socket}/>
         <Route exact path="/not-found" component={NotFound} />
       </Switch>
     </div>

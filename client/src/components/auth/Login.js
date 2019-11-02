@@ -115,7 +115,7 @@ class Login extends Component {
               </div>
 
               <div className="col s12" style={{ paddingLeft: "11.250px" }}>
-                <OAuth />
+                <OAuth socket={this.props.socket}/>
               </div>
             </form>
           </div>

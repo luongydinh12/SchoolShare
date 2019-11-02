@@ -17,7 +17,6 @@ class ChatList extends Component {
     }
     componentWillReceiveProps(nextProps) {
         if (!nextProps.profile.loading) {
-            console.log(`PROFILE LOADED: ${JSON.stringify(this.props.profile)}`)
             this.setState({ loaded: this.checkLoaded() })
         }
     }
@@ -31,9 +30,6 @@ class ChatList extends Component {
             })
     }
     checkLoaded = () => {
-        console.log('checkLoaded')
-        console.log(this.props.profile.profile)
-        console.log(this.state.chats)
         return (this.props.profile.profile && this.state.chats)
     }
     SearchBar = () => {
@@ -75,7 +71,6 @@ class ChatList extends Component {
     }
     ChatList = () => {
         const { displayedChats } = this.state
-        console.log(`displayedChats: ${displayedChats}`)
         const profileId = this.props.profile.profile._id
         const list = displayedChats ? displayedChats.map((c) => {
             return (
@@ -125,4 +120,7 @@ class ChatList extends Component {
     }
 }
 
-export default connect((state) => ({ auth: state.auth, profile: state.profile }))(ChatList)
+const mapStateToProps = (state) => { 
+    return ({ auth: state.auth, profile: state.profile}) }
+
+export default connect(mapStateToProps)(ChatList)
