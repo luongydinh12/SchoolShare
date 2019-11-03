@@ -2,11 +2,30 @@ import Express from 'express'
 import Passport from 'passport'
 import JWT from 'jsonwebtoken'
 import GroupChat from '../../models/GroupChat'
+import GroupChatMessages from '../../models/GroupChatMessages'
 import User from '../../models/User'
 import Profile from '../../models/Profile'
 import Friend from '../../models/Friend'
 const Router = Express.Router()
 const auth = Passport.authenticate('jwt', { session: false })
+
+import io, { addSocketIdtoSession } from './socket.io'
+
+io.of('/chat').on('connection', (socket) => {
+    const room='testroom'
+    socket.on('join', (num) => {
+        console.log(`join room           ${socket.id}`)
+        socket.join(room)
+    })
+    socket.on('chatmsg', (message) => {
+        console.log(`got message from ${socket.id}`, message)
+        socket.emit('chatmsg','socketemit')
+        io.emit('chatmsg','ioemit')
+        io.in(room).emit('chatmsg','ioroomemit')
+        socket.in(room).emit('chatmsg','socketroomemit')
+
+    })
+})
 
 Router.get('/getChats', auth, (req, res) => {
     const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
@@ -16,7 +35,7 @@ Router.get('/getChats', auth, (req, res) => {
             .populate('members')
             .exec()
     }).then((chats) => {
-        console.log(`chats: ${chats}`)
+        // console.log(`chats: ${chats}`)
         res.send(chats)
     })
 })
@@ -49,10 +68,10 @@ Router.post('/create', auth, (req, res) => {
     )
 })
 
+Router.post('/submit')
 
 Router.post('/leaveOrDelete', auth, (req, res) => {
     const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
-    console.log(`req body: ${JSON.stringify(req.body)} tokenUser: ${JSON.stringify(tokenUser)}`)
     Profile.findById(req.body.profileId)
         .then((prof) => {
             if (!prof.user.equals(tokenUser.id)) throw Error('wrong profileid')
@@ -76,4 +95,4 @@ Router.post('/leaveOrDelete', auth, (req, res) => {
         )
 })
 
-module.exports = Router
+export default Router

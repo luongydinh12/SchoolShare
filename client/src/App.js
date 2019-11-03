@@ -35,6 +35,7 @@ import PrivateChat from './components/privateChat/PrivateChat'
 
 import io from 'socket.io-client'
 const socket = io("http://localhost:5050/")
+const chatSocket=io(`http://localhost:5050/chat`)
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -102,7 +103,7 @@ const DefaultContainer = () => {
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/create-profile" component={CreateProfile} />
         <PrivateRoute exact path="/edit-profile" component={EditProfile} />
-        <PrivateRoute path="/private-chat" component={PrivateChat} socket={socket}/>
+        <PrivateRoute path="/private-chat" component={PrivateChat} socket={chatSocket}/>
         <Route exact path="/not-found" component={NotFound} />
       </Switch>
     </div>

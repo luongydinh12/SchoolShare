@@ -8,13 +8,17 @@ import Spinner from "../common/Spinner"
 class Chat extends Component {
     state = {
         chat: null,
-        message:''
+        message: ''
     }
     componentDidMount() {
         this.getChat()
-        const socket=this.props.socket
-        socket.on('example_response', (res)=>{
-            console.log(res)
+        const socket = this.props.socket
+        socket.on('*',(event,data)=>{
+            console.log(event)
+            console.log(data)
+        })
+        socket.on('chatmsg', (res) => {
+            console.log(`chatResponse: ${res}`)
         })
     }
     getChat = () => {
@@ -24,6 +28,9 @@ class Chat extends Component {
                 console.log(res.data)
                 this.setState({ chat: res.data })
                 this._scrollMessages()
+                this.props.socket.emit('join', 1);
+
+                // this.props.socket.emit('joinChat', this.state.chat._id)
             }).catch((err) => {
                 this.props.history.push('/private-chat')
             })
@@ -43,11 +50,13 @@ class Chat extends Component {
     _handleMessageChange = (e) => {
         this.setState({ message: e.target.value })
     }
-    _handleMessageKeyUp=(e)=>{
-        if(e.which===13){//enter
+    _handleMessageKeyUp = (e) => {
+        if (e.which === 13) {//enter
             e.preventDefault()
-            const socket=this.props.socket
-            socket.emit('chatMessage', this.state.message)
+            const socket = this.props.socket
+            socket.emit('chatmsg', "fromclient"
+            //{ room: this.state.chat._id, msg: this.state.message }
+            )
         }
     }
     _scrollMessages = () => {
@@ -74,10 +83,10 @@ class Chat extends Component {
                                             <p>msg</p>
                                             <p style={{ fontSize: 10 }}>created by adsf asdfaf</p>
                                         </li>
-                                        
+
                                     </ul>
                                     <input id="message" placeholder="Message" autoComplete="off"
-                                        onChange={this._handleMessageChange} 
+                                        onChange={this._handleMessageChange}
                                         onKeyUp={this._handleMessageKeyUp}
                                         value={this.state.message}
                                         required type="text" />
@@ -97,4 +106,4 @@ class Chat extends Component {
     }
 }
 
-export default connect((state, ownProps) => ({ auth: state.auth, profile: state.profile , ...ownProps}))(Chat)
+export default connect((state, ownProps) => ({ auth: state.auth, profile: state.profile, ...ownProps }))(Chat)

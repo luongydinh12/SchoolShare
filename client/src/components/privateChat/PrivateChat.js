@@ -8,7 +8,6 @@ class PrivateChat extends Component {
     render() {
         const path = this.props.match.path
         const socket = this.props.socket
-        console.log(socket)
         return (
             <Switch>
                 <PropsRoute exact path={path + '/'} component={ChatList} />

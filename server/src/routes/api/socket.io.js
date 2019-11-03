@@ -2,7 +2,6 @@ import Express from 'express'
 const app = Express()
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
-import {chatSocket} from './groupchat'
 
 export const addSocketIdtoSession = (req, res, next) => {
     req.session.socketId = req.query.socketId
@@ -10,7 +9,7 @@ export const addSocketIdtoSession = (req, res, next) => {
 }
 
 io.on('connection', (socket) => {
-    chatSocket(socket)
+    // chatSocket(socket)
     console.log("socket.io connected", socket.id);
     socket.on('disconnect', () => {
         console.log("socket.io disconnected", socket.id);
@@ -20,6 +19,7 @@ io.on('connection', (socket) => {
         socket.emit('example_response', 'response msg')
     })
 })
+
 io.listen(5050)
 
 export default io

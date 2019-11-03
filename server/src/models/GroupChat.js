@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose'
-
+import GroupChatMessages from './GroupChatMessages'
 const GroupChatSchema = new Schema({
     name: {
         type: String,
@@ -25,11 +25,14 @@ const GroupChatSchema = new Schema({
 })
 GroupChatSchema.statics.getProfileChats = function (profileId, cb) {
     return this.find({
-      $or: [
-          {owner:profileId}, 
-          {members:{"$in":[profileId]}}
-      ]
-    },cb)
-  }
+        $or: [
+            { owner: profileId },
+            { members: { "$in": [profileId] } }
+        ]
+    }, cb)
+}
+GroupChatSchema.virtual.getMessages = function (cb) {
+    return GroupChatMessages.find({groupChatId:this._id}).exec(cb)
+}
 var GroupChat = mongoose.model('groupChats', GroupChatSchema)
 module.exports = GroupChat
