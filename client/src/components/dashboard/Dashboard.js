@@ -1,30 +1,16 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { logoutUser, deleteUser } from "../../actions/authActions";
 import moment from 'moment'; //npm install moment --save (CLIENT)
-import { Link } from 'react-router-dom'
-import { getCurrentProfile, deleteAccount } from '../../actions/profileActions'
-import Spinner from '../common/Spinner'
-import ProfileActions from './ProfileActions'
+import PropTypes from "prop-types";
+import React, { Component } from "react";
+import { connect } from "react-redux";
+import { Link } from 'react-router-dom';
+import { deleteUser, logoutUser } from "../../actions/authActions";
+import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
+import Spinner from '../common/Spinner';
+import NavBar from '../dashboard/NavBar'
 
-// for calendar
-import { Calendar } from '@fullcalendar/core';
-import dayGridPlugin from '@fullcalendar/daygrid';
-
-//test
-import NavBar from './NavBar'
-
-const options = [
-  'EDIT PROFILE',
-  'DELETE',
-  'CALENDER',
-  'LOG OUT',
-];
 class Dashboard extends Component {
 
   onLogoutClick = e => {
-    alert("test logout");
     e.preventDefault();
     this.props.logoutUser();
   };
@@ -39,7 +25,7 @@ class Dashboard extends Component {
     document.body.classList.add("background-white");
     this.props.getCurrentProfile()
   }
- //test
+  //test
   handleDeleteAccount = () => {
     this.props.deleteAccount()
   }
@@ -59,16 +45,10 @@ class Dashboard extends Component {
           }} className="lead text-muted">
             <Link to={`/profile/${profile.handle}`}>My Profile Page</Link>
           </p>
-          <ProfileActions />
+          <Link to="/edit-profile" >
+            <button className="btn btn-large waves-effect waves-light hoverable green accent-3" > Edit Profile </button>
+          </Link>
           <div style={{ marginBottom: '15px' }} />
-          {/*           <button  style={{
-              width: "150px",
-              borderRadius: "3px",
-              letterSpacing: "1.5px",
-              marginTop: "2rem"
-            }}  className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.handleDeleteAccount}>
-            Delete account
-          </button> */}
         </div>
       )
     } else {
@@ -89,19 +69,21 @@ class Dashboard extends Component {
 
     return (
       <div>
-        <NavBar/>
-        <div style={{ height: "75vh" }} className="container">
+        <NavBar />
+        <div className="section">
           <div className="row">
             <div className="col s12 center-align ">
 
-              <img id="userAvatar" style={{
-                verticalAlign: "middle",
-                borderRadius: "50%",
-                width: "150px",
-                height: "150px",
-                textAlign: "center",
-                marginTop: "25px"
-              }} src={user.avatar} />
+              <img id="userAvatar"
+                  alt=""
+                  style={{
+                  verticalAlign: "middle",
+                  borderRadius: "50%",
+                  width: "150px",
+                  height: "150px",
+                  textAlign: "center",
+                  marginTop: "25px"
+                }} src={user.avatar} />
 
               <p className="userName" style={{
                 fontWeight: "bold",
@@ -121,79 +103,36 @@ class Dashboard extends Component {
               {dashboardContent}
 
               <div>
-              {/* <Link to="/groups" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                  width: "150px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "2rem",
-                  marginBottom: "1.4rem",
-                }}>
-                Groups
-              </Link> */}
 
-              {/* <Link to="/forum" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-                  width: "150px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "2rem",
-                  marginBottom: "1.4rem",
-                  marginLeft: 16,
-                }}>
-                FORUM
-              </Link>
+                <Link to="/calendar">
+                  <button className="btn btn-large waves-effect waves-light hoverable green accent-3">
+                    View Calendar
+                  </button>
+                </Link>
 
-              <Link to="/profilelist" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-              </Link>  */}
-              <Link to="/calendar" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "2rem",
-                  marginBottom: "1.4rem",
-                  marginLeft: 16,
-                }}>
-                View Calendar
-              </Link>
               </div>
-
-              <Link to="/profilelist" className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{
-
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "2rem",
-                  marginBottom: "1.4rem",
-                  marginLeft: 16,
-                }}>
-                View Users
-              </Link>
+              <div className='section'>
+                <Link to="/profilelist">
+                  <button className="btn btn-large waves-effect waves-light hoverable green accent-3">
+                    View Users
+                </button>
+                </Link>
 
 
-              <button
-                style={{
-                  width: "200px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "2rem"
-                }}
-                onClick={this.onLogoutClick}
-                className="btn btn-large waves-effect waves-light hoverable green accent-3"
-              >
-                Logout
+                <button
+                  onClick={this.onLogoutClick}
+                  className="btn btn-large waves-effect waves-light hoverable green accent-3"
+                >
+                  Logout
             </button>
 
-              <button
-                style={{
-                  width: "200px",
-                  borderRadius: "3px",
-                  letterSpacing: "1.5px",
-                  marginTop: "2rem",
-                  marginLeft: "1rem"
-                }}
-                onClick={this.onDeleteClick}
-                className="btn btn-large waves-effect waves-light hoverable green accent-3"
-              >
-                Delete Account
+                <button
+                  onClick={this.onDeleteClick}
+                  className="btn btn-large waves-effect waves-light hoverable green accent-3">
+                  Delete Account
             </button>
+
+              </div>
             </div>
           </div>
         </div>

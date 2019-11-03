@@ -1,7 +1,7 @@
-import React, { Component, Fragment} from 'react';
 import axios from 'axios';
+import React, { Component, Fragment } from 'react';
+import { Button, Modal } from 'react-materialize';
 import { connect } from 'react-redux';
-import {Button, Modal} from 'react-materialize';
 
 class GroupChat extends Component {
     state = {
@@ -97,7 +97,7 @@ class GroupChat extends Component {
     render() {
         let messageList = <h4 style={{fontFamily: "Urbana",}}>Loading...</h4>
         let membersList = <p style={{fontFamily: "Urbana",}}>Loading...</p>
-        let joinButton = null, leaveButton = null, leaveModal = null, deleteModal = null, editDelete = null;
+        let joinButton = null, leaveButton = null, leaveModal = null, editDelete = null;
         let messageForm = null;
         const { messages, error, members } = this.state;
         if (messages) {

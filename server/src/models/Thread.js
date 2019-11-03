@@ -16,6 +16,10 @@ const ThreadSchema = new Schema({
   category: {
     type: String
   },
+  saves:[{
+    type: Schema.Types.ObjectId,
+    ref: 'users'
+  }],
   deleted: {
     type: Boolean,
     default: false

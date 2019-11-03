@@ -1,6 +1,5 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 class FriendButton extends Component {
     state = {
