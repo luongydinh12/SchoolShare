@@ -185,20 +185,20 @@ export default () => {
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
-                <ChevronRightIcon />
-              )}
+              <ChevronRightIcon />
+            )}
           </IconButton>
         </div>
         <Divider />
 
         <List>
-
+          
 
           <EditProfileButton />
 
           <ListItem button key={"text1"}>
             <ListItemIcon>
-              <InboxIcon />
+            <InboxIcon />
               {/* <DeleteForeverIcon /> */}
             </ListItemIcon>
             <ListItemText primary={"Delete Account"} />
@@ -226,24 +226,24 @@ export default () => {
 
 class LogOutButton extends Component {
   onLogoutClick = e => {
-    e.preventDefault()
-    this.props.logoutUser()
+      e.preventDefault()
+      this.props.logoutUser()
   }
   render() {
-    return (
-      <ListItem button key={"text1"} onClick={this.onLogoutClick}>
-        <ListItemIcon>
-          <InboxIcon />
-        </ListItemIcon>
-        <ListItemText primary={"Log Out"} />
-      </ListItem>
-    )
+      return (
+          <ListItem button key={"text1"} onClick={this.onLogoutClick}>
+              <ListItemIcon>
+                  <InboxIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Log Out"} />
+          </ListItem>
+      )
   }
 }
 
 LogOutButton = connect(
   (state) => ({
-    auth: state.auth
+      auth: state.auth
   }),
   { logoutUser }
 )(LogOutButton)
