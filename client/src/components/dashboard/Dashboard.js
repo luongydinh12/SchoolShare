@@ -6,9 +6,6 @@ import { Link } from 'react-router-dom';
 import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
-
-
-
 class Dashboard extends Component {
 
   onLogoutClick = e => {
