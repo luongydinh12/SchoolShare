@@ -1,7 +1,7 @@
-import React, { Component, Fragment } from 'react'
 import Axios from 'axios'
 import M from 'materialize-css'
-import FriendsList, { ProfileListItemFragment } from '../profile/FriendsList'
+import React, { Component } from 'react'
+import { ProfileListItemFragment } from '../profile/FriendsList'
 
 class CreateChat extends Component {
     state = {
@@ -50,8 +50,7 @@ class CreateChat extends Component {
         const { friends } = this.state
         if (friends) {
             const list = friends.map((f) => {
-
-                if (f.status === 'approved') return (
+                return (f.status === 'approved') ? (
                     <div className='row' key={f.friend._id}>
                         <div className='col s10'>
                             <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
@@ -60,7 +59,8 @@ class CreateChat extends Component {
                             <input onChange={this.handleCheckFriend} value={f.friend._id} type="checkbox" />
                             <span>Add</span>
                         </label>
-                    </div>)
+                    </div>) 
+                    : null
             })
 
             return (<div className='container'>

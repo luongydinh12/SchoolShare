@@ -1,39 +1,38 @@
+import jwt_decode from "jwt-decode";
 import React, { Component } from "react";
+import { Provider } from "react-redux";
 //import './App.css';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import jwt_decode from "jwt-decode";
-import setAuthToken from "./utils/setAuthToken";
-import { setCurrentUser, logoutUser } from "./actions/authActions";
-import { getCurrentProfile, clearCurrentProfile} from './actions/profileActions'
-
-import { Provider } from "react-redux";
-import store from "./store";
-
-import Navbar from "./components/dashboard/NavBar";
-import Landing from "./components/layout/Landing";
-import Register from "./components/auth/Register";
+import io from 'socket.io-client';
+import { logoutUser, setCurrentUser } from "./actions/authActions";
+import { clearCurrentProfile, getCurrentProfile } from './actions/profileActions';
 import Login from "./components/auth/Login";
-import OAuth from "./components/auth/OAuth";
-import PrivateRoute, {PropsRoute} from "./components/private-route/PrivateRoute";
+import Register from "./components/auth/Register";
+import Calendar from "./components/calendar/Calendar";
 import Dashboard from "./components/dashboard/Dashboard";
-
+import Navbar from "./components/dashboard/NavBar";
+import Forum from "./components/forum/Forum";
+import MySaves from "./components/forum/MySaves";
+import CreateCategory from "./components/Groups/CreateCategory";
+import Groups from "./components/Groups/Groups";
+import MyGroups from "./components/Groups/MyGroups";
+import Landing from "./components/layout/Landing";
+import NotFound from "./components/not-found/NotFound";
+import PrivateRoute, { PropsRoute } from "./components/private-route/PrivateRoute";
+import PrivateChat from './components/privateChat/PrivateChat';
 //import { clearCurrentProfile } from "./actions/profileActions";
 import CreateProfile from "./components/profile/CreateProfile";
 import EditProfile from "./components/profile/EditProfile";
+import FriendsList from './components/profile/FriendsList';
 import Profile from "./components/profile/Profile";
-import ProfilesList from "./components/profile/ProfilesList"
-import FriendsList from './components/profile/FriendsList'
-import NotFound from "./components/not-found/NotFound";
+import ProfilesList from "./components/profile/ProfilesList";
+import store from "./store";
+import setAuthToken from "./utils/setAuthToken";
 
-import Groups from "./components/Groups/Groups";
-import MyGroups from "./components/Groups/MyGroups";
-import CreateCategory from "./components/Groups/CreateCategory";
-import Forum from "./components/forum/Forum";
-import Calendar from "./components/calendar/Calendar";
-import MySaves from "./components/forum/MySaves";
-import PrivateChat from './components/privateChat/PrivateChat'
 
-import io from 'socket.io-client'
+
+
+
 const socket = io("http://localhost:5050/")
 const chatSocket=io(`http://localhost:5050/chat`)
 

@@ -1,10 +1,9 @@
-import React, { Component, Fragment } from 'react'
-import Axios from 'axios'
-import { connect } from 'react-redux'
+import Axios from 'axios';
+import React, { Component, Fragment } from 'react';
+import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
-import Spinner from "../common/Spinner"
-import CreateChat from './CreateChat'
-import FriendsList from '../profile/FriendsList';
+import Spinner from "../common/Spinner";
+import CreateChat from './CreateChat';
 
 class ChatList extends Component {
     state = {
@@ -66,6 +65,7 @@ class ChatList extends Component {
         console.log(`handle search query: ${query}`)
         const c = (query === null) ? chats : chats.filter((cur) => {
             if (cur.name.toUpperCase().includes(query.toUpperCase())) return cur
+            return null
         })
         this.setState({ displayedChats: c })
     }

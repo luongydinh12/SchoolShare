@@ -17,7 +17,7 @@ export const registerUser = (userData, history) => dispatch => {
 export const oAuthLogin = token  => {
   console.log("in authactions.js", token);
   localStorage.setItem("jwtToken", token);
-  const decoded = jwt_decode(token);
+  // const decoded = jwt_decode(token);
   // Set token to Auth header
   setAuthToken(token);
 };

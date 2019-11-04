@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { oAuthLogin } from "../../actions/authActions"
 import { connect } from "react-redux";
-import io from 'socket.io-client'
 
 const local = "http://localhost"
 // const socket = io("http://localhost:5050/")

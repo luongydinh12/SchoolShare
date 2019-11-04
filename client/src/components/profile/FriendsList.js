@@ -27,7 +27,7 @@ class FriendsList extends Component {
         const query = document.querySelector('#search').value
         const friends = this.state.friends
         const f = (query === null) ? friends : friends.filter((cur) => {
-            if (cur.friend.handle.toUpperCase().includes(query.toUpperCase())) return cur
+            return (cur.friend.handle.toUpperCase().includes(query.toUpperCase())) ? cur : null
         })
         this.setState({ displayedFriends: f })
     }
