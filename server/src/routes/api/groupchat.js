@@ -15,11 +15,17 @@ io.of('/chat').on('connection', (socket) => {
     // const room = 'testroom'
     socket.on('join', (room) => {
         socket.join(room)
-        console.log(`${socket.id} room: ${room}`)
+        console.log(`${socket.id} joined room ${room}`)
     })
     socket.on('chatmsg', (message) => {
-        console.log(`got message from ${socket.id}`, message)
+        console.log(`got message from ${socket.id}`, message.msg.text)
         io.of('/chat').to(message.room).emit('chatmsg', message.msg) //socket.to and socket.in still won't work for some reason, check later x_x
+        
+        new GroupChatMessage({
+            groupChat: message.room,
+            text: message.msg.text,
+            poster: message.msg.poster._id
+        }).save()
     })
 })
 
@@ -44,7 +50,6 @@ Router.get('/chat/:chatId', auth, (req, res) => {
         .then((chat) => {
             return chat.getMessages().then(messages => [chat, messages])
         }).then(([chat, messages]) => {
-            console.log(messages)
             res.send({ chat: chat, messages: messages })
         })
         .catch((err) => {
@@ -69,19 +74,15 @@ Router.post('/create', auth, (req, res) => {
     )
 })
 
-Router.post('/message', (req, res) => {
-    console.log(req.body)
-    new GroupChatMessage({
-        groupChat: '5dbf508e95a1d30c90faffad',
-        text: req.body.message,
-        poster: '5d8bdd3d9fcd191fa41afc35'
-    }).save().then((msg) => {
-        console.log(msg)
-        res.send(msg)
-    })
-})
-
-Router.post('/submit')
+// Router.post('/message', (req, res) => {
+//     new GroupChatMessage({
+//         groupChat: '5dbf508e95a1d30c90faffad',
+//         text: req.body.message,
+//         poster: '5d8bdd3d9fcd191fa41afc35'
+//     }).save().then((msg) => {
+//         res.send(msg)
+//     })
+// })
 
 Router.post('/leaveOrDelete', auth, (req, res) => {
     const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])

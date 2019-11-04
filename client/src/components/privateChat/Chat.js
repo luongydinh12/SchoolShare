@@ -89,6 +89,7 @@ class Chat extends Component {
                     }
                 }
             )
+            this.setState({messageInput:''})
         }
     }
     _scrollMessages = () => {
