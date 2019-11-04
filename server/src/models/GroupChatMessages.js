@@ -10,12 +10,12 @@ const GroupChatMessagesSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  createdBy: {
+  poster: {
     type: Schema.Types.ObjectId,
     ref: 'profile',
     required:true
   },
-  groupChatId: {
+  groupChat: {
     type: Schema.Types.ObjectId,
     ref: 'groupChats',
     required: true

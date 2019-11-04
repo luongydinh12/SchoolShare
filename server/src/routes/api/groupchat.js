@@ -2,7 +2,7 @@ import Express from 'express'
 import Passport from 'passport'
 import JWT from 'jsonwebtoken'
 import GroupChat from '../../models/GroupChat'
-import GroupChatMessages from '../../models/GroupChatMessages'
+import GroupChatMessage from '../../models/GroupChatMessages'
 import User from '../../models/User'
 import Profile from '../../models/Profile'
 import Friend from '../../models/Friend'
@@ -12,18 +12,14 @@ const auth = Passport.authenticate('jwt', { session: false })
 import io, { addSocketIdtoSession } from './socket.io'
 
 io.of('/chat').on('connection', (socket) => {
-    const room='testroom'
-    socket.on('join', (num) => {
-        console.log(`join room           ${socket.id}`)
+    // const room = 'testroom'
+    socket.on('join', (room) => {
         socket.join(room)
+        console.log(`${socket.id} room: ${room}`)
     })
     socket.on('chatmsg', (message) => {
         console.log(`got message from ${socket.id}`, message)
-        socket.emit('chatmsg','socketemit')
-        io.emit('chatmsg','ioemit')
-        io.in(room).emit('chatmsg','ioroomemit')
-        socket.in(room).emit('chatmsg','socketroomemit')
-
+        io.of('/chat').to(message.room).emit('chatmsg', message.msg) //socket.to and socket.in still won't work for some reason, check later x_x
     })
 })
 
@@ -46,9 +42,14 @@ Router.get('/chat/:chatId', auth, (req, res) => {
         .populate('owner')
         .populate('members')
         .then((chat) => {
-            res.send(chat)
-        }).catch((err) => {
+            return chat.getMessages().then(messages => [chat, messages])
+        }).then(([chat, messages]) => {
+            console.log(messages)
+            res.send({ chat: chat, messages: messages })
+        })
+        .catch((err) => {
             res.sendStatus(500)
+            console.log(err)
         })
 })
 
@@ -66,6 +67,18 @@ Router.post('/create', auth, (req, res) => {
             res.send(chat)
         }
     )
+})
+
+Router.post('/message', (req, res) => {
+    console.log(req.body)
+    new GroupChatMessage({
+        groupChat: '5dbf508e95a1d30c90faffad',
+        text: req.body.message,
+        poster: '5d8bdd3d9fcd191fa41afc35'
+    }).save().then((msg) => {
+        console.log(msg)
+        res.send(msg)
+    })
 })
 
 Router.post('/submit')

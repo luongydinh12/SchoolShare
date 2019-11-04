@@ -31,8 +31,8 @@ GroupChatSchema.statics.getProfileChats = function (profileId, cb) {
         ]
     }, cb)
 }
-GroupChatSchema.virtual.getMessages = function (cb) {
-    return GroupChatMessages.find({groupChatId:this._id}).exec(cb)
+GroupChatSchema.methods.getMessages = function (cb) {
+    return GroupChatMessages.find({groupChat:this._id}).populate('poster').exec(cb)
 }
 var GroupChat = mongoose.model('groupChats', GroupChatSchema)
 module.exports = GroupChat
