@@ -1,7 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
-import { Textarea, Row } from "react-materialize";
+import { Textarea, Row, ProgressBar } from "react-materialize";
+import likeIcon from '../../icons/Like/likeicon.jpg';
 
 class ThreadComments extends Component {
   constructor(props) {
@@ -105,7 +106,7 @@ class RenderComment extends Component {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -136,7 +137,7 @@ class RenderComment extends Component {
     if (!this.state.displayEditBox) return undefined;
     if (this.state.postingEdit) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Editing...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -180,7 +181,7 @@ class RenderComment extends Component {
     if (!this.state.displayDeleteBox) return undefined;
     if (this.state.postingDelete) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Deleting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -218,7 +219,7 @@ class RenderComment extends Component {
   }
 
   showCommentManagement(e){
-    if(this.props.auth.user.id != e || this.props.c.deleted) return (
+    if(this.props.auth.user.id !== e || this.props.c.deleted) return (
       <p><a href="/" onClick={this.postReplyClick}>
       Reply
       </a></p>)
@@ -327,7 +328,7 @@ class RenderComment extends Component {
               style={{ boxShadow: "unset", border: "none", margin: 0 }}
             >
               <div style={{ color: "#2BB673", fontWeight: 600 }}>
-                {comment.author.name}:
+                {(comment.author)?comment.author.name:"[deleted]"}:
               </div>
               <p style={comment.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{comment.deleted?"[comment deleted]":comment.content}</p>
               {this.showCommentManagement(comment.author._id)}
@@ -341,13 +342,13 @@ class RenderComment extends Component {
                 (<a style={{ color: "rgb(44, 127, 252)" }}>Like</a>)}
               </span>
               
-              {!comment.likes.find(el => el.user === loggedInUserId) ? (
+              {!comment.deleted&&!comment.likes.find(el => el.user === loggedInUserId) ? (
                 <a
                   style={{ color: "rgb(44, 127, 252)", marginLeft: 15 }}
                   href="/"
                   onClick={e => this.likeComment(e, comment._id, loggedInUserId)}
                 >
-                  <img src="https://img.favpng.com/11/18/20/like-button-clip-art-facebook-portable-network-graphics-computer-icons-png-favpng-5iCL2atihCg2iTcgnC2n0NGg8.jpg" alt="Like" height="17" width="17"></img>
+                  <img src={likeIcon} alt="Like" height="17" width="17"></img>
                 </a>
               ) : null}
 

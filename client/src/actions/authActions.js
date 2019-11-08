@@ -1,11 +1,7 @@
 import axios from "axios";
-import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
-import {
-  GET_ERRORS,
-  SET_CURRENT_USER,
-  USER_LOADING
-} from "./types";
+import setAuthToken from "../utils/setAuthToken";
+import { GET_ERRORS, SET_CURRENT_USER, USER_LOADING } from "./types";
 // Register User
 export const registerUser = (userData, history) => dispatch => {
   axios
@@ -18,9 +14,10 @@ export const registerUser = (userData, history) => dispatch => {
       })
     );
 };
-export const oAuthLogin = token => {
+export const oAuthLogin = token  => {
   console.log("in authactions.js", token);
   localStorage.setItem("jwtToken", token);
+  // const decoded = jwt_decode(token);
   // Set token to Auth header
   setAuthToken(token);
 };
@@ -31,7 +28,7 @@ export const loginUser = userData => dispatch => {
     .then(res => {
       // Save to localStorage
       // Set token to localStorage
-      const { token,userId } = res.data;
+      const { token, userId } = res.data;
       console.log(token);
       localStorage.setItem("jwtToken", token);
       localStorage.setItem("userId", userId);
@@ -74,9 +71,9 @@ export const logoutUser = () => dispatch => {
 
 export const deleteUser = () => dispatch => {
   axios.post("api/users/delete")
-    // .then(res => {
-    //   //console.log(res.data)
-    // })
+  // .then(res => {
+  //   //console.log(res.data)
+  // })
   localStorage.removeItem("jwtToken");
   setAuthToken(false);
   dispatch(setCurrentUser({}));

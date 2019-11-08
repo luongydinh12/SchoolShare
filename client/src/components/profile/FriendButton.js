@@ -1,6 +1,5 @@
 import Axios from 'axios';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 class FriendButton extends Component {
     state = {
@@ -28,12 +27,21 @@ class FriendButton extends Component {
             }
         })
     }
+    removeFriend=(e)=>{
+        Axios.post('/api/friends/removeFriend',{
+            friendDocId: this.state.friend._id,
+        }).then((res)=>{
+            if(this.props.cb){
+                this.props.cb()
+            }
+        })
+    }
     render() {
         const friend = this.state.friend
         if (friend===null || friend === "self") {
             return (null)
         }
-        if (friend.status === "approved") return (<i className="material-icons right">people</i>)
+        if (friend.status === "approved") return (<div><i className="material-icons right">people</i><button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.removeFriend}>Remove</button></div>)
         if (friend.status === "pending") {
             if (friend.request === true) {
                 return (<div><button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={true}>Accept</button>

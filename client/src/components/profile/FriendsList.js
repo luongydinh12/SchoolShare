@@ -2,47 +2,66 @@ import React, { Component, Fragment } from 'react'
 import Axios from 'axios'
 import { Link } from 'react-router-dom'
 import FriendButton from './FriendButton'
-
+import Spinner from "../common/Spinner"
 class FriendsList extends Component {
     state = {
-        friends: null
+        friends: null,
+        displayedFriends: null,
     }
     componentDidMount = () => {
         this.getFriendsList()
     }
-    getFriendsList=()=>{
+
+    getFriendsList = () => {
         Axios.get('/api/friends/listFriends')
-        .then((res) => {
-            this.setState({ friends: res.data })
-        })
+            .then((res) => {
+                this.setState({ friends: res.data, displayedFriends: res.data })
+            })
     }
-    friendButtonCb=()=>{
+
+    friendButtonCb = () => {
         this.getFriendsList()
     }
-    render() {
+
+    handleSearch = () => {
+        const query = document.querySelector('#search').value
         const friends = this.state.friends
-        if (friends) {
-            const list = friends.map((f) => {
+        const f = (query === null) ? friends : friends.filter((cur) => {
+            return (cur.friend.handle.toUpperCase().includes(query.toUpperCase())) ? cur : null
+        })
+        this.setState({ displayedFriends: f })
+    }
+
+    render() {
+        const { displayedFriends } = this.state
+        if (displayedFriends) { //if friends list has been retrieved
+            const list = displayedFriends.map((f) => {
                 return (<ProfileListItemFragment {...f} key={f.friend._id} cb={this.friendButtonCb} />)
             })
 
             return (<div className="container" style={{ marginBottom: "20px" }}>
                 <div className="card white" style={{ padding: 5 }}>
                     <h4 className="center-text"
-                    >List of Friends</h4>
+                    >Friends List</h4>
+                    <div className="search">
+                        <input id="search" placeholder="Search" autoComplete="off"
+                            onChange={this.handleSearch}
+                            required type="text" />
+                    </div>
                     <ul className="collection">
                         {list}
                     </ul>
                 </div>
             </div>)
         }
-        return (<div>Error</div>)
+        return (<Spinner />)
     }
-
 }
+
 class ProfileListItemFragment extends Component {
     render() {
         const friend = this.props.friend
+        const dontShowFriendButton = this.props.dontShowFriendButton
         return (
             <Fragment >
                 <div className="row">
@@ -51,17 +70,15 @@ class ProfileListItemFragment extends Component {
                             <img src={friend.avatar} alt="" className="circle" />
                             <Link to={'/profile/' + friend.handle}                    >
                                 <span className="title">{friend.handle}</span>                </Link>
-
                             <p>{friend.description}
                             </p>
                         </li>
                     </div>
-                    <div className="col s2">
-                        <FriendButton profileId={friend._id} cb={this.props.cb}/>
-                    </div>
+                    {(dontShowFriendButton) ? null : <div className="col s2"><FriendButton profileId={friend._id} cb={this.props.cb} />     </div>}
                 </div>
             </Fragment>
         )
     }
 }
 export default FriendsList
+export { ProfileListItemFragment }
