@@ -13,11 +13,15 @@ class CreateChat extends Component {
     componentDidMount = () => {
         Axios.get('/api/friends/listFriends')
             .then((res) => {
-                this.setState({ friends: res.data })
+                this.setState({
+                    friends: res.data.filter((f) => {
+                        return f.status === 'approved'
+                    })
+                })
             })
     }
     openModal = (e) => {
-        M.Modal.init(document.querySelector('.modal'), { endingTop:'20%' }).open()
+        M.Modal.init(document.querySelector('.modal'), { endingTop: '20%' }).open()
     }
     handleSubmit = (e) => {
         e.preventDefault()
@@ -48,19 +52,17 @@ class CreateChat extends Component {
     }
     render() {
         const { friends } = this.state
-        if (friends) {
+        if (friends&&friends.length>0) {
             const list = friends.map((f) => {
-                return (f.status === 'approved') ? (
-                    <div className='row' key={f.friend._id}>
-                        <div className='col s10'>
-                            <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
-                        </div>
-                        <label className='col s2'>
-                            <input onChange={this.handleCheckFriend} value={f.friend._id} type="checkbox" />
-                            <span>Add</span>
-                        </label>
-                    </div>)
-                    : null
+                return(<div className='row' key={f.friend._id}>
+                    <div className='col s10'>
+                        <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
+                    </div>
+                    <label className='col s2'>
+                        <input onChange={this.handleCheckFriend} value={f.friend._id} type="checkbox" />
+                        <span>Add</span>
+                    </label>
+                </div>)
             })
 
             return (<div className='container'>
