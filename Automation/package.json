@@ -9,7 +9,9 @@
   "author": "Trevor",
   "license": "ISC",
   "dependencies": {
-    "faker": "^4.1.0",
+    "faker": "^4.1.0"
+  },
+  "devDependencies": {
     "nightwatch": "^1.2.4"
   }
 }
