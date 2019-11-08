@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Axios from 'axios'
 import Spinner from "../common/Spinner"
+import M from 'materialize-css'
+import { ProfileListItemFragment } from '../profile/FriendsList'
 
 // import io from 'socket.io-client'
 // const socket = io("http://localhost:5050/")
@@ -9,7 +11,9 @@ class Chat extends Component {
     state = {
         chat: null,
         messages: null,
-        messageInput: ''
+        messageInput: '',
+        friends: null,
+        checkedFriends: []
     }
     componentDidMount() {
         this.getChat()
@@ -30,10 +34,16 @@ class Chat extends Component {
         const chatId = this.props.location.pathname.split('/')[2]
         Axios.get(`/api/groupchat/chat/${chatId}`)
             .then((res) => {
-                console.log(res.data)
                 this.setState({ chat: res.data.chat, messages: res.data.messages })
                 this.props.socket.emit('join', this.state.chat._id)
-            }).catch((err) => {
+                if (this.props.profile.profile._id === res.data.chat.owner._id || res.data.chat.membersCanAdd) {
+                    return (Axios.get('/api/friends/listFriends'))
+                }
+            }).then((res) => {
+                if (!res) return
+                this.setState({ friends: res.data })
+            })
+            .catch((err) => {
                 console.log(err)
                 this.props.history.push('/private-chat')
             })
@@ -47,24 +57,78 @@ class Chat extends Component {
         </ul>)
     }
     MessageList = () => {
-        return (
-            <ul id='messages' style={{
-                height: '45vh',
-                overflowY: "scroll"
-            }}>
-                {this.state.messages.map((msg, i) => {
-                    const posterStyle = (msg.poster._id === this.props.profile.profile._id) ? 'offset-s3 green lighten-5' : 'pink lighten-5'
+        if (this.state.messages && this.props.profile) {
+            return (
+                <ul id='messages' style={{
+                    height: '45vh',
+                    overflowY: "scroll"
+                }}>
+                    {this.state.messages.map((msg, i) => {
+                        const posterStyle = (msg.poster._id === this.props.profile.profile._id) ? 'offset-s3 green lighten-5' : 'pink lighten-5'
 
-                    return (
-                        <li className={`row card-panel col s9 ${posterStyle}`} style={{ padding: 5 }} key={i}>
-                            <p>{msg.text}</p>
-                            <p style={{ fontSize: 10 }}>{msg.poster.handle}</p>
-                        </li>
-                    )
-                }
-                )}
-            </ul>
-        )
+                        return (
+                            <li className={`row card-panel col s9 ${posterStyle}`} style={{ padding: 5 }} key={i}>
+                                <p>{msg.text}</p>
+                                <p style={{ fontSize: 10 }}>{msg.poster.handle}</p>
+                            </li>
+                        )
+                    }
+                    )}
+                </ul>
+            )
+        }
+        return <Spinner />
+    }
+    _handleCheckFriend = (e) => {
+        const val = e.target.value
+        const { checkedFriends } = this.state
+        const newCheckedFriends = (e.target.checked) ? [...checkedFriends, e.target.value] : checkedFriends.filter((f) => {
+            return (f._id === val)
+        })
+        this.setState({ checkedFriends: newCheckedFriends })
+    }
+    _handleAddFriends = e => {
+
+    }
+    AddMemberModal = () => {
+        //this.state.friend only has data if the user may add
+        if (this.state.friends) {
+            const list = this.state.friends.map((f) => {
+                return (f.status === 'approved') ? (
+                    <div className='row' key={f.friend._id}>
+                        <div className='col s10'>
+                            <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
+                        </div>
+                        <label className='col s2'>
+                            <input onChange={this._handleCheckFriend} value={f.friend._id} type="checkbox" />
+                            <span>Add</span>
+                        </label>
+                    </div>)
+                    : null
+            })
+            return (<div className='container'>
+                <div className="btn-small waves-effect waves-light hoverable" onClick={this.openModal}>
+                    Add Members
+            </div>
+                <div className='modal'>
+                    <div className='modal-content'>
+                        <h4>Add Members</h4>
+                    </div>
+                    <div>
+                        <ul className='collection'>
+                            {list}
+                        </ul>
+                    </div>
+                    <div className="modal-footer">
+                        <button className="modal-close waves-effect waves-red btn-flat" onClick={this._handleAddFriends}>Submit</button>
+                    </div>
+                </div>
+            </div>)
+        }
+        return null
+    }
+    openModal = (e) => {
+        M.Modal.init(document.querySelector('.modal'), { endingTop: '20%' }).open()
     }
     _handleMessageChange = (e) => {
         this.setState({ messageInput: e.target.value })
@@ -98,24 +162,23 @@ class Chat extends Component {
         const chat = this.state.chat
         if (chat) {
             return (
-                <div className="container">
+                <div id='chat'>
                     <div className="card white" >
-                        <div className='container'>
-                            <h4 className='title'>{chat.name}</h4>
-                            <div className="row" >
-                                <div className="col s9">
-                                    <this.MessageList />
-                                    <input id="messageInput" placeholder="Message" autoComplete="off"
-                                        onChange={this._handleMessageChange}
-                                        onKeyUp={this._handleMessageKeyUp}
-                                        value={this.state.messageInput}
-                                        required type="text" />
-                                </div>
-                                <div className="col s3">
-                                    <h6>Members</h6>
-                                    <hr />
-                                    <this.MemberList />
-                                </div>
+                        <h4 className='title'>{chat.name}</h4>
+                        <div className="row" >
+                            <div className="col s9">
+                                <this.MessageList />
+                                <input id="messageInput" placeholder="Message" autoComplete="off"
+                                    onChange={this._handleMessageChange}
+                                    onKeyUp={this._handleMessageKeyUp}
+                                    value={this.state.messageInput}
+                                    required type="text" />
+                            </div>
+                            <div className="col s3">
+                                <h6>Members</h6>
+                                <hr />
+                                <this.MemberList />
+                                <this.AddMemberModal />
                             </div>
                         </div>
                     </div>

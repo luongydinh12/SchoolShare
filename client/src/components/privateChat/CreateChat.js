@@ -17,7 +17,7 @@ class CreateChat extends Component {
             })
     }
     openModal = (e) => {
-        M.Modal.init(document.querySelector('.modal')).open()
+        M.Modal.init(document.querySelector('.modal'), { endingTop:'20%' }).open()
     }
     handleSubmit = (e) => {
         e.preventDefault()
@@ -59,7 +59,7 @@ class CreateChat extends Component {
                             <input onChange={this.handleCheckFriend} value={f.friend._id} type="checkbox" />
                             <span>Add</span>
                         </label>
-                    </div>) 
+                    </div>)
                     : null
             })
 
