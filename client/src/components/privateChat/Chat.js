@@ -35,13 +35,17 @@ class Chat extends Component {
         Axios.get(`/api/groupchat/chat/${chatId}`)
             .then((res) => {
                 this.setState({ chat: res.data.chat, messages: res.data.messages })
-                this.props.socket.emit('join', this.state.chat._id)
+                this.props.socket.emit('join', { prof: this.props.profile.profile._id, room: this.state.chat._id })
                 if (this.props.profile.profile._id === res.data.chat.owner._id || res.data.chat.membersCanAdd) {
                     return (Axios.get('/api/friends/listFriends'))
                 }
             }).then((res) => {
                 if (!res) return
-                this.setState({ friends: res.data })
+                this.setState({
+                    friends: res.data.filter((f) => {
+                        return f.status === 'approved'
+                    })
+                })
             })
             .catch((err) => {
                 console.log(err)
@@ -88,23 +92,34 @@ class Chat extends Component {
         this.setState({ checkedFriends: newCheckedFriends })
     }
     _handleAddFriends = e => {
+        console.log('handle add friends' + this.state.checkedFriends)
+        Axios.post('/api/groupchat/addUsersToChat', { chat: this.state.chat._id, users: this.state.checkedFriends }).then(() => {
+            this.getChat()
+        })
 
     }
     AddMemberModal = () => {
         //this.state.friend only has data if the user may add
         if (this.state.friends) {
-            const list = this.state.friends.map((f) => {
-                return (f.status === 'approved') ? (
-                    <div className='row' key={f.friend._id}>
-                        <div className='col s10'>
-                            <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
-                        </div>
-                        <label className='col s2'>
-                            <input onChange={this._handleCheckFriend} value={f.friend._id} type="checkbox" />
-                            <span>Add</span>
-                        </label>
-                    </div>)
-                    : null
+            const { members } = this.state.chat
+
+            const flist = this.state.friends.filter((f) => {
+                for (let m in members) {
+                    if (members[m]._id === f.friend._id) return false
+                }
+                return true
+            })
+
+            const list = flist.map((f) => {
+                return (<div className='row' key={f.friend._id}>
+                    <div className='col s10'>
+                        <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
+                    </div>
+                    <label className='col s2'>
+                        <input onChange={this._handleCheckFriend} value={f.friend._id} type="checkbox" />
+                        <span>Add</span>
+                    </label>
+                </div>)
             })
             return (<div className='container'>
                 <div className="btn-small waves-effect waves-light hoverable" onClick={this.openModal}>

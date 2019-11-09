@@ -13,14 +13,14 @@ import io, { addSocketIdtoSession } from './socket.io'
 
 io.of('/chat').on('connection', (socket) => {
     // const room = 'testroom'
-    socket.on('join', (room) => {
-        socket.join(room)
-        console.log(`${socket.id} joined room ${room}`)
+    socket.on('join', (msg) => {
+        socket.join(msg.room)
+        console.log(`profile ${msg.prof} joined room ${msg.room} wtih socketid ${socket.id} `)
     })
     socket.on('chatmsg', (message) => {
         console.log(`got message from ${socket.id}`, message.msg.text)
         io.of('/chat').to(message.room).emit('chatmsg', message.msg) //socket.to and socket.in still won't work for some reason, check later x_x
-        
+
         new GroupChatMessage({
             groupChat: message.room,
             text: message.msg.text,
@@ -74,15 +74,36 @@ Router.post('/create', auth, (req, res) => {
     )
 })
 
-// Router.post('/message', (req, res) => {
-//     new GroupChatMessage({
-//         groupChat: '5dbf508e95a1d30c90faffad',
-//         text: req.body.message,
-//         poster: '5d8bdd3d9fcd191fa41afc35'
-//     }).save().then((msg) => {
-//         res.send(msg)
-//     })
-// })
+Router.post('/addUsersToChat', auth, (req, res) => {
+    const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
+    console.log(req.body)
+    Profile.findByUserId(tokenUser.id)
+        .then((prof) => {
+            const profileId = prof._id
+            return GroupChat.findOneAndUpdate(
+                {
+                    $and: [
+                        { _id: req.body.chat },
+                        {
+                            $or: [
+                                { owner: profileId },
+                                {
+                                    $and: [{ membersCanAdd: true }, {
+                                        members: { '$in': [profileId] }
+                                    }]
+                                }]
+                        }]
+                },
+                {
+                    $addToSet: { members: { $each: req.body.users } }
+                }
+            )
+        }).then((chat) => {
+            console.log(chat)
+            res.sendStatus(200)
+        })
+})
+
 
 Router.post('/leaveOrDelete', auth, (req, res) => {
     const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
