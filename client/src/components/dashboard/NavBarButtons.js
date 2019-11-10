@@ -4,18 +4,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import EditIcon from '@material-ui/icons/Edit';
 import Axios from 'axios';
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
 class EditProfileButton extends Component {
-    state = {
-        profile: null
-    }
-    componentWillMount() {
-        Axios.get('/api/profile/')
-            .then((res) => {
-                this.setState({ profile: res.data })
-            })
-    }
     render() {
-        if (this.state.profile) return (
+        if (this.props.profile.profile) return (
             <ListItem component="a" href="/edit-profile">
                 <ListItemIcon>
                     <EditIcon />
@@ -26,6 +18,7 @@ class EditProfileButton extends Component {
         return null
     }
 }
+EditProfileButton = connect((state, ownProps) => ({ auth: state.auth, profile: state.profile, ...ownProps }))(EditProfileButton)
 export { EditProfileButton };
 // class LogOutButton extends Component {
 //     onLogoutClick = e => {
