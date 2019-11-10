@@ -4,7 +4,7 @@ import Axios from 'axios'
 import Spinner from "../common/Spinner"
 import M from 'materialize-css'
 import { ProfileListItemFragment } from '../profile/FriendsList'
-
+import {Link} from 'react-router-dom'
 // import io from 'socket.io-client'
 // const socket = io("http://localhost:5050/")
 class Chat extends Component {
@@ -67,9 +67,16 @@ class Chat extends Component {
                     this.state.onlineList.forEach((o) => {
                         if (o === m._id) style = ''
                     })
-                    return <li key={m._id} className={style}>{m.handle}</li>
+                    // return <li key={m._id} className={style}>{m.handle}</li>
+                    return (
+                        <Link to={'/profile/' + m.handle}>
+                            <li className={style}>
+                                {m.handle}
+                            </li>
+                        </Link>)
                 })}
             </ul>
+
         )
     }
     MessageList = () => {
