@@ -1,19 +1,16 @@
 import React, { Component, Fragment } from "react";
-import { Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
+import { Link, Route, Switch } from "react-router-dom";
 import Categories from "./Categories";
 import Category from "./Category";
-import { Link } from "react-router-dom";
 import NewPost from "./NewPost";
 import ViewPost from "./ViewPost";
-import NavBar from '../dashboard/NavBar'
 
 class Forum extends Component {
   render() {
     console.log(this.props.match);
     return (
       <div>
-      <NavBar/>
         <div className="container" style={{}}>
           <Link
             to="/dashboard"

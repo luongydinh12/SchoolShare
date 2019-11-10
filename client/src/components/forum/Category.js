@@ -55,7 +55,7 @@ class Category extends Component {
         return (
           <div className="forumThread" key={p._id}>
             <Link to={"/forum/post/" + p._id}>{p.title}</Link>
-            <p>{p.author.name}</p>
+            <p>{(p.author)?p.author.name:"[deleted]"}</p>
           </div>
         );
       });

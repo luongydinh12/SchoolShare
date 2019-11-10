@@ -50,7 +50,7 @@ class ViewPost extends Component {
       <>
         <div className="postContent">
           <p style={{ color: "#2BB673", fontWeight: 600 }}>
-            {post.author.name}:
+            {(post.author)?post.author.name:"[deleted]"}:
           </p>
           <p style={post.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{post.deleted?"[Post Deleted]":post.content}</p>
           {this.showCommentManagement(post)}
