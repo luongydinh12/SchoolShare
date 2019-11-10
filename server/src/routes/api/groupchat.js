@@ -11,11 +11,19 @@ const auth = Passport.authenticate('jwt', { session: false })
 
 import io, { addSocketIdtoSession } from './socket.io'
 
+let onlineList = {}
 io.of('/chat').on('connection', (socket) => {
     // const room = 'testroom'
+    //dict for storing online members
     socket.on('join', (msg) => {
         socket.join(msg.room)
+        if (!onlineList[msg.room]) {
+            onlineList[msg.room] = {}
+        }
+        onlineList[msg.room][socket.id] = msg.prof
+
         console.log(`profile ${msg.prof} joined room ${msg.room} wtih socketid ${socket.id} `)
+        io.of('/chat').to(msg.room).emit('onlinelist', onlineList[msg.room])
     })
     socket.on('chatmsg', (message) => {
         console.log(`got message from ${socket.id}`, message.msg.text)
@@ -26,6 +34,23 @@ io.of('/chat').on('connection', (socket) => {
             text: message.msg.text,
             poster: message.msg.poster._id
         }).save()
+    })
+    socket.on('leave', (msg) => {
+        console.log(`${socket.id} leaving room  msg: ${JSON.stringify(msg)}`)
+        delete onlineList[msg.room][socket.id]
+        console.log(onlineList)
+    })
+    socket.on('disconnect', () => {
+        for (var room in onlineList) {
+            for (var socketid in onlineList[room]) {
+                console.log(socketid)
+                if (socketid === socket.id) {
+                    delete onlineList[room][socketid]
+                }
+            }
+        }
+        console.log(`${socket.id} disconnected: onlineList 
+            `, onlineList)
     })
 })
 

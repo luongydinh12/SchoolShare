@@ -18,14 +18,17 @@ class Chat extends Component {
     componentDidMount() {
         this.getChat()
         const socket = this.props.socket
-        socket.on('*', (event, data) => {
-            console.log(event)
-            console.log(data)
-        })
         socket.on('chatmsg', (res) => {
             console.log(`chatResponse: ${JSON.stringify(res)}`)
             this.setState({ messages: [...this.state.messages, res] })
         })
+        socket.on('onlinelist', (data) => {
+            console.log(data)  
+        })
+    }
+    componentWillUnmount() {
+        //leave room
+        this.props.socket.emit('leave', { prof: this.props.profile.profile._id, room: this.state.chat._id })
     }
     componentDidUpdate = () => {
         this._scrollMessages()
