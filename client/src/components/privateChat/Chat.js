@@ -13,7 +13,8 @@ class Chat extends Component {
         messages: null,
         messageInput: '',
         friends: null,
-        checkedFriends: []
+        checkedFriends: [],
+        onlineList: []
     }
     componentDidMount() {
         this.getChat()
@@ -23,7 +24,8 @@ class Chat extends Component {
             this.setState({ messages: [...this.state.messages, res] })
         })
         socket.on('onlinelist', (data) => {
-            console.log(data)  
+            console.log(data)
+            this.setState({ onlineList: data })
         })
     }
     componentWillUnmount() {
@@ -57,11 +59,18 @@ class Chat extends Component {
     }
     MemberList = () => {
         const members = [this.state.chat.owner, ...this.state.chat.members]
-        return (<ul>
-            {members.map((m) => {
-                return <li key={m._id}>{m.handle}</li>
-            })}
-        </ul>)
+        return (
+            <ul >
+                <li><h5>Members</h5></li>
+                {members.map((m) => {
+                    let style = 'grey-text text-lighten-1'
+                    this.state.onlineList.forEach((o) => {
+                        if (o === m._id) style = ''
+                    })
+                    return <li key={m._id} className={style}>{m.handle}</li>
+                })}
+            </ul>
+        )
     }
     MessageList = () => {
         if (this.state.messages && this.props.profile) {
@@ -193,8 +202,6 @@ class Chat extends Component {
                                     required type="text" />
                             </div>
                             <div className="col s3">
-                                <h6>Members</h6>
-                                <hr />
                                 <this.MemberList />
                                 <this.AddMemberModal />
                             </div>

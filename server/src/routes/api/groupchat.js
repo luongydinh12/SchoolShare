@@ -11,10 +11,9 @@ const auth = Passport.authenticate('jwt', { session: false })
 
 import io, { addSocketIdtoSession } from './socket.io'
 
-let onlineList = {}
+let onlineList = {}     //dict for storing online members
+
 io.of('/chat').on('connection', (socket) => {
-    // const room = 'testroom'
-    //dict for storing online members
     socket.on('join', (msg) => {
         socket.join(msg.room)
         if (!onlineList[msg.room]) {
@@ -23,11 +22,11 @@ io.of('/chat').on('connection', (socket) => {
         onlineList[msg.room][socket.id] = msg.prof
 
         console.log(`profile ${msg.prof} joined room ${msg.room} wtih socketid ${socket.id} `)
-        io.of('/chat').to(msg.room).emit('onlinelist', onlineList[msg.room])
+        sendOnlineListUpdate(msg.room)
     })
     socket.on('chatmsg', (message) => {
         console.log(`got message from ${socket.id}`, message.msg.text)
-        io.of('/chat').to(message.room).emit('chatmsg', message.msg) //socket.to and socket.in still won't work for some reason, check later x_x
+        io.of('/chat').to(message.room).emit('chatmsg', message.msg)
 
         new GroupChatMessage({
             groupChat: message.room,
@@ -37,8 +36,9 @@ io.of('/chat').on('connection', (socket) => {
     })
     socket.on('leave', (msg) => {
         console.log(`${socket.id} leaving room  msg: ${JSON.stringify(msg)}`)
-        delete onlineList[msg.room][socket.id]
+        if (onlineList[msg.room]) delete onlineList[msg.room][socket.id] //on server update, client may still attempt to leave a room that doesn't exist
         console.log(onlineList)
+        sendOnlineListUpdate(msg.room)
     })
     socket.on('disconnect', () => {
         for (var room in onlineList) {
@@ -46,12 +46,19 @@ io.of('/chat').on('connection', (socket) => {
                 console.log(socketid)
                 if (socketid === socket.id) {
                     delete onlineList[room][socketid]
+                    sendOnlineListUpdate(room)
                 }
             }
         }
         console.log(`${socket.id} disconnected: onlineList 
             `, onlineList)
     })
+
+    const sendOnlineListUpdate = (room) => {
+        io.of('/chat').to(room).emit('onlinelist', Object.keys(onlineList[room]).map((key) => {
+            return onlineList[room][key]
+        }))
+    }
 })
 
 Router.get('/getChats', auth, (req, res) => {
