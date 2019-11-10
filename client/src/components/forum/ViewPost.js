@@ -73,16 +73,14 @@ class ViewPost extends Component {
                 <h6
                   style={{ color: "rgb(44, 127, 252)" }}
                   href="/"
-                  onClick={e => this.savePost(e, post)}
-                >
+                  onClick={e => this.savePost(e, post)}>
                  Save
                 </h6>
               ) : <h6 style={{ color: "rgb(44, 127, 252)" }}
-              href="/"
-              // onClick={e => this.unsavePost(e, post)}
-            >
-             UnSave
-            </h6> }
+                   href="/"
+                   onClick={e => this.unsavePost(e, post)}>
+                   UnSave
+                  </h6> }
           </div> 
           </>
     );
@@ -103,7 +101,24 @@ class ViewPost extends Component {
       this.getPost();
   })
   }
-  
+
+  unsavePost = (e, post) => {
+    e.preventDefault();
+    const userId = this.props.auth.user.id;
+    const postId = post._id;
+    
+    const data = {
+      postId: postId,
+      userId: userId
+    }
+
+    axios
+    .post('/api/posts/unsaveThread', data)
+    .then(res => {
+      this.getPost();
+  })
+  }
+
   renderPostReplyBox=()=> {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
