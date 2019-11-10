@@ -11,7 +11,7 @@ class ProfileHeader extends Component {
           <div className="card card-body bg-info text-white mb-3 center-align">
             <div className="row">
               <div className="col-4 col-md-3 m-auto" style={{ padding: "30px"}}>
-              <div class="crop">
+              <div className="crop">
                 <img style={{
                   verticalAlign: "middle",
                   borderRadius: "50%",
