@@ -38,7 +38,7 @@ class CreateChat extends Component {
         const val = e.target.value
         const { checkedFriends } = this.state
         const newCheckedFriends = (e.target.checked) ? [...checkedFriends, e.target.value] : checkedFriends.filter((f) => {
-            return (f._id === val)
+            return (f !== val)
         })
         this.setState({ checkedFriends: newCheckedFriends })
     }
