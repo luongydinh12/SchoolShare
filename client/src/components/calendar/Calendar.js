@@ -27,6 +27,9 @@ class Calendar extends React.Component {
 
   componentDidMount = () => {
     this.updateCalendar()
+    M.AutoInit()
+    //let elems = document.querySelectorAll('.dropdown-trigger');
+    //M.Dropdown.init(elems, {inDuration: 300, outDuration: 225});
   }
 
   // Update the list of events for current user
@@ -75,7 +78,6 @@ class Calendar extends React.Component {
     start: this.state.start,
     desc: this.state.desc,
     allDay: this.state.allDay,
-    user: this.props.auth.user.id
   })
     .then(result => {
       
@@ -87,7 +89,8 @@ class Calendar extends React.Component {
         title: '',
         desc: '',
         curEventId: null,
-        isUpdate: false
+        isUpdate: false,
+        tags:[]
         })
       this.updateCalendar()
     })
@@ -106,9 +109,10 @@ class Calendar extends React.Component {
     }
     axios.post('/api/calendar/deleteevent', data)
     .then(res => {
-        this.updateCalendar()
+        this.updateCalendar();
     })
   }
+
   render() {
     return (
       <div>
@@ -131,8 +135,15 @@ class Calendar extends React.Component {
               <textarea id="event_desc" className="materialize-textarea" onChange={this.handleDescOnChange} />
               
             </div>
+
+            <ul id='dropdown' className='dropdown-content'>
+              <li><a href="#">one</a></li>
+              <li><a href="#">two</a></li>
+            </ul>
+            <a className='btn dropdown-button' href = "#" data-activates='dropdown'>Tags </a>
+              
           </div>
-          <div className="modal-footer">
+          <div className="modal-footer"> 
             <button id="delete_bt" className="modal-close waves-effect waves-blue btn-flat" onClick={this.deleteEvent}>Delete</button>
             <button className="modal-close waves-effect waves-red btn-flat" onClick={this.handleSubmit}>Save</button>           
             <button className="modal-close waves-effect waves-green btn-flat">Close</button>

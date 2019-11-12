@@ -33,18 +33,15 @@ router.get('/getallevents', (req, res) => {
 // @returns String and msg data(details)
 router.post('/newevent', (req, res) => {
   console.log({body: req.body})
-  //const { title, start,desc, allDay, user } = req.body
-  const title = req.body.title
-  const start = req.body.start
-  const desc = req.body.desc
-  const user = req.body.user
-  const allDay = req.body.allDay
+  const { title, start,desc, allDay, user, tags } = req.body
+
   const newEvent = new CalendarEvent({
     title: title,
     desc:desc,
     date:start,
     allDay:allDay,
-    user:user
+    user:user,
+    tags:tags
   })
 
   newEvent
