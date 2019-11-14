@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
+import Axios from 'axios';
+
 class Dashboard extends Component {
 
   onLogoutClick = e => {
@@ -64,7 +66,31 @@ class Dashboard extends Component {
         </div>
       )
     }
+  //uploadImage(e, method) {
+    //let imageObj = {};
 
+    if (method === "multer") {
+
+      let imageFromObj = new FormData();
+
+      imageFromObj.append("imageName", "multer-image-" + Date.now());
+      imageFromObj.append("imageData", e.target.files[0]);
+
+      this.setState({
+        multerImage: URL.createObjectURL(e.target.files[0])
+      });
+
+      Axios.post('${API_URL}/image/uploadmulter', imageFromObj)
+      .then((data) => {
+        if (data.data.success) {
+          alert("Image has been succesfully uploaded using multer");
+        }
+      })
+      .catch((err) => {
+        alert("Error while uploading image using multer");
+        this.setDefaultImage("multer");
+      });
+  //}
     return (
       <div>
         <div className="section">
@@ -96,9 +122,19 @@ class Dashboard extends Component {
                 // fontWeight: "bold",
                 fontSize: "150%"
               }}>Joined Date: {moment(user.date).format('MM/DD/YYYY')}</p>
-
+              </div>
               {dashboardContent}
+              <div className = "main-container">
+               <h3 className = "main-heading"> Image upload App</h3>
 
+               <div className = "main-container">
+                 <div className = "process">
+                   <h4 className = "process__heading">Process: using Multer</h4>
+                   <p className = "process__details" >upload image to a node server, connected to a MongoDB, with the help of multer</p>
+
+                   <input type= "file" className= "peocess__upload-btn" onchange={(e) => this.uploadImage(e,"multer")} />
+                   <img src={this.state.multerImage} alt= "upload-image" className="process__image" />
+                   </div>
               <div>
 
                 <Link to="/calendar">

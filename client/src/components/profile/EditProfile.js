@@ -74,6 +74,7 @@ class CreateProfile extends Component {
               <Link to="/dashboard" className="btn btn-large waves-effect waves-light hoverable green accent-3">
                 Go Back
               </Link>
+            
               <h1 className="display-4 text-center">Edit Profile</h1>
               <small className="d-block pb-3">* = required fields</small>
               <form onSubmit={this.onSubmit}>
@@ -126,6 +127,7 @@ class CreateProfile extends Component {
                   className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 />
               </form>
+              /**add file upload button here */
             </div>
           </div>
         </div>

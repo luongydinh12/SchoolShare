@@ -21,6 +21,7 @@ import { connect } from 'react-redux';
 import { Link, Link as RouterLink } from 'react-router-dom';
 import { logoutUser } from "../../actions/authActions";
 import { EditProfileButton } from './NavBarButtons';
+
 const drawerWidth = 240;
 // const options = [
 //   'EDIT PROFILE',

@@ -63,6 +63,7 @@ app.use('/api/posts',posts);
 app.use('/api/friends',friends)
 app.use('/api/calendar',calendarevents);
 app.use('/api/groupchat', groupChat)
+app.use('/uploads', express.static('uploads'))
 
 const port = process.env.PORT || 5000;
-app.listen(port,() => console.log( ` TEst Server started on port ${port}`));
+app.listen(port,() => console.log( ` Test Server started on port ${port}`));
