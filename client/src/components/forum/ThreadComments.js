@@ -36,7 +36,7 @@ class ThreadComments extends Component {
   }
 
   render() {
-    console.log("ThreadComments", { state: this.state });
+    //console.log("ThreadComments", { state: this.state });
     if (Array.isArray(this.state.comments)) {
       if (this.state.comments.length) {
         return (
@@ -68,6 +68,7 @@ class RenderComment extends Component {
       displayEditBox: false,
       displayDeleteBox: false,
       commentId: null,
+      authorHandle: ""
     };
 
     this.getReplies = this.getReplies.bind(this);
@@ -314,11 +315,20 @@ class RenderComment extends Component {
       });
   }
 
+  hasProfile=(userId)=> {
+    axios.get("/api/profile/user/"+userId)
+        .then(({data}) => {this.setState({authorHandle: data.handle})})
+        .catch(err => {
+          this.setState({authorHandle: ""});
+        });
+  }
+
   render() {
-    console.log("RenderComment", { state: this.state });
+    //console.log("RenderComment", { state: this.state });
     const { c: comment } = this.props;
     const loggedInUserId = this.props.auth.user.id;
     //console.log(comment._id, loggedInUserId, comment.content)
+    this.hasProfile(comment.author._id);
     return (
       <>
         <div className="row" style={{ marginBottom: 0 }}>
@@ -328,7 +338,11 @@ class RenderComment extends Component {
               style={{ boxShadow: "unset", border: "none", margin: 0 }}
             >
               <div style={{ color: "#2BB673", fontWeight: 600 }}>
-                {(comment.author)?comment.author.name:"[deleted]"}:
+                {(comment.author)?
+                  ((this.state.authorHandle)?
+                    <a style={{ color: "#2BB673", fontWeight: 600 }} href={"/profile/"+this.state.authorHandle}>{comment.author.name}</a>:
+                    comment.author.name)
+                  :"[deleted]"}
               </div>
               <p style={comment.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{comment.deleted?"[comment deleted]":comment.content}</p>
               {this.showCommentManagement(comment.author._id)}
