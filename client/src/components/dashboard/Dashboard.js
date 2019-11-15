@@ -7,11 +7,25 @@ import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
 import Axios from 'axios';
+import DefaultImg from '../../image/avatar_4.png';
+
 
 class Dashboard extends Component {
-  state={
-    
+  
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      multerImage: DefaultImg
+    }
   }
+  setDefaultImage(uploadType) {
+    if (uploadType === "multer") {
+      this.setState({
+        multerImage: DefaultImg
+      });
+    }
+    }
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
@@ -22,8 +36,13 @@ class Dashboard extends Component {
       this.props.deleteUser();
     }
   }
-uploadImage=(e, method)=>{
+
+  uploadImage= (e, method)=>{
+  console.log('success');
   let imageObj = {};
+  alert('uploadimage',method)
+  console.log(`uploadImage method=${method}`)
+
   if (method === "multer") {
 
     let imageFromObj = new FormData();
@@ -138,8 +157,16 @@ uploadImage=(e, method)=>{
                    <h4 className = "process__heading">Process: using Multer</h4>
                    <p className = "process__details" >upload image to a node server, connected to a MongoDB, with the help of multer</p>
 
-                   <input type= "file" className= "peocess__upload-btn" onchange={(e) => this.uploadImage(e,"multer")} />
-                   <img src={this.state.multerImage} alt= "upload-image" className="process__image" />
+                   <input 
+                      accept="image/*"
+                      type= "file" 
+                      className= "peocess__upload-btn tn" 
+                      onchange={(e) => this.uploadImage(e,"multer")} 
+                   />
+                   
+                   <img src={this.state.multerImage} 
+                   alt= "upload-image" 
+                   className="process__image" />
                    </div>
               <div>
 
