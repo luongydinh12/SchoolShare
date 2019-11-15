@@ -319,7 +319,25 @@ router.post('/saveThread', (req,res) => {
     console.log(err)
     res.sendStatus(404)
   })
+})
 
+router.post('/unsaveThread', (req,res) => {
+  const postId = req.body.postId
+  const userId = req.body.userId
+
+  Thread.findById({_id: postId})
+  .then(thread => {
+    console.log("Thread.save before deletion: "+ thread.saves);
+    console.log("UserID: "+userId)
+    thread.saves.remove(userId)
+    console.log("Thread.save after deletion: "+ thread.saves);
+    thread.save();
+    res.send(thread)
+  })
+  .catch(err => {
+    console.log(err)
+    res.sendStatus(404)
+  })
 })
 
 

@@ -12,6 +12,7 @@
   "author": "Dinh Luong",
   "license": "ISC",
   "dependencies": {
-    "concurrently": "^4.1.2"
+    "concurrently": "^4.1.2",
+    "fg-loadcss": "^2.1.0"
   }
 }
