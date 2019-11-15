@@ -21,15 +21,18 @@ class Calendar extends React.Component {
       title: '',
       desc: '',
       curEventId: null,
-      isUpdate: false
+      isUpdate: false,
+      tags:[]
     }
   }
 
   componentDidMount = () => {
     this.updateCalendar()
-    M.AutoInit()
-    //let elems = document.querySelectorAll('.dropdown-trigger');
-    //M.Dropdown.init(elems, {inDuration: 300, outDuration: 225});
+    var dropdownEle = document.querySelectorAll('.dropdown-trigger');
+    M.Dropdown.init(dropdownEle, {inDuration: 300, outDuration: 225, constrainWidth: false});
+
+    var tagEle = document.querySelectorAll('.chips');
+    var instance = M.Chips.getInstance(tagEle);
   }
 
   // Update the list of events for current user
@@ -78,6 +81,8 @@ class Calendar extends React.Component {
     start: this.state.start,
     desc: this.state.desc,
     allDay: this.state.allDay,
+    user: this.props.auth.user.id,
+    tags: this.state.tags
   })
     .then(result => {
       
@@ -116,9 +121,11 @@ class Calendar extends React.Component {
   render() {
     return (
       <div>
+        
         <div style={{marginBottom: "4rem",}}>
           <NavBar />
         </div>
+        
         <div className='modal'>
           <div className='modal-content'>
             <h4>Event</h4>
@@ -136,11 +143,17 @@ class Calendar extends React.Component {
               
             </div>
 
-            <ul id='dropdown' className='dropdown-content'>
-              <li><a href="#">one</a></li>
-              <li><a href="#">two</a></li>
-            </ul>
-            <a className='btn dropdown-button' href = "#" data-activates='dropdown'>Tags </a>
+            <div>
+              <ul id='dropdown1' class='dropdown-content' >
+                <li><a href="#!"><i class="material-icons">school</i>School</a></li>
+                <li class="divider" tabindex="-1"></li>
+                <li><a href="#!"><i class="material-icons">work</i>Work</a></li>
+                <li class="divider" tabindex="-1"></li>
+                <li><a href="#!"><i class="material-icons">person</i>Personal</a></li>
+              </ul>
+              <a class='dropdown-trigger btn' href='#' data-target='dropdown1'><i class="large material-icons">add_box</i>Add Tags</a>
+
+            </div>
               
           </div>
           <div className="modal-footer"> 
