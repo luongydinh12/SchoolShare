@@ -9,7 +9,9 @@ import Spinner from '../common/Spinner';
 import Axios from 'axios';
 
 class Dashboard extends Component {
-
+  state={
+    
+  }
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
@@ -19,6 +21,31 @@ class Dashboard extends Component {
       e.preventDefault();
       this.props.deleteUser();
     }
+  }
+uploadImage=(e, method)=>{
+  let imageObj = {};
+  if (method === "multer") {
+
+    let imageFromObj = new FormData();
+
+    imageFromObj.append("imageName", "multer-image-" + Date.now());
+    imageFromObj.append("imageData", e.target.files[0]);
+
+    this.setState({
+      multerImage: URL.createObjectURL(e.target.files[0])
+    });
+
+    Axios.post('${API_URL}/image/uploadmulter', imageFromObj)
+    .then((data) => {
+      if (data.data.success) {
+        alert("Image has been succesfully uploaded using multer");
+      }
+    })
+    .catch((err) => {
+      alert("Error while uploading image using multer");
+      this.setDefaultImage("multer");
+    });}
+
   }
 
   componentDidMount() {
@@ -30,6 +57,9 @@ class Dashboard extends Component {
     this.props.deleteAccount()
   }
   render() {
+    
+    
+
     const { user } = this.props.auth;
     const { profile, loading } = this.props.profile
     let dashboardContent
@@ -67,29 +97,6 @@ class Dashboard extends Component {
       )
     }
  
-
-    if (method === "multer") {
-
-      let imageFromObj = new FormData();
-
-      imageFromObj.append("imageName", "multer-image-" + Date.now());
-      imageFromObj.append("imageData", e.target.files[0]);
-
-      this.setState({
-        multerImage: URL.createObjectURL(e.target.files[0])
-      });
-
-      Axios.post('${API_URL}/image/uploadmulter', imageFromObj)
-      .then((data) => {
-        if (data.data.success) {
-          alert("Image has been succesfully uploaded using multer");
-        }
-      })
-      .catch((err) => {
-        alert("Error while uploading image using multer");
-        this.setDefaultImage("multer");
-      });
-  //}
     return (
       <div>
         <div className="section">

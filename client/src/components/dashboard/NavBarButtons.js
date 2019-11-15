@@ -1,31 +1,53 @@
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
+import EditIcon from '@material-ui/icons/Edit';
+import Axios from 'axios';
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { deleteUser, logoutUser } from "../../actions/authActions"
-class LogOutButton extends Component {
-    onLogoutClick = e => {
-        e.preventDefault()
-        this.props.logoutUser()
+class EditProfileButton extends Component {
+    state = {
+        profile: null
+    }
+    componentWillMount() {
+        Axios.get('/api/profile/')
+            .then((res) => {
+                this.setState({ profile: res.data })
+            })
     }
     render() {
-        return (
-            <ListItem button key={"text1"} onClick={this.onLogoutClick}>
+        if (this.state.profile) return (
+            <ListItem component="a" href="/edit-profile">
                 <ListItemIcon>
-                    <InboxIcon />
+                    <EditIcon />
                 </ListItemIcon>
-                <ListItemText primary={"Log Out"} />
+                <ListItemText primary={"Edit Profile"} />
             </ListItem>
         )
+        return null
     }
 }
-class DeleteUserButton extends Component {
-    render() {
-        return (null)
-    }
-}
+export { EditProfileButton };
+// class LogOutButton extends Component {
+//     onLogoutClick = e => {
+//         e.preventDefault()
+//         this.props.logoutUser()
+//     }
+//     render() {
+//         return (
+//             <ListItem button key={"text1"} onClick={this.onLogoutClick}>
+//                 <ListItemIcon>
+//                     <InboxIcon />
+//                 </ListItemIcon>
+//                 <ListItemText primary={"Log Out"} />
+//             </ListItem>
+//         )
+//     }
+// }
+// class DeleteUserButton extends Component {
+//     render() {
+//         return (null)
+//     }
+// }
 
 // LogOutButton = connect(
 //     (state) => ({
