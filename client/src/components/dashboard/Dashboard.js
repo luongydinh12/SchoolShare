@@ -66,8 +66,7 @@ class Dashboard extends Component {
         </div>
       )
     }
-  //uploadImage(e, method) {
-    //let imageObj = {};
+ 
 
     if (method === "multer") {
 
@@ -169,6 +168,7 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
+      </div>
       </div>
     );
   }
