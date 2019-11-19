@@ -5,6 +5,10 @@ import PropTypes from 'prop-types';
 import TextFieldGroup from '../common/TextFieldGroup';
 import { createProfile, getCurrentProfile } from '../../actions/profileActions';
 import isEmpty from '../../validation/is-empty';
+import DefaultImg from '../../icons/DefaultImage/default-img.jpg';
+import axios from 'axios';
+import '../../App.css';
+const API_URL = "http://localhost:5000";
 
 class CreateProfile extends Component {
   constructor(props) {
@@ -15,10 +19,59 @@ class CreateProfile extends Component {
       avatar: '', // ADD THIS
       name: '',
       //email: '',
-      errors: {}
+      errors: {},
+      multerImage: DefaultImg,
+      baseImage: DefaultImg,
     };
   }
 
+  setDefaultImage(uploadType) {
+    if (uploadType === "multer") {
+      this.setState({
+        multerImage: DefaultImg
+      });
+    } /*else if (uploadType === "firebase") {
+      this.setState({
+        firebaseImage: DefaultImg
+      });
+    }*/ else {
+      this.setState({
+        baseImage: DefaultImg
+      });
+    }
+  }
+
+  uploadImage(e, method) {
+    let imageObj = {};
+
+    if (method === "multer") {
+
+      let imageFormObj = new FormData();
+
+      imageFormObj.append("imageName", "multer-image-" + Date.now());
+      imageFormObj.append("imageData", e.target.files[0]);
+      
+      // stores a readable instance of 
+      // the image being uploaded using multer
+      this.setState({
+        multerImage: URL.createObjectURL(e.target.files[0])
+      });
+
+     //axios.post(`${API_URL}/image/uploadmulter`, imageFormObj)
+     axios.post(`/image/uploadmulter`, imageFormObj)
+        .then((data) => {
+          if (data.data.success) {
+            console.log("HELLO");
+            alert("Image has been successfully uploaded using multer");
+            this.setDefaultImage("multer");
+          }
+        })
+        .catch((err) => {
+          alert("Error while uploading image using multer");
+          this.setDefaultImage("multer");
+        });
+    }
+  }
   componentDidMount() {
     this.props.getCurrentProfile();
   }
@@ -76,6 +129,13 @@ class CreateProfile extends Component {
               </Link>
               <h1 className="display-4 text-center">Edit Profile</h1>
               <small className="d-block pb-3">* = required fields</small>
+              <div className="image-container">
+          <div className="process">
+            <p className="process__details">Upload your profile image</p>
+
+            <input type="file" className="process__upload-btn" onChange={(e) => this.uploadImage(e, "multer")} />
+            <img  src={this.state.multerImage} alt="upload-image" className="process__image" />
+          </div> </div>
               <form onSubmit={this.onSubmit}>
                 <p>Please type in </p>
                 <TextFieldGroup
