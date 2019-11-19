@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
+import Button from '@material-ui/core/Button';
+
 class Dashboard extends Component {
 
   onLogoutClick = e => {
@@ -128,7 +130,18 @@ class Dashboard extends Component {
                   className="btn btn-large waves-effect waves-light hoverable green accent-3">
                   Delete Account
             </button>
-
+            <input
+               accept="image/*"
+               className={this.input}
+               id="contained-button-file"
+               multiple
+               type="file"
+              />
+              <label htmlFor="contained-button-file">
+              <Button variant="contained" component="span" className={this.button}>
+               Upload
+              </Button>
+              </label>
               </div>
             </div>
           </div>
