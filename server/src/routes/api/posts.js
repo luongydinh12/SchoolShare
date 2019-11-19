@@ -302,26 +302,6 @@ router.post('/likeComment', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
-router.post('/unlikeComment', (req,res) => {
-  const commentId = req.body.commentId
-  const userId = req.body.userId
-
-  CommentLike.findOneAndDelete({user: userId, comment : commentId })
-  .then(like => {
-    console.log("Like to be remove is: "+ like)
-    console.log("Like to be remove is: "+ like._id)
-    Comment.findById({_id : commentId})
-    .then(comment=>{
-      comment.likes.remove(like._id)
-      comment.save();
-    })
-  })
-  .catch(err => {
-    console.log(err)
-    res.sendStatus(404)
-  })
-})
-
 router.post('/saveThread', (req,res) => {
   const postId = req.body.postId
   const userId = req.body.userId
