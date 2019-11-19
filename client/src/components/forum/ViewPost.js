@@ -39,6 +39,7 @@ class ViewPost extends Component {
           loading: false,
           error: false
         });
+        this.hasProfile(this.state.post);
       })
       .catch(err => {
         console.log({ err });
@@ -55,7 +56,6 @@ class ViewPost extends Component {
   }
 
   renderPost=(post)=> { 
-    this.hasProfile(post);
     return (
       <>
         <div className="postContent">

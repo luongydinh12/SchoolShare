@@ -86,6 +86,7 @@ class RenderComment extends Component {
   }
 
   componentDidMount = () => {
+    this.hasProfile(this.props.c.author._id);
     this.getReplies();
   };
 
@@ -328,7 +329,6 @@ class RenderComment extends Component {
     const { c: comment } = this.props;
     const loggedInUserId = this.props.auth.user.id;
     //console.log(comment._id, loggedInUserId, comment.content)
-    this.hasProfile(comment.author._id);
     return (
       <>
         <div className="row" style={{ marginBottom: 0 }}>
