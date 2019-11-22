@@ -16,7 +16,10 @@ module.exports = {
         .pause(1000)
         .click('#root > div > div > div > div > div > form > div:nth-child(3) > button')
         .pause(5000)
+        .click('#root > div > div > div:nth-child(2) > div:nth-child(1) > div > header > div > a:nth-child(5) > span.MuiIconButton-label > svg > path')
+        .pause(1000)
         .end();
+
     }
   
   };
