@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
-import Axios from 'axios';
+import axios from 'axios';
 import DefaultImg from '../../image/avatar_4.png';
 
 
@@ -38,10 +38,10 @@ class Dashboard extends Component {
   }
 
   uploadImage= (e, method)=>{
-  console.log('success');
+  //console.log('success');
   let imageObj = {};
-  alert('uploadimage',method)
-  console.log(`uploadImage method=${method}`)
+  //alert('uploadimage',method)
+  //console.log(`uploadImage method=${method}`)
 
   if (method === "multer") {
 
@@ -49,22 +49,24 @@ class Dashboard extends Component {
 
     imageFromObj.append("imageName", "multer-image-" + Date.now());
     imageFromObj.append("imageData", e.target.files[0]);
-
+// stores a readable instance of 
+// the image  being uploaded using multer
     this.setState({
       multerImage: URL.createObjectURL(e.target.files[0])
     });
 
-    Axios.post('${API_URL}/image/uploadmulter', imageFromObj)
-    .then((data) => {
-      if (data.data.success) {
-        alert("Image has been succesfully uploaded using multer");
-      }
-    })
-    .catch((err) => {
-      alert("Error while uploading image using multer");
-      this.setDefaultImage("multer");
-    });}
-
+   //Axios.post('${API_URL}/image/uploadmulter', imageFromObj)
+   axios.post('{api/image/uploadmulter', imageFromObj)
+      .then((data) => {
+        if (data.data.success) {
+          alert("Image has been succesfully uploaded using multer");
+        }
+      })
+      .catch((err) => {
+        alert("Error while uploading image using multer");
+        this.setDefaultImage("multer");
+      });
+    }
   }
 
   componentDidMount() {
