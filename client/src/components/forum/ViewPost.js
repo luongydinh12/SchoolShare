@@ -13,6 +13,7 @@ class ViewPost extends Component {
       commentCount: 0,
       loading: true,
       error: false,
+      authorHandle: "",
       displayReplyBox: false,
       displayEditTitle: false,
       displayEditDesc: false,
@@ -38,6 +39,7 @@ class ViewPost extends Component {
           loading: false,
           error: false
         });
+        this.hasProfile(this.state.post);
       })
       .catch(err => {
         console.log({ err });
@@ -45,12 +47,24 @@ class ViewPost extends Component {
       });
   }
 
-  renderPost=(post)=> {
+  hasProfile=(post)=> {
+    axios.get("/api/profile/user/"+post.author._id)
+        .then(({data}) => {this.setState({authorHandle: data.handle})})
+        .catch(err => {
+          this.setState({authorHandle: ""});
+        });
+  }
+
+  renderPost=(post)=> { 
     return (
       <>
         <div className="postContent">
           <p style={{ color: "#2BB673", fontWeight: 600 }}>
-            {(post.author)?post.author.name:"[deleted]"}:
+            {(post.author)?
+                ((this.state.authorHandle)?
+                  <a style={{ color: "#2BB673", fontWeight: 600 }} href={"/profile/"+this.state.authorHandle}>{post.author.name}</a>:
+                  post.author.name)
+                :"[deleted]"}
           </p>
           <p style={post.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{post.deleted?"[Post Deleted]":post.content}</p>
           {this.showCommentManagement(post)}
