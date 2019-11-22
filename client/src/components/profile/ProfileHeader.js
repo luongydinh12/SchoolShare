@@ -22,7 +22,7 @@ class ProfileHeader extends Component {
 
                 }}
                   //className="rounded-circle"
-                  src={profile.user.avatar}
+                  src={"..//"+profile.user.avatar}
                   alt=""
                 />
                 </div>
