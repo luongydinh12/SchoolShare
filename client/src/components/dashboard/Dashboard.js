@@ -82,6 +82,10 @@ class Dashboard extends Component {
                   marginTop: "25px"
                 }} src={user.avatar} />
 
+                <div>
+                  {user.avatar}s
+                </div>
+
               <p className="userName" style={{
                 fontWeight: "bold",
                 fontSize: "250%"

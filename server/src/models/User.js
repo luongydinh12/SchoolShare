@@ -31,7 +31,7 @@ const UserSchema = new Schema({
   avatar: {
     type: String,
     required: false,
-    default: "https://res.cloudinary.com/geekysrm/image/upload/v1542221619/default-user.png"
+    default: "uploads/15743941465812.png"
   },
   description: {
     type: String,
