@@ -2,7 +2,7 @@ var express = require('express');
 var Image = require('../../models/image');
 var ImageRouter = express.Router();
 const multer = require('multer');
-
+const User = require('../../models/User');
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads/');
@@ -42,14 +42,21 @@ ImageRouter.route("/uploadmulter")
             imageName: req.body.imageName,
             imageData: req.file.path
         });
-
+        
         newImage.save()
             .then((result) => {
                 console.log(result);
+                User.findOneAndUpdate({_id: req.body.userId},{$set:{"avatar": req.file.path}},function(err, doc){
+                    if(err){
+                        console.log("Something wrong when updating data!");
+                    }
+                    console.log(doc);
+                });
                 res.status(200).json({
                     success: true,
                     document: result
                 });
+                
             })
             .catch((err) => next(err));
     });
