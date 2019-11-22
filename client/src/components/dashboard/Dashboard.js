@@ -6,8 +6,11 @@ import { Link } from 'react-router-dom';
 import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
+import Axios from "axios";
 class Dashboard extends Component {
-
+  state={
+    avatar: null
+  }
   onLogoutClick = e => {
     e.preventDefault();
     this.props.logoutUser();
@@ -22,6 +25,10 @@ class Dashboard extends Component {
   componentDidMount() {
     document.body.classList.add("background-white");
     this.props.getCurrentProfile()
+    Axios.get("api/users/avatar?user="+this.props.auth.user.id).then((res)=>{
+      console.log(res.data.avatar)
+      this.setState({avatar: res.data.avatar})
+    })
   }
   //test
   handleDeleteAccount = () => {
@@ -80,7 +87,7 @@ class Dashboard extends Component {
                   height: "150px",
                   textAlign: "center",
                   marginTop: "25px"
-                }} src={user.avatar} />
+                }} src={this.state.avatar} />
 
 
               <p className="userName" style={{

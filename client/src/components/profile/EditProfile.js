@@ -62,12 +62,12 @@ class CreateProfile extends Component {
      axios.post(`/image/uploadmulter`, imageFormObj)
         .then((data) => {
           if (data.data.success) {
-            alert("Image has been successfully uploaded using multer");
+            alert("Image has been successfully uploaded");
             this.setDefaultImage("multer");
           }
         })
         .catch((err) => {
-          alert("Error while uploading image using multer");
+          alert("Error while uploading image");
           this.setDefaultImage("multer");
         });
     }
