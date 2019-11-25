@@ -18,7 +18,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link, Link as RouterLink } from 'react-router-dom';
 import { logoutUser } from "../../actions/authActions";
 import { EditProfileButton } from './NavBarButtons';
 import { red } from '@material-ui/core/colors';
