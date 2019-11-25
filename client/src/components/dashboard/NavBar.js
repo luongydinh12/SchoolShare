@@ -18,12 +18,11 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import clsx from 'clsx';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Link, Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { logoutUser } from "../../actions/authActions";
 import { EditProfileButton } from './NavBarButtons';
 import { red } from '@material-ui/core/colors';
 import { loadCSS } from 'fg-loadcss';
-import AccountBalanceIcon from '@material-ui/icons/AccountBalance';
 import EventAvailableIcon from '@material-ui/icons/EventAvailable';
 import NavigationIcon from '@material-ui/icons/Navigation';
 import Fab from '@material-ui/core/Fab';
@@ -50,12 +49,7 @@ const theme = createMuiTheme({
 });
 
 const drawerWidth = 240;
-// const options = [
-//   'EDIT PROFILE',
-//   'DELETE',
-//   'CALENDER',
-//   'LOG OUT',
-// ];
+
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -81,7 +75,8 @@ const useStyles = makeStyles(theme => ({
   iconHover: {
     '&:hover': {
       color: red[300],
-    },},
+    },
+  },
   appBar: {
     backgroundColor: "#2BB673",
     transition: theme.transitions.create(['margin', 'width'], {
@@ -136,13 +131,13 @@ const useStyles = makeStyles(theme => ({
     }),
     marginLeft: 0,
   },
-  
+
 }));
 
 
 export default () => {
 
-  
+
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -185,103 +180,47 @@ export default () => {
             <img width="200" alt="Logo" src="/images/logos/logo--white.png" />
           </RouterLink>
           <Typography variant="h6" className={classes.title}></Typography>
-          
-          {/* <Link to="/private-chat" className="btn waves-effect waves-light hoverable white" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            color: "black"
-          }}>
-            Private Chat
-              </Link> */}
-              
-          {/* <IconButton className={classes.button} aria-label="delete"><AccountBalanceIcon /> </IconButton>
-          <IconButton className={classes.button} aria-label="delete" disabled color="primary"><DeleteIcon /></IconButton>
-          <IconButton color="secondary" className={classes.button} aria-label="add an alarm"><AlarmIcon /> </IconButton>
-          <IconButton 
-              color="primary" 
-              className={classes.button} aria-label="calendar"><EventAvailableIcon /></IconButton>
-          <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
-          <label htmlFor="icon-button-file">
-            <IconButton
-              color="primary"
-              className={classes.button}
-              aria-label="upload picture"
-              component="span"
-              ><PhotoCamera />
-            </IconButton>
-          </label> */}
-          
 
-          {/* <Link
-            to="/forum"
-            className="btn waves-effect waves-light hoverable blue accent-3"
-            style={{
-              width: "150px",
-              borderRadius: "3px",
-              letterSpacing: "1.5px",
-              marginTop: "2rem",
-              marginBottom: "1.4rem",
-              marginLeft: 16
-            }}
-          >
-            FORUM
-          </Link> */}
-          <IconButton 
-              href = "/calendar"
-              size = 'large'
-              color="inherit" 
-              className={classes.button} 
-              aria-label="calendar">
-                <EventAvailableIcon />
-          </IconButton>
-          
-          <IconButton 
-              href = "/profilelist"
-              size = 'large'
-              color="inherit" 
-              className={classes.button} 
-              aria-label="group">
-                <GroupIcon />
+          <IconButton
+            href="/calendar"
+            size='large'
+            color="inherit"
+            className={classes.button}
+            aria-label="calendar">
+            <EventAvailableIcon />
           </IconButton>
 
-          <IconButton 
-              href = "/private-chat"
-              size = 'large'
-              color="inherit" 
-              className={classes.button} 
-              aria-label="forum">
-                <ForumIcon />
+          <IconButton
+            href="/profilelist"
+            size='large'
+            color="inherit"
+            className={classes.button}
+            aria-label="group">
+            <GroupIcon />
           </IconButton>
-        
+
+          <IconButton
+            href="/private-chat"
+            size='large'
+            color="inherit"
+            className={classes.button}
+            aria-label="forum">
+            <ForumIcon />
+          </IconButton>
+
           <Fab
-              href="/forum"
-              variant="extended"
-              size="small"
-              color="primary"
-              aria-label="add"
-              className={classes.margin}
-              >
+            href="/forum"
+            variant="extended"
+            size="small"
+            color="primary"
+            aria-label="add"
+            className={classes.margin}
+          >
             <NavigationIcon className={classes.extendedIcon} />
             Forum
           </Fab>
-          
-          {/* <Link
-            to="/calendar"
-            className="btn waves-effect waves-light hoverable blue accent-3"
-            style={{
-              width: "150px",
-              borderRadius: "3px",
-              letterSpacing: "1.5px",
-              marginTop: "2rem",
-              marginBottom: "1.4rem",
-              marginLeft: 16
-            }}
-          >
-            CALENDAR
-          </Link> */}
+
+
         </Toolbar>
       </AppBar>
       <Drawer
@@ -298,33 +237,25 @@ export default () => {
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
-              <ChevronRightIcon />
-            )}
+                <ChevronRightIcon />
+              )}
           </IconButton>
         </div>
         <Divider />
 
         <List>
-          
+
 
           <EditProfileButton />
 
           <ListItem button key={"text1"}>
             <ListItemIcon>
-            <InboxIcon />
+              <InboxIcon />
               {/* <DeleteForeverIcon /> */}
             </ListItemIcon>
             <ListItemText primary={"Delete Account"} />
           </ListItem>
 
-
-          {/* <ListItem button key={"text2"}>
-            <ListItemIcon>
-            <InboxIcon />
-               <ExitToAppIcon /> 
-            </ListItemIcon>
-            <ListItemText primary={"Logout"} />
-          </ListItem> */}
 
           <LogOutButton />
 
@@ -339,24 +270,24 @@ export default () => {
 
 class LogOutButton extends Component {
   onLogoutClick = e => {
-      e.preventDefault()
-      this.props.logoutUser()
+    e.preventDefault()
+    this.props.logoutUser()
   }
   render() {
-      return (
-          <ListItem button key={"text1"} onClick={this.onLogoutClick}>
-              <ListItemIcon>
-                  <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Log Out"} />
-          </ListItem>
-      )
+    return (
+      <ListItem button key={"text1"} onClick={this.onLogoutClick}>
+        <ListItemIcon>
+          <InboxIcon />
+        </ListItemIcon>
+        <ListItemText primary={"Log Out"} />
+      </ListItem>
+    )
   }
 }
 
 LogOutButton = connect(
   (state) => ({
-      auth: state.auth
+    auth: state.auth
   }),
   { logoutUser }
 )(LogOutButton)

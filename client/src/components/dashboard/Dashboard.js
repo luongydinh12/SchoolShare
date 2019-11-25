@@ -8,7 +8,7 @@ import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
 import Axios from "axios";
 class Dashboard extends Component {
-  state={
+  state = {
     avatar: null
   }
   onLogoutClick = e => {
@@ -25,9 +25,9 @@ class Dashboard extends Component {
   componentDidMount() {
     document.body.classList.add("background-white");
     this.props.getCurrentProfile()
-    Axios.get("api/users/avatar?user="+this.props.auth.user.id).then((res)=>{
+    Axios.get("api/users/avatar?user=" + this.props.auth.user.id).then((res) => {
       console.log(res.data.avatar)
-      this.setState({avatar: res.data.avatar})
+      this.setState({ avatar: res.data.avatar })
     })
   }
   //test
@@ -71,7 +71,6 @@ class Dashboard extends Component {
         </div>
       )
     }
-
     return (
       <div>
         <div className="section">
@@ -79,8 +78,8 @@ class Dashboard extends Component {
             <div className="col s12 center-align ">
 
               <img id="userAvatar"
-                  alt=""
-                  style={{
+                alt=""
+                style={{
                   verticalAlign: "middle",
                   borderRadius: "50%",
                   width: "150px",
