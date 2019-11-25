@@ -29,6 +29,7 @@ import Fab from '@material-ui/core/Fab';
 import grey from '@material-ui/core/colors/grey';
 import GroupIcon from '@material-ui/icons/Group';
 import ForumIcon from '@material-ui/icons/Forum';
+import { deleteUser } from "../../actions/authActions";
 
 
 const theme = createMuiTheme({
@@ -248,23 +249,29 @@ export default () => {
 
           <EditProfileButton />
 
-          <ListItem button key={"text1"}>
+           {/* <ListItem button key={"text1"}>
             <ListItemIcon>
               <InboxIcon />
-              {/* <DeleteForeverIcon /> */}
+                <deleteUserButton/>
             </ListItemIcon>
             <ListItemText primary={"Delete Account"} />
-          </ListItem>
+          </ListItem> 
+           */}
 
+          
 
           <LogOutButton />
+          
+          <DeleteButton />
 
         </List>
+
         <Divider />
       </Drawer>
     </div>
   );
 }
+
 
 
 
@@ -281,6 +288,8 @@ class LogOutButton extends Component {
         </ListItemIcon>
         <ListItemText primary={"Log Out"} />
       </ListItem>
+
+      
     )
   }
 }
@@ -291,3 +300,31 @@ LogOutButton = connect(
   }),
   { logoutUser }
 )(LogOutButton)
+
+class DeleteButton extends Component{
+  onDeleteClick = e => {
+    if (window.confirm("Do you want to delete your account?")) {
+      e.preventDefault();
+      this.props.deleteUser();
+    }
+  }
+  render() {
+    return (
+      <ListItem button key={"text1"} onClick={this.onDeleteClick}>
+        <ListItemIcon>
+          <InboxIcon />
+        </ListItemIcon>
+        <ListItemText primary={"Delete"} />
+      </ListItem>
+
+    )
+  }
+}
+
+
+DeleteButton = connect(
+  (state) => ({
+    auth: state.auth
+  }),
+  { deleteUser }
+)(DeleteButton)
