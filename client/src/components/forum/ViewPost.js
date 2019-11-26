@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Row, Textarea, ProgressBar } from 'react-materialize';
 import { connect } from 'react-redux';
 import ThreadComments from "./ThreadComments";
-
+import Button from '@material-ui/core/Button';
 class ViewPost extends Component {
   constructor(props) {
     super(props);
@@ -84,17 +84,18 @@ class ViewPost extends Component {
       <>
           <div>
           {!post.saves.find(user => user._id === this.props.auth.user.id) ? (
-                <h6
-                  style={{ color: "rgb(44, 127, 252)" }}
+                <Button variant="outlined" color="secondary" 
+                  //style={{ color: "rgb(44, 127, 252)" }}
                   href="/"
                   onClick={e => this.savePost(e, post)}>
                  Save
-                </h6>
-              ) : <h6 style={{ color: "rgb(44, 127, 252)" }}
+                </Button>
+              ) : <Button variant="outlined" color="secondary" 
+                   //style={{ color: "rgb(44, 127, 252)" }}
                    href="/"
                    onClick={e => this.unsavePost(e, post)}>
                    UnSave
-                  </h6> }
+                  </Button> }
           </div> 
           </>
     );

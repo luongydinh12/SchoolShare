@@ -3,6 +3,8 @@ import axios from "axios";
 import { connect } from "react-redux";
 import { Textarea, Row, ProgressBar } from "react-materialize";
 import likeIcon from '../../icons/Like/likeicon.jpg';
+import unlikeIcon from '../../icons/Like/unlikeicon.jpg';
+import Button from '@material-ui/core/Button';
 
 class ThreadComments extends Component {
   constructor(props) {
@@ -19,7 +21,7 @@ class ThreadComments extends Component {
 
   componentDidMount = () => {
     this.getComments();
-  };
+  }; 
 
   getComments() {
     this.setState({ loading: true });
@@ -83,6 +85,7 @@ class RenderComment extends Component {
     this.closeAll = this.closeAll.bind(this);
     this.showCommentManagement = this.showCommentManagement.bind(this);
     this.likeComment = this.likeComment.bind(this);
+    this.unlikeComment = this.unlikeComment.bind(this);
   }
 
   componentDidMount = () => {
@@ -174,6 +177,19 @@ class RenderComment extends Component {
     }
     axios
     .post('/api/posts/likeComment', data)
+    .then(res => {
+      this.props.getComments();
+    })
+  }
+
+  unlikeComment (e, commentId, userId) {
+    e.preventDefault();
+    const data = {
+      commentId: commentId,
+      userId: userId
+    }
+    axios
+    .post('/api/posts/unlikeComment', data)
     .then(res => {
       this.props.getComments();
     })
@@ -328,7 +344,7 @@ class RenderComment extends Component {
     //console.log("RenderComment", { state: this.state });
     const { c: comment } = this.props;
     const loggedInUserId = this.props.auth.user.id;
-    //console.log(comment._id, loggedInUserId, comment.content)
+
     return (
       <>
         <div className="row" style={{ marginBottom: 0 }}>
@@ -349,22 +365,31 @@ class RenderComment extends Component {
               {this.renderPostReplyBox()}
               {this.renderPostEditBox(comment._id)}
               {this.renderDeleteConfirmation()}
-
+              {!comment.deleted?
               <span style={{color: "rgb(44, 127, 252)", margin: "0px", width: "fit-content" }}>
                 {comment.likes.length}{" "}
                 {comment.likes.length >= 2 ? (<a style={{ color: "rgb(44, 127, 252)" }}>Likes</a>) : 
                 (<a style={{ color: "rgb(44, 127, 252)" }}>Like</a>)}
-              </span>
+              </span>:null}
               
-              {!comment.deleted&&!comment.likes.find(el => el.user === loggedInUserId) ? (
-                <a
+              {!comment.deleted?<a>
+              {!comment.likes.find(el => el.user === loggedInUserId) ? (
+                <Button 
                   style={{ color: "rgb(44, 127, 252)", marginLeft: 15 }}
                   href="/"
                   onClick={e => this.likeComment(e, comment._id, loggedInUserId)}
                 >
                   <img src={likeIcon} alt="Like" height="17" width="17"></img>
-                </a>
-              ) : null}
+                </Button>
+              ) :                 
+              (<Button
+              style={{ color: "rgb(44, 127, 252)", marginLeft: 15 }}
+              href="/"
+              onClick={e => this.unlikeComment(e, comment._id, loggedInUserId)}>
+              <img src={unlikeIcon} alt="Like" height="17" width="17"></img>
+              </Button>)
+              } </a>:null
+              }
 
               {Array.isArray(this.state.comments) &&
               this.state.comments.length ? (
