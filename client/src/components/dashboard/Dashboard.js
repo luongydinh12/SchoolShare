@@ -8,7 +8,7 @@ import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
 import Axios from "axios";
 class Dashboard extends Component {
-  state={
+  state = {
     avatar: null
   }
   onLogoutClick = e => {
@@ -25,9 +25,9 @@ class Dashboard extends Component {
   componentDidMount() {
     document.body.classList.add("background-white");
     this.props.getCurrentProfile()
-    Axios.get("api/users/avatar?user="+this.props.auth.user.id).then((res)=>{
+    Axios.get("api/users/avatar?user=" + this.props.auth.user.id).then((res) => {
       console.log(res.data.avatar)
-      this.setState({avatar: res.data.avatar})
+      this.setState({ avatar: res.data.avatar })
     })
   }
   //test
@@ -50,6 +50,7 @@ class Dashboard extends Component {
           }} className="lead text-muted">
             <Link to={`/profile/${profile.handle}`}>My Profile Page</Link>
           </p>
+    
           <Link to="/edit-profile" >
             <button className="btn btn-large waves-effect waves-light hoverable green accent-3" > Edit Profile </button>
           </Link>
@@ -71,7 +72,6 @@ class Dashboard extends Component {
         </div>
       )
     }
-
     return (
       <div>
         <div className="section">
@@ -79,8 +79,8 @@ class Dashboard extends Component {
             <div className="col s12 center-align ">
 
               <img id="userAvatar"
-                  alt=""
-                  style={{
+                alt=""
+                style={{
                   verticalAlign: "middle",
                   borderRadius: "50%",
                   width: "150px",
@@ -107,7 +107,7 @@ class Dashboard extends Component {
 
               {dashboardContent}
 
-              <div>
+              {/* <div>
 
                 <Link to="/calendar">
                   <button className="btn btn-large waves-effect waves-light hoverable green accent-3">
@@ -115,27 +115,28 @@ class Dashboard extends Component {
                   </button>
                 </Link>
 
-              </div>
+              </div> */}
+              
               <div className='section'>
-                <Link to="/profilelist">
+                {/* <Link to="/profilelist">
                   <button className="btn btn-large waves-effect waves-light hoverable green accent-3">
                     View Users
                 </button>
-                </Link>
+                </Link> */}
 
 
-                <button
+                {/* <button
                   onClick={this.onLogoutClick}
                   className="btn btn-large waves-effect waves-light hoverable green accent-3"
                 >
                   Logout
-            </button>
+            </button> */}
 
-                <button
+                {/* <button
                   onClick={this.onDeleteClick}
                   className="btn btn-large waves-effect waves-light hoverable green accent-3">
                   Delete Account
-            </button>
+            </button> */}
 
               </div>
             </div>
