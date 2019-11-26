@@ -17,7 +17,7 @@ class ViewPost extends Component {
       displayReplyBox: false,
       displayEditTitle: false,
       displayEditDesc: false,
-      displayDeleteConfirm: false
+      displayDeleteConfirm: false,
     };
 
   }
@@ -27,8 +27,7 @@ class ViewPost extends Component {
   };
 
   getPost=()=>{
-    this.setState({ loading: true });
-
+    //this.setState({ loading: true });
     const id = this.props.location.pathname.split("/")[3];
     axios
       .get("/api/posts/getpostbyid?id=" + id)
