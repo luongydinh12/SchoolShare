@@ -70,7 +70,7 @@ class RenderComment extends Component {
       displayEditBox: false,
       displayDeleteBox: false,
       commentId: null,
-      authorHandle: ""
+      authorHandle: "",
     };
 
     this.getReplies = this.getReplies.bind(this);
@@ -368,10 +368,10 @@ class RenderComment extends Component {
               {!comment.deleted?
               <span style={{color: "rgb(44, 127, 252)", margin: "0px", width: "fit-content" }}>
                 {comment.likes.length}{" "}
-                {comment.likes.length >= 2 ? (<a style={{ color: "rgb(44, 127, 252)" }}>Likes</a>) : 
-                (<a style={{ color: "rgb(44, 127, 252)" }}>Like</a>)}
+                {comment.likes.length >= 2 ? (<span style={{ color: "rgb(44, 127, 252)" }}>Likes</span>) : 
+                (<span style={{ color: "rgb(44, 127, 252)" }}>Like</span>)}
               </span>:null}
-              
+
               {!comment.deleted?<a>
               {!comment.likes.find(el => el.user === loggedInUserId) ? (
                 <Button 
