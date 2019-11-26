@@ -2,6 +2,10 @@
 import React, { Component } from 'react'
 
 class WebRTC extends Component {
+    state = {
+        connections: {},
+        room: 'abcdefg'
+    }
     socket = this.props.socket
     startTime = null
     localVideo = null
@@ -9,15 +13,57 @@ class WebRTC extends Component {
     startButton = null
     callButton = null
     hangupButton = null
-    sendJoin = (description) => {
-        const socket = this.props.socket
-        socket.emit('join', { room: 'abcdefg', description: description })
+
+    iceConfig = {}
+    RTCOfferOptions = {
+        offerToReceiveVideo: true,
+        offerToRecieveAudio: true
     }
-    sendLocalDescription = (desc) => {
-        console.log('send local')
-        const socket = this.props.socket
-        socket.emit('sendLocalDescription', desc)
+    getUserMediaOptions = {
+        audio: true
     }
+    _sendJoin = () => {
+        this.socket.emit('join', { room: this.state.room, profile: this.props.profile.profile })
+    }
+    _handleMessage = (data) => {
+        //{ sender: sender, msgType: msgType, msg: msg }
+        const { sender, msgType, msg } = data
+        var pc = this._getPeerConnection(sender)
+        console.log('_handlemessage sender:', sender, 'pc:', pc)
+        switch (msgType) {
+            case 'ice':
+                console.log('Adding new ICE candidates')
+                pc.addIceCandidate(new RTCIceCandidate(msg))
+                break
+            case 'sdp-offer':
+                pc.setRemoteDescription(new RTCSessionDescription(msg), () => {
+                    console.log('Setting remote description by offer')
+                    pc.createAnswer(this.RTCOfferOptions).then((sdp) => {
+                        pc.setLocalDescription(sdp)
+                        this.socket.emit('relayMsg',
+                            {
+                                sender: this.socket.id,
+                                recipient: sender,
+                                msgType: 'sdp-answer',
+                                msg: sdp
+                            })
+                    })
+                }) //pc.setRemoteDescription
+                break
+            case 'sdp-answer':
+                pc.setRemoteDescription(new RTCSessionDescription(msg),
+                    () => { console.log('Setting remote description by answer') },
+                    (e) => {
+                        console.error(e)
+                    })
+                break
+            default:
+                console.log('msgType:', msgType)
+
+        }
+
+    }
+
     // Handles remote MediaStream success by adding it as the remoteVideo src.
     gotRemoteMediaStream = (event) => {
         const mediaStream = event.stream;
@@ -34,9 +80,7 @@ class WebRTC extends Component {
     // Handles start button action: creates local MediaStream.
     startAction = () => {
         this.startButton.disabled = true;
-        navigator.mediaDevices.getUserMedia({
-            audio: true
-        })
+        navigator.mediaDevices.getUserMedia(this.getUserMediaOptions)
             .then((mediaStream) => {
                 console.log(`gotlocalmediastream: `, mediaStream)
                 this.localVideo.srcObject = mediaStream;
@@ -159,7 +203,9 @@ class WebRTC extends Component {
                 //this is where you'd do the signalling?
 
                 this.socket.emit('sendLocalDescription', description)
-                // this.sendJoin(description)
+                this._sendJoin()
+                this.socket.emit('relayMsg', { recipient: 'abc', room: 'abcdefg', msgType: 'test', msg: 'testmsg' })
+
                 // this.sendLocalDescription(description)
                 this.socket.on('remoteDescription', (remoteDescription) => {
                     this.trace('remotePeerConnection setRemoteDescription start.');
@@ -195,6 +241,57 @@ class WebRTC extends Component {
 
             }).catch(setSessionDescriptionError);
     }
+    _makeOffer = (recipientId) => {
+        var pc = this._getPeerConnection(recipientId)
+        pc.createOffer((sdp) => {
+            pc.setLocalDescription(sdp)
+            console.log(`Creating offer for ${recipientId}`)
+            this.socket.emit('relayMsg', {
+                sender: this.socket.id,
+                recipient: recipientId,
+                msgType: 'sdp-offer',
+                msg: sdp
+            })
+        }, (e) => {
+            console.log('makeOffer', e)
+        }, { mandatory: this.RTCOfferOptions })
+
+    }
+    _getPeerConnection(recipientId) {
+        console.log(`getPeerConnection ${recipientId}`, this.state.connections[recipientId])
+        let pc
+        if (this.state.connections[recipientId].peerConnection) pc = this.state.connections[recipientId].peerConnection
+        else {
+            console.log('create rtcpeerconnection')
+            pc = new RTCPeerConnection(this.iceConfig)
+            const c = this.state.connections[recipientId]
+            this.state.connections[recipientId].peerConnection = pc
+            this.setState({ connnections: c })
+
+            navigator.mediaDevices.getUserMedia({
+                audio: true
+            })
+                .then((mediaStream) => {
+                    pc.addStream(mediaStream)
+                })
+            // pc.addStream(this.localStream)
+            pc.onicecandidate = (e) => {
+                console.log('onicecandidate')
+                this.socket.emit('relayMsg', {
+                    recipient: recipientId,
+                    sender: this.socket.id,
+                    msgType: 'ice',
+                    msg: e.candidate
+                })
+            }
+            pc.onaddstream = (e) => {
+                console.log('recieved new stream, e:', e)
+                ///###############
+            }
+            console.log('_getPeerConnection id:', recipientId, 'pc:', pc)
+        }
+        return pc
+    }
     componentDidMount() {
         this.startButton = document.getElementById('startButton');
         this.callButton = document.getElementById('callButton');
@@ -205,7 +302,24 @@ class WebRTC extends Component {
         let localStream;
         let remoteStream;
 
-
+        this.socket.on('onlinelist', (data) => {
+            console.log('voice online list: ', data)
+            this.setState({ connections: data })
+        })
+        this.socket.on('userDisconnect', (socketId) => {
+            console.log('user disconnect: ', socketId)
+            const { connections: { [socketId]: deletedValue, ...connections } } = this.state
+            this.setState({ connections: connections })
+        })
+        this.socket.on('userConnect', (data) => {
+            console.log('user connect:', data)
+            var { connections } = this.state
+            connections[data.socketId] = { profile: data.profile.profile }
+            console.log(connections)
+            this.setState({ connections: connections })
+            this._makeOffer(data.socketId)
+        })
+        this.socket.on('relayMsg', this._handleMessage)
         // Logs a message with the id and size of a video element.
         function logVideoLoaded(event) {
             const video = event.target;
@@ -249,7 +363,7 @@ class WebRTC extends Component {
         return (
             <div className="container" style={{ marginBottom: "20px" }}>
                 <div className="card white" style={{ padding: 5 }}>
-                    <h4 className="center-text">WebRTC Test</h4>
+                    <h4 className="center-text">WebRTC Test {this.socket.id} </h4>
 
                     <video id="localVideo" autoPlay playsInline></video>
                     <video id="remoteVideo" autoPlay playsInline></video>
@@ -259,6 +373,12 @@ class WebRTC extends Component {
                         <button id="callButton">Call</button>
                         <button id="hangupButton">Hang Up</button>
                     </div>
+
+
+                    <div className="btn-small waves-effect waves-light hoverable" onClick={this._sendJoin}>
+                        Join Call
+                    </div>
+                    
                 </div>
             </div>)
     }

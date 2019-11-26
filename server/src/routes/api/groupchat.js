@@ -11,15 +11,16 @@ const auth = Passport.authenticate('jwt', { session: false })
 
 import io, { addSocketIdtoSession } from './socket.io'
 
-let onlineList = {}     //dict for storing online members
+let chatOnlineList = {}     //dict for storing online members
+let voiceOnlineList = {}
 
 io.of('/chat').on('connection', (socket) => {
     socket.on('join', (msg) => {
         socket.join(msg.room)
-        if (!onlineList[msg.room]) {
-            onlineList[msg.room] = {}
+        if (!chatOnlineList[msg.room]) {
+            chatOnlineList[msg.room] = {}
         }
-        onlineList[msg.room][socket.id] = msg.prof
+        chatOnlineList[msg.room][socket.id] = msg.prof
 
         console.log(`profile ${msg.prof} joined room ${msg.room} wtih socketid ${socket.id} `)
         sendOnlineListUpdate(msg.room)
@@ -36,28 +37,66 @@ io.of('/chat').on('connection', (socket) => {
     })
     socket.on('leave', (msg) => {
         console.log(`${socket.id} leaving room  msg: ${JSON.stringify(msg)}`)
-        if (onlineList[msg.room]) delete onlineList[msg.room][socket.id] //on server update, client may still attempt to leave a room that doesn't exist
-        console.log(onlineList)
+        if (chatOnlineList[msg.room]) delete chatOnlineList[msg.room][socket.id] //on server update, client may still attempt to leave a room that doesn't exist
+        console.log(chatOnlineList)
         sendOnlineListUpdate(msg.room)
     })
     socket.on('disconnect', () => {
-        for (var room in onlineList) {
-            for (var socketid in onlineList[room]) {
-                console.log(socketid)
+        for (var room in chatOnlineList) {
+            for (var socketid in chatOnlineList[room]) {
                 if (socketid === socket.id) {
-                    delete onlineList[room][socketid]
+                    delete chatOnlineList[room][socketid]
                     sendOnlineListUpdate(room)
                 }
             }
         }
         console.log(`${socket.id} disconnected: onlineList 
-            `, onlineList)
+            `, chatOnlineList)
     })
 
     const sendOnlineListUpdate = (room) => {
-        io.of('/chat').to(room).emit('onlinelist', Object.keys(onlineList[room]).map((key) => {
-            return onlineList[room][key]
+        io.of('/chat').to(room).emit('onlinelist', Object.keys(chatOnlineList[room]).map((key) => {
+            return chatOnlineList[room][key]
         }))
+    }
+})
+
+io.of('/voiceChat').on('connection', (socket) => {
+    socket.emit("connect", "voice connected")
+    console.log(`voice connected: ${socket.id}`)
+    socket.on('join', (msg) => {
+        console.log('join', msg.room)
+        socket.join(msg.room)
+        if (!voiceOnlineList[msg.room]) {
+            voiceOnlineList[msg.room] = {}
+        }
+        socket.emit('onlinelist', voiceOnlineList[msg.room])
+        voiceOnlineList[msg.room][socket.id] = { profile: msg.profile }
+        console.log(`socket ${socket.id} joined room ${msg.room} `)
+        socket.to(msg.room).emit('userConnect', { socketId: socket.id, profile: voiceOnlineList[msg.room][socket.id] })
+    })
+    socket.on('disconnect', () => {
+        for (var room in voiceOnlineList) {
+            for (var socketid in voiceOnlineList[room]) {
+                if (socketid === socket.id) {
+                    delete voiceOnlineList[room][socketid]
+                    io.of('/voiceChat').to(room).emit('userDisconnect', socket.id)
+                }
+            }
+        }
+        console.log(`${socket.id} disconnected: voiceOnlineList 
+            `, voiceOnlineList)
+    })
+    socket.on('relayMsg', (data) => {
+        const { recipient, sender, room, msgType, msg } = data
+        console.log(data)
+        io.of('/voiceChat').to(recipient).emit('relayMsg', { sender: sender, msgType: msgType, msg: msg })
+    })
+    const sendOnlineList = (room) => {
+        console.log('send online list:', voiceOnlineList)
+        io.of('/voiceChat').to(room).emit('onlinelist',
+            voiceOnlineList[room]
+        )
     }
 })
 
