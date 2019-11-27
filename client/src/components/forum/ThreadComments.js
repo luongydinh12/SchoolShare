@@ -1,8 +1,10 @@
 import React, { Component } from "react";
 import axios from "axios";
 import { connect } from "react-redux";
-import { Textarea, Row } from "react-materialize";
+import { Textarea, Row, ProgressBar } from "react-materialize";
 import likeIcon from '../../icons/Like/likeicon.jpg';
+import unlikeIcon from '../../icons/Like/unlikeicon.jpg';
+import Button from '@material-ui/core/Button';
 
 class ThreadComments extends Component {
   constructor(props) {
@@ -19,7 +21,7 @@ class ThreadComments extends Component {
 
   componentDidMount = () => {
     this.getComments();
-  };
+  }; 
 
   getComments() {
     this.setState({ loading: true });
@@ -36,7 +38,7 @@ class ThreadComments extends Component {
   }
 
   render() {
-    console.log("ThreadComments", { state: this.state });
+    //console.log("ThreadComments", { state: this.state });
     if (Array.isArray(this.state.comments)) {
       if (this.state.comments.length) {
         return (
@@ -68,6 +70,7 @@ class RenderComment extends Component {
       displayEditBox: false,
       displayDeleteBox: false,
       commentId: null,
+      authorHandle: "",
     };
 
     this.getReplies = this.getReplies.bind(this);
@@ -82,9 +85,11 @@ class RenderComment extends Component {
     this.closeAll = this.closeAll.bind(this);
     this.showCommentManagement = this.showCommentManagement.bind(this);
     this.likeComment = this.likeComment.bind(this);
+    this.unlikeComment = this.unlikeComment.bind(this);
   }
 
   componentDidMount = () => {
+    this.hasProfile(this.props.c.author._id);
     this.getReplies();
   };
 
@@ -106,7 +111,7 @@ class RenderComment extends Component {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Posting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -137,7 +142,7 @@ class RenderComment extends Component {
     if (!this.state.displayEditBox) return undefined;
     if (this.state.postingEdit) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Editing...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -177,11 +182,24 @@ class RenderComment extends Component {
     })
   }
 
+  unlikeComment (e, commentId, userId) {
+    e.preventDefault();
+    const data = {
+      commentId: commentId,
+      userId: userId
+    }
+    axios
+    .post('/api/posts/unlikeComment', data)
+    .then(res => {
+      this.props.getComments();
+    })
+  }
+
   renderDeleteConfirmation() {
     if (!this.state.displayDeleteBox) return undefined;
     if (this.state.postingDelete) {
       return (
-        <div style={{ margin: 10, padding: "5px 15px 0 25px" }}>Deleting...</div>
+        <ProgressBar/>
       );
     }
     return (
@@ -314,11 +332,19 @@ class RenderComment extends Component {
       });
   }
 
+  hasProfile=(userId)=> {
+    axios.get("/api/profile/user/"+userId)
+        .then(({data}) => {this.setState({authorHandle: data.handle})})
+        .catch(err => {
+          this.setState({authorHandle: ""});
+        });
+  }
+
   render() {
-    console.log("RenderComment", { state: this.state });
+    //console.log("RenderComment", { state: this.state });
     const { c: comment } = this.props;
     const loggedInUserId = this.props.auth.user.id;
-    //console.log(comment._id, loggedInUserId, comment.content)
+
     return (
       <>
         <div className="row" style={{ marginBottom: 0 }}>
@@ -328,29 +354,42 @@ class RenderComment extends Component {
               style={{ boxShadow: "unset", border: "none", margin: 0 }}
             >
               <div style={{ color: "#2BB673", fontWeight: 600 }}>
-                {comment.author.name}:
+                {(comment.author)?
+                  ((this.state.authorHandle)?
+                    <a style={{ color: "#2BB673", fontWeight: 600 }} href={"/profile/"+this.state.authorHandle}>{comment.author.name}</a>:
+                    comment.author.name)
+                  :"[deleted]"}
               </div>
               <p style={comment.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{comment.deleted?"[comment deleted]":comment.content}</p>
               {this.showCommentManagement(comment.author._id)}
               {this.renderPostReplyBox()}
               {this.renderPostEditBox(comment._id)}
               {this.renderDeleteConfirmation()}
-
+              {!comment.deleted?
               <span style={{color: "rgb(44, 127, 252)", margin: "0px", width: "fit-content" }}>
                 {comment.likes.length}{" "}
-                {comment.likes.length >= 2 ? (<a style={{ color: "rgb(44, 127, 252)" }}>Likes</a>) : 
-                (<a style={{ color: "rgb(44, 127, 252)" }}>Like</a>)}
-              </span>
-              
+                {comment.likes.length >= 2 ? (<span style={{ color: "rgb(44, 127, 252)" }}>Likes</span>) : 
+                (<span style={{ color: "rgb(44, 127, 252)" }}>Like</span>)}
+              </span>:null}
+
+              {!comment.deleted?<a>
               {!comment.likes.find(el => el.user === loggedInUserId) ? (
-                <a
+                <Button 
                   style={{ color: "rgb(44, 127, 252)", marginLeft: 15 }}
                   href="/"
                   onClick={e => this.likeComment(e, comment._id, loggedInUserId)}
                 >
                   <img src={likeIcon} alt="Like" height="17" width="17"></img>
-                </a>
-              ) : null}
+                </Button>
+              ) :                 
+              (<Button
+              style={{ color: "rgb(44, 127, 252)", marginLeft: 15 }}
+              href="/"
+              onClick={e => this.unlikeComment(e, comment._id, loggedInUserId)}>
+              <img src={unlikeIcon} alt="Like" height="17" width="17"></img>
+              </Button>)
+              } </a>:null
+              }
 
               {Array.isArray(this.state.comments) &&
               this.state.comments.length ? (

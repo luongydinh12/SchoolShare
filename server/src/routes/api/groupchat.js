@@ -2,7 +2,7 @@ import Express from 'express'
 import Passport from 'passport'
 import JWT from 'jsonwebtoken'
 import GroupChat from '../../models/GroupChat'
-import GroupChatMessages from '../../models/GroupChatMessages'
+import GroupChatMessage from '../../models/GroupChatMessages'
 import User from '../../models/User'
 import Profile from '../../models/Profile'
 import Friend from '../../models/Friend'
@@ -10,22 +10,22 @@ const Router = Express.Router()
 const auth = Passport.authenticate('jwt', { session: false })
 
 import io, { addSocketIdtoSession } from './socket.io'
+
 io.of('/chat').on('connection', (socket) => {
-    const room='testroom'
-    socket.on('join', (num) => {
-        console.log(`joined room           ${socket.id}`)
+    // const room = 'testroom'
+    socket.on('join', (room) => {
         socket.join(room)
-        //io.sockets.in(room).emit('chatmsg', 'After joined')
+        console.log(`${socket.id} joined room ${room}`)
     })
     socket.on('chatmsg', (message) => {
-        console.log(`got message from ${socket.id}`, message)
-        socket.emit('chatmsg','socketemit')
-        //io.emit('chatmsg','ioemit')
-        //io.to(room).emit('ioroomemit')
-        //io.sockets.in('testroom').emit('chatmsg','socketroomemit')
-        socket.to(room).emit('chatmsg',"tes")
-        //var room2 = io.sockets.adapter.rooms[room];
-        //socket.broadcast.emit('chatmsg', 'room2')
+        console.log(`got message from ${socket.id}`, message.msg.text)
+        io.of('/chat').to(message.room).emit('chatmsg', message.msg) //socket.to and socket.in still won't work for some reason, check later x_x
+        
+        new GroupChatMessage({
+            groupChat: message.room,
+            text: message.msg.text,
+            poster: message.msg.poster._id
+        }).save()
     })
 })
 
@@ -48,9 +48,13 @@ Router.get('/chat/:chatId', auth, (req, res) => {
         .populate('owner')
         .populate('members')
         .then((chat) => {
-            res.send(chat)
-        }).catch((err) => {
+            return chat.getMessages().then(messages => [chat, messages])
+        }).then(([chat, messages]) => {
+            res.send({ chat: chat, messages: messages })
+        })
+        .catch((err) => {
             res.sendStatus(500)
+            console.log(err)
         })
 })
 
@@ -70,7 +74,15 @@ Router.post('/create', auth, (req, res) => {
     )
 })
 
-Router.post('/submit')
+// Router.post('/message', (req, res) => {
+//     new GroupChatMessage({
+//         groupChat: '5dbf508e95a1d30c90faffad',
+//         text: req.body.message,
+//         poster: '5d8bdd3d9fcd191fa41afc35'
+//     }).save().then((msg) => {
+//         res.send(msg)
+//     })
+// })
 
 Router.post('/leaveOrDelete', auth, (req, res) => {
     const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
