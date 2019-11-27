@@ -7,7 +7,21 @@ import { deleteUser, logoutUser } from "../../actions/authActions";
 import { deleteAccount, getCurrentProfile } from '../../actions/profileActions';
 import Spinner from '../common/Spinner';
 import Axios from "axios";
+import { makeStyles } from '@material-ui/styles';
+import { Grid } from '@material-ui/core';
+
+import {
+  Budget,
+  TotalUsers,
+  TasksProgress,
+  TotalProfit,
+  LatestSales,
+  UsersByDevice,
+  LatestProducts,
+} from './components';
+
 class Dashboard extends Component {
+  
   state = {
     avatar: null
   }
@@ -35,6 +49,12 @@ class Dashboard extends Component {
     this.props.deleteAccount()
   }
   render() {
+    const useStyles = makeStyles(theme => ({
+      root: {
+        padding: theme.spacing(4)
+      }
+    }));
+    
     const { user } = this.props.auth;
     const { profile, loading } = this.props.profile
     let dashboardContent
@@ -73,6 +93,7 @@ class Dashboard extends Component {
       )
     }
     return (
+      
       <div>
         <div className="section">
           <div className="row">
@@ -142,6 +163,77 @@ class Dashboard extends Component {
             </div>
           </div>
         </div>
+        <div className='sectoion2'>
+      <Grid
+        container
+        spacing={4}
+      >
+        <Grid
+          item
+          lg={3}
+          sm={6}
+          xl={3}
+          xs={12}
+        >
+          <Budget />
+        </Grid>
+        <Grid
+          item
+          lg={3}
+          sm={6}
+          xl={3}
+          xs={12}
+        >
+          <TotalUsers />
+        </Grid>
+        <Grid
+          item
+          lg={3}
+          sm={6}
+          xl={3}
+          xs={12}
+        >
+          <TasksProgress />
+        </Grid>
+        <Grid
+          item
+          lg={3}
+          sm={6}
+          xl={3}
+          xs={12}
+        >
+          <TotalProfit />
+        </Grid>
+        <Grid
+          item
+          lg={8}
+          md={12}
+          xl={9}
+          xs={12}
+        >
+          <LatestSales />
+        </Grid>
+        <Grid
+          item
+          lg={4}
+          md={6}
+          xl={3}
+          xs={12}
+        >
+          <UsersByDevice />
+        </Grid>
+        <Grid
+          item
+          lg={4}
+          md={6}
+          xl={3}
+          xs={12}
+        >
+ 
+        </Grid>
+        
+      </Grid>
+    </div>
       </div>
     );
   }
