@@ -315,6 +315,7 @@ router.post('/unlikeComment', (req,res) => {
       comment.likes.remove(like._id)
       comment.save();
     })
+      res.send()
   })
   .catch(err => {
     console.log(err)

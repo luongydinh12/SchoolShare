@@ -41,11 +41,11 @@ class FriendButton extends Component {
         if (friend===null || friend === "self") {
             return (null)
         }
-        if (friend.status === "approved") return (<div><i className="material-icons right">people</i><button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.removeFriend}>Remove</button></div>)
+        if (friend.status === "approved") return (<span><i className="material-icons right">people</i><button className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{marginRight: "1rem"}} onClick={this.removeFriend}>Remove</button></span>)
         if (friend.status === "pending") {
             if (friend.request === true) {
-                return (<div><button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={true}>Accept</button>
-                    <button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={false} >Reject</button></div>)
+                return (<span><button className="btn btn-large waves-effect waves-light hoverable green accent-3" style={{marginRight: "1rem"}} onClick={this.acceptFriendRequest} value={true}>Accept</button>
+                    <button className="btn btn-large waves-effect waves-light hoverable green accent-3" onClick={this.acceptFriendRequest} value={false} >Reject</button></span>)
             }
             return (<i className="material-icons right">access_time</i>)
         }
