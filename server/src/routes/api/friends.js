@@ -110,26 +110,6 @@ Router.post('/acceptOrRejectFriendRequest', auth,
     }
 )
 
-Router.post('/removeFriend',auth,
-    (req,res)=>{
-        const friendDocId = req.body.friendDocId
-        const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
-        Profile.findByUserId(tokenUser.id).then((profile)=>{
-            return Friend.findById(friendDocId).then(friend=>[profile._id,friend])
-        }).then(([profileId,friend])=>{
-            if(friend.profileA.equals(profileId)||friend.profileB.equals(profileId)){
-                return friend.remove()
-            }
-        }).then((friend)=>{
-            return res.json({friend:friend,removed:true})
-        }).catch((err)=>{
-            console.log(`${err}`)
-            res.status(400)
-            return res.send(`${err}`)
-        })
-    }
-)
-
 Router.get('/getFriend/:targetid', auth,
     (req, res) => {
         const targetid = req.params.targetid
@@ -141,24 +121,59 @@ Router.get('/getFriend/:targetid', auth,
             if(!friend) res.json(0) //react: state.friend=null is used before api call to render null button
             res.json({...friend.toObject(),request:(friend.profileB.equals(profileid))})
         })
+
+        // Profile.findByUserId(tokenUser.id)
+        //     .then((profile)=>{
+        //         if(profile._id==targetid) return "self"
+        //         return Friend.getFriendDocument(profile_id,targetid).then(friend=>[profile._id,friends])
+        //     }).then(([profileId,friend])=>{
+        //         var ret={
+                    
+        //         }
+        //         if(friend.profileA.equals(profileId)){
+
+        //         }
+        //     })
+
+        // const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
+        // return Profile.findByUserId(tokenUser.id).then((profile) => {
+        //     return profile.getFriends().then(friends => [profile._id, friends]) //pass along profile id
+        // }).then(([profileId, friends]) => {
+        //     const list = friends.map((friend) => {//maps to only the one that isn't the logged in user
+        //         var prof
+        //         if (friend.profileA.equals(profileId)) {
+        //             prof=friend.profileB //return { id: friend.profileB._id, handle: friend.profileB.handle }
+        //         }
+        //         prof={_id:prof.id,
+        //             avatar:prof.user.avatar,
+        //             handle:prof.handle,
+        //             description:prof.description}
+        //         return { friend: prof, status: friend.status }
+        //     })
+        //     return res.json(list)
+        // }).catch((err) => {
+        //     console.log(err)
+        //     res.status(400)
+        //     return res.send(`${err}`)
+        // })
     })
 
 
 
-// Router.post('/createFriendRequest',
-//   (req, res) => {
-//     const a = req.body.a
-//     const b = req.body.b
-//     console.log(`a: ${a} b: ${b}`)
-//     new Friend({
-//       profileA: a,
-//       profileB: b,
-//       status: 'pending'
-//     }).save().then((friend) => {
-//       console.log(`########friend created ${friend}`)
-//       res.json(friend)
-//     })
-//  }) //DELETE THIS
+Router.post('/createFriendRequest',
+  (req, res) => {
+    const a = req.body.a
+    const b = req.body.b
+    console.log(`a: ${a} b: ${b}`)
+    new Friend({
+      profileA: a,
+      profileB: b,
+      status: 'pending'
+    }).save().then((friend) => {
+      console.log(`########friend created ${friend}`)
+      res.json(friend)
+    })
+  }) //DELETE THIS
 
 // Router.post('/deleteFriendRequest',
 //   (req, res) => {

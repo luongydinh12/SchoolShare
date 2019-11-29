@@ -118,9 +118,6 @@ class CreateProfile extends Component {
                 />
               </form>
             </div>
-
-
-            
           </div>
         </div>
       </div>

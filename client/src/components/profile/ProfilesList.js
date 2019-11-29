@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import Axios from 'axios'
 import { Link } from 'react-router-dom'
-import Spinner from "../common/Spinner";
 
 class ProfilesList extends Component {
     state = {
@@ -32,7 +31,7 @@ class ProfilesList extends Component {
                     </div>
                 </div>)
         }
-        return (<Spinner />)
+        return (<div>Error</div>)
     }
 
 }

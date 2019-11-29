@@ -28,7 +28,7 @@
         },
         "desiredCapabilities": {
           "browserName": "chrome",
-          "version": "79.0",
+          "version": "77.0",
           "chomeOptions": {
               "w3c": false,
               "args": [

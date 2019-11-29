@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import NavBar from '../dashboard/NavBar';
 class MySaves extends Component {
     state = {
         posts: null,
@@ -41,6 +42,7 @@ class MySaves extends Component {
         return (
             
             <div>
+                <NavBar/>
                 <div class="container" style={{
                     marginLeft: "auto",
                     marginRight: "auto"

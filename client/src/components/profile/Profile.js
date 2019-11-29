@@ -38,23 +38,16 @@ class Profile extends Component {
       profileContent = (
         <div>
           <div className="row">
-            <div className="">
-            <a
-                href="/"
-                onClick={e => {
-                  e.preventDefault();
-                  this.props.history.goBack();
-                }}
+            <div className="col s6">
+              <Link
+                to="/dashboard"
                 className="btn btn-large waves-effect waves-light hoverable green accent-3"
-                style={{
-                  width: "160px",
-                  borderRadius: "1px",
-                  marginRight: "2rem"
-                }}
               >
-                Go Back
-              </a>
-              <span ><this.FriendButton /></span>
+                Back to Dashboard
+              </Link>
+            </div>
+            <div className="col s1 offset-s4" >
+              <this.FriendButton />
             </div>
           </div>
           <ProfileHeader profile={profile} />

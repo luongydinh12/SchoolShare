@@ -13,7 +13,28 @@ const passport = require("passport");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 
-import io, {addSocketIdtoSession} from './socket.io'
+const app = express();
+
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
+app.set('io', io);
+
+const addSocketIdtoSession = (req, res, next) => {
+  req.session.socketId = req.query.socketId;
+  next();
+}
+
+io.on('connection', function (socket) {
+  console.log("socket.io connected", socket.id);
+  socket.on('disconnect', function () {
+    console.log("socket.io disconnected", socket.id);
+  });
+  socket.on('example_message', function (msg) {
+    console.log('message:\t' + msg + "\t id:\t" + socket.id);
+    // socket.emit('example_response','response msg');
+  })
+})
+io.listen(5050);
 
 //Get (test)
 router.get('/', (req, res) => {
@@ -93,6 +114,8 @@ router.get(
       {
         expiresIn: 31556926 // 1 year in seconds
       });
+    const io = app.get('io');
+    //console.log("token: ",token);
     io.in(req.session.socketId).emit('google', "Bearer " + token);
     return res.end(`<script>
     window.close();
@@ -119,6 +142,8 @@ router.get(
       {
         expiresIn: 31556926 // 1 year in seconds
       });
+    const io = app.get('io');
+    //console.log("token: ",token);
     io.in(req.session.socketId).emit('facebook', "Bearer " + token);
     return res.end(`<script>
     window.close();
@@ -210,16 +235,4 @@ router.post('/delete', passport.authenticate('jwt', { session: false }),
     }
   )
 
-  router.get('/avatar', 
-    (req,res)=>{
-      const userId = req.query.user || undefined;
-
-      User.findById(userId, (err, u) => {
-        //console.log(u)
-        res.json({
-          avatar: u.avatar
-        })
-      })
-    }
-  )  
 module.exports = router;

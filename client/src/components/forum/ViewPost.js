@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Row, Textarea, ProgressBar } from 'react-materialize';
 import { connect } from 'react-redux';
 import ThreadComments from "./ThreadComments";
-import Button from '@material-ui/core/Button';
+
 class ViewPost extends Component {
   constructor(props) {
     super(props);
@@ -13,11 +13,10 @@ class ViewPost extends Component {
       commentCount: 0,
       loading: true,
       error: false,
-      authorHandle: "",
       displayReplyBox: false,
       displayEditTitle: false,
       displayEditDesc: false,
-      displayDeleteConfirm: false,
+      displayDeleteConfirm: false
     };
 
   }
@@ -27,7 +26,8 @@ class ViewPost extends Component {
   };
 
   getPost=()=>{
-    //this.setState({ loading: true });
+    this.setState({ loading: true });
+
     const id = this.props.location.pathname.split("/")[3];
     axios
       .get("/api/posts/getpostbyid?id=" + id)
@@ -38,7 +38,6 @@ class ViewPost extends Component {
           loading: false,
           error: false
         });
-        this.hasProfile(this.state.post);
       })
       .catch(err => {
         console.log({ err });
@@ -46,24 +45,12 @@ class ViewPost extends Component {
       });
   }
 
-  hasProfile=(post)=> {
-    axios.get("/api/profile/user/"+post.author._id)
-        .then(({data}) => {this.setState({authorHandle: data.handle})})
-        .catch(err => {
-          this.setState({authorHandle: ""});
-        });
-  }
-
-  renderPost=(post)=> { 
+  renderPost=(post)=> {
     return (
       <>
         <div className="postContent">
           <p style={{ color: "#2BB673", fontWeight: 600 }}>
-            {(post.author)?
-                ((this.state.authorHandle)?
-                  <a style={{ color: "#2BB673", fontWeight: 600 }} href={"/profile/"+this.state.authorHandle}>{post.author.name}</a>:
-                  post.author.name)
-                :"[deleted]"}
+            {post.author.name}:
           </p>
           <p style={post.deleted?{color:"#7F7F7F"}:{color:"#000000"}}>{post.deleted?"[Post Deleted]":post.content}</p>
           {this.showCommentManagement(post)}
@@ -83,18 +70,19 @@ class ViewPost extends Component {
       <>
           <div>
           {!post.saves.find(user => user._id === this.props.auth.user.id) ? (
-                <Button variant="outlined" color="secondary" 
-                  //style={{ color: "rgb(44, 127, 252)" }}
+                <h6
+                  style={{ color: "rgb(44, 127, 252)" }}
                   href="/"
-                  onClick={e => this.savePost(e, post)}>
+                  onClick={e => this.savePost(e, post)}
+                >
                  Save
-                </Button>
-              ) : <Button variant="outlined" color="secondary" 
-                   //style={{ color: "rgb(44, 127, 252)" }}
-                   href="/"
-                   onClick={e => this.unsavePost(e, post)}>
-                   UnSave
-                  </Button> }
+                </h6>
+              ) : <h6 style={{ color: "rgb(44, 127, 252)" }}
+              href="/"
+              // onClick={e => this.unsavePost(e, post)}
+            >
+             UnSave
+            </h6> }
           </div> 
           </>
     );
@@ -115,24 +103,7 @@ class ViewPost extends Component {
       this.getPost();
   })
   }
-
-  unsavePost = (e, post) => {
-    e.preventDefault();
-    const userId = this.props.auth.user.id;
-    const postId = post._id;
-    
-    const data = {
-      postId: postId,
-      userId: userId
-    }
-
-    axios
-    .post('/api/posts/unsaveThread', data)
-    .then(res => {
-      this.getPost();
-  })
-  }
-
+  
   renderPostReplyBox=()=> {
     if (!this.state.displayReplyBox) return undefined;
     if (this.state.postingReply) {
