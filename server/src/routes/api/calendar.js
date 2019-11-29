@@ -89,12 +89,10 @@ router.post('/editevent', (req, res) => {
   const start = req.body.start
   const desc = req.body.desc
   const user = req.body.user
-  const tags = req.body.tags
-  CalendarEvent.findOne({user: user, date: start}, (err, event) => {
+  CalendarEvent.findOne({title: title, user: user, date: start}, (err, event) => {
     if(event) {
       event.title = title;
       event.desc = desc;
-      event.tags = tags;
       event.save()
       CalendarEvent.find({ user: user}).then(data => {
         res.send({data});})
