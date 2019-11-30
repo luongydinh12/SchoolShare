@@ -65,7 +65,7 @@ io.of('/voiceChat').on('connection', (socket) => {
     socket.emit("connect", "voice connected")
     console.log(`voice connected: ${socket.id}`)
     socket.on('join', (msg) => {
-        console.log('join', msg.room)
+        console.log('join', socket.id, msg.room)
         socket.join(msg.room)
         if (!voiceOnlineList[msg.room]) {
             voiceOnlineList[msg.room] = {}
@@ -75,11 +75,25 @@ io.of('/voiceChat').on('connection', (socket) => {
         console.log(`socket ${socket.id} joined room ${msg.room} `)
         socket.to(msg.room).emit('userConnect', { socketId: socket.id, profile: voiceOnlineList[msg.room][socket.id] })
     })
+    socket.on('leave', (data) => { 
+        console.log('leave room ', socket.id, data)
+        console.log('leave volist',voiceOnlineList)
+        if (voiceOnlineList[data.room]) delete voiceOnlineList[data.room][socket.id]
+        // for (var room in voiceOnlineList) {
+        //     for (var socketid in voiceOnlineList[room]) {
+        //         if (socketid === socket.id) {
+        //             delete voiceOnlineList[room][socketid]
+        //             io.of('/voiceChat').to(room).emit('userDisconnect', socket.id)
+        //         }
+        //     } 
+        // }
+        console.log(voiceOnlineList[data.room])
+    })
     socket.on('disconnect', () => {
         for (var room in voiceOnlineList) {
             for (var socketid in voiceOnlineList[room]) {
                 if (socketid === socket.id) {
-                    delete voiceOnlineList[room][socketid]
+                    delete voiceOnlineList[room][socket.id]
                     io.of('/voiceChat').to(room).emit('userDisconnect', socket.id)
                 }
             }
@@ -89,8 +103,12 @@ io.of('/voiceChat').on('connection', (socket) => {
     })
     socket.on('relayMsg', (data) => {
         const { recipient, sender, room, msgType, msg } = data
-        console.log(data)
-        io.of('/voiceChat').to(recipient).emit('relayMsg', { sender: sender, msgType: msgType, msg: msg })
+        console.log('relaymsg sender ', sender, 'recipient', recipient, 'msgType', msgType)
+        console.log('relaymsg voiceonlinelist', voiceOnlineList[room])
+        if (voiceOnlineList[room] && voiceOnlineList[room][recipient]) {
+            io.of('/voiceChat').to(recipient).emit('relayMsg', { sender: sender, msgType: msgType, msg: msg })
+        }
+        else console.log('whoops')
     })
     const sendOnlineList = (room) => {
         console.log('send online list:', voiceOnlineList)

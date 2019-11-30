@@ -4,9 +4,9 @@ import Axios from 'axios'
 import Spinner from "../common/Spinner"
 import M from 'materialize-css'
 import { ProfileListItemFragment } from '../profile/FriendsList'
-import {Link} from 'react-router-dom'
-// import io from 'socket.io-client'
-// const socket = io("http://localhost:5050/")
+import { Link } from 'react-router-dom'
+import VoiceChat from './VoiceChat'
+import { isAbsolute } from 'path'
 class Chat extends Component {
     state = {
         chat: null,
@@ -16,9 +16,10 @@ class Chat extends Component {
         checkedFriends: [],
         onlineList: []
     }
+    socket = this.props.io(`http://localhost:5050/chat`)
     componentDidMount() {
         this.getChat()
-        const socket = this.props.socket
+        const socket = this.socket
         socket.on('chatmsg', (res) => {
             console.log(`chatResponse: ${JSON.stringify(res)}`)
             this.setState({ messages: [...this.state.messages, res] })
@@ -30,7 +31,7 @@ class Chat extends Component {
     }
     componentWillUnmount() {
         //leave room
-        this.props.socket.emit('leave', { prof: this.props.profile.profile._id, room: this.state.chat._id })
+        this.socket.emit('leave', { prof: this.props.profile.profile._id, room: this.state.chat._id })
     }
     componentDidUpdate = () => {
         this._scrollMessages()
@@ -40,7 +41,7 @@ class Chat extends Component {
         Axios.get(`/api/groupchat/chat/${chatId}`)
             .then((res) => {
                 this.setState({ chat: res.data.chat, messages: res.data.messages })
-                this.props.socket.emit('join', { prof: this.props.profile.profile._id, room: this.state.chat._id })
+                this.socket.emit('join', { prof: this.props.profile.profile._id, room: this.state.chat._id })
                 if (this.props.profile.profile._id === res.data.chat.owner._id || res.data.chat.membersCanAdd) {
                     return (Axios.get('/api/friends/listFriends'))
                 }
@@ -60,22 +61,24 @@ class Chat extends Component {
     MemberList = () => {
         const members = [this.state.chat.owner, ...this.state.chat.members]
         return (
-            <ul >
-                <li><h5>Members</h5></li>
-                {members.map((m) => {
-                    let style = 'grey-text text-lighten-1'
-                    this.state.onlineList.forEach((o) => {
-                        if (o === m._id) style = ''
-                    })
-                    // return <li key={m._id} className={style}>{m.handle}</li>
-                    return (
-                        <Link to={'/profile/' + m.handle}>
-                            <li className={style}>
-                                {m.handle}
-                            </li>
-                        </Link>)
-                })}
-            </ul>
+            <div>
+                <ul >
+                    <li><h5>Members</h5></li>
+                    {members.map((m) => {
+                        let style = 'grey-text text-lighten-1'
+                        this.state.onlineList.forEach((o) => {
+                            if (o === m._id) style = ''
+                        })
+                        // return <li key={m._id} className={style}>{m.handle}</li>
+                        return (
+                            <Link to={'/profile/' + m.handle} key={m.handle}>
+                                <li className={style}>
+                                    {m.handle}
+                                </li>
+                            </Link>)
+                    })}
+                </ul>
+            </div>
 
         )
     }
@@ -140,24 +143,25 @@ class Chat extends Component {
                     </label>
                 </div>)
             })
-            return (<div className='container'>
-                <div className="btn-small waves-effect waves-light hoverable" onClick={this.openModal}>
-                    Add Members
+            return (
+                <div className='container'>
+                    <div className="btn-small waves-effect waves-light hoverable" onClick={this.openModal}>
+                        Add Members
             </div>
-                <div className='modal'>
-                    <div className='modal-content'>
-                        <h4>Add Members</h4>
+                    <div className='modal'>
+                        <div className='modal-content'>
+                            <h4>Add Members</h4>
+                        </div>
+                        <div>
+                            <ul className='collection'>
+                                {list}
+                            </ul>
+                        </div>
+                        <div className="modal-footer">
+                            <button className="modal-close waves-effect waves-red btn-flat" onClick={this._handleAddFriends}>Submit</button>
+                        </div>
                     </div>
-                    <div>
-                        <ul className='collection'>
-                            {list}
-                        </ul>
-                    </div>
-                    <div className="modal-footer">
-                        <button className="modal-close waves-effect waves-red btn-flat" onClick={this._handleAddFriends}>Submit</button>
-                    </div>
-                </div>
-            </div>)
+                </div>)
         }
         return null
     }
@@ -170,7 +174,7 @@ class Chat extends Component {
     _handleMessageKeyUp = (e) => {
         if (e.which === 13) {//enter
             e.preventDefault()
-            const socket = this.props.socket
+            const socket = this.socket
             socket.emit('chatmsg',
                 {
                     room: this.state.chat._id,
@@ -211,6 +215,15 @@ class Chat extends Component {
                             <div className="col s3">
                                 <this.MemberList />
                                 <this.AddMemberModal />
+                                <VoiceChat
+                                    style={{
+                                       bottom:'2rem',
+                                       position:'absolute'
+                                    }}
+                                    socket={this.props.io(`http://localhost:5050/voiceChat`)}
+                                    profile={this.props.profile}
+                                    room={this.state.chat._id}
+                                />
                             </div>
                         </div>
                     </div>

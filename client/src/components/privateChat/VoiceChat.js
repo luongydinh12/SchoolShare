@@ -5,7 +5,6 @@ import adapter from 'webrtc-adapter';
 class VoiceChat extends Component {
     state = {
         connections: {},
-        room: 'abcdefg',
         joinEnabled: true
     }
     socket = this.props.socket
@@ -17,6 +16,10 @@ class VoiceChat extends Component {
     }
     getUserMediaOptions = {
         audio: true
+    }
+    _handleClick = (e) => {
+        if (this.state.joinEnabled) this._joinCall()
+        else this._leaveCall()
     }
     _joinCall = (e) => {
         navigator.mediaDevices.getUserMedia(this.getUserMediaOptions)
@@ -38,16 +41,22 @@ class VoiceChat extends Component {
             .then(() => this._sendJoin())
     }
     _leaveCall = () => {
-        this.socket.emit('leave', { room: this.state.room })
+        this.socket.emit('leave', { 
+            room: this.props.room 
+        })
         for (var conn in this.state.connections) {
-            if (this.state.connections[conn]&& this.state.connections[conn].peerConnection) {
+            console.log('leavecall', conn)
+            if (this.state.connections[conn] && this.state.connections[conn].peerConnection) {
                 this.state.connections[conn].peerConnection.close()
             }
         }
         this.setState({ connections: {}, joinEnabled: true })
     }
     _sendJoin = () => {
-        this.socket.emit('join', { room: this.state.room, profile: this.props.profile.profile })
+        this.socket.emit('join', { 
+            room: this.props.room, 
+            profile: this.props.profile.profile 
+        })
     }
     _handleMessage = (data) => {
         //{ sender: sender, msgType: msgType, msg: msg }
@@ -68,6 +77,7 @@ class VoiceChat extends Component {
                             {
                                 sender: this.socket.id,
                                 recipient: sender,
+                                room:this.props.room,
                                 msgType: 'sdp-answer',
                                 msg: sdp
                             })
@@ -93,6 +103,7 @@ class VoiceChat extends Component {
             this.socket.emit('relayMsg', {
                 sender: this.socket.id,
                 recipient: recipientId,
+                room:this.props.room,
                 msgType: 'sdp-offer',
                 msg: sdp
             })
@@ -108,8 +119,8 @@ class VoiceChat extends Component {
         if (this.state.connections[recipientId] && this.state.connections[recipientId].peerConnection) { pc = this.state.connections[recipientId].peerConnection }
         else {
             const c = this.state.connections
-            c[recipientId]={}
-            
+            c[recipientId] = {}
+
             console.log('create rtcpeerconnection')
             pc = new RTCPeerConnection(this.iceConfig)
 
@@ -124,6 +135,7 @@ class VoiceChat extends Component {
                     this.socket.emit('relayMsg', {
                         recipient: recipientId,
                         sender: this.socket.id,
+                        room:this.props.room,
                         msgType: 'ice',
                         msg: e.candidate
                     })
@@ -168,21 +180,23 @@ class VoiceChat extends Component {
     }
     render() {
         return (
-            <div className="container" style={{ marginBottom: "20px" }}>
-                <div className="card white" style={{ padding: 5 }}>
-                    <h4 className="center-text">Voice Chat Test {this.socket.id} </h4>
-                    <audio id='audio' 
-                        autoPlay={true}
-                    />
-                    <div disabled={!this.state.joinEnabled} id='joinbutton' className="btn-small waves-effect waves-light hoverable" onClick={this._joinCall}>
-                        Join Call
-                    </div>
-                    <div disabled={this.state.joinEnabled} className="btn-small waves-effect waves-light hoverable" onClick={this._leaveCall}>
-                        Leave Call
-                    </div>
+            <div style={this.props.style}>
+                {this.socket.id}
+
+                <audio id='audio'
+                    autoPlay={true}
+                />
+                 <div id='button' className="btn-small waves-effect waves-light hoverable" onClick={this._handleClick}>
+                    {this.state.joinEnabled?'Join Voice Call':'Leave Voice Call'}
                 </div>
+                {/* <div disabled={!this.state.joinEnabled} id='joinbutton' className="btn-small waves-effect waves-light hoverable" onClick={this._joinCall}>
+                    Join Call
+                </div>
+                <div disabled={this.state.joinEnabled} className="btn-small waves-effect waves-light hoverable" onClick={this._leaveCall}>
+                    Leave Call
+                </div> */}
             </div>
-            )
+        )
     }
 }
 export default VoiceChat

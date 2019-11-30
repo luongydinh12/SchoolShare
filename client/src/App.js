@@ -34,7 +34,6 @@ import setAuthToken from "./utils/setAuthToken";
 
 
 const socket = io("http://localhost:5050/")
-const chatSocket=io(`http://localhost:5050/chat`)
 
 // Check for token to keep user logged in
 if (localStorage.jwtToken) {
@@ -53,7 +52,7 @@ if (localStorage.jwtToken) {
     store.dispatch(logoutUser());
     store.dispatch(clearCurrentProfile())
     // Redirect to login
-    window.location.href = "./login";
+
   }
 }
 
@@ -80,7 +79,7 @@ const LandingContainer = () => {
       <Switch>
         <Route exact path="/" component={Landing} />
         <Route exact path="/register" component={Register} />
-        <PropsRoute exact path="/login" component={Login} socket={socket}/>
+        <PropsRoute exact path="/login" component={Login} socket={socket} />
         <Route exact path="/not-found" component={NotFound} />
       </Switch>
     </div>)
@@ -102,7 +101,7 @@ const DefaultContainer = () => {
         <PrivateRoute exact path="/dashboard" component={Dashboard} />
         <PrivateRoute exact path="/create-profile" component={CreateProfile} />
         <PrivateRoute exact path="/edit-profile" component={EditProfile} />
-        <PrivateRoute path="/private-chat" component={PrivateChat} socket={chatSocket}/>
+        <PrivateRoute path="/private-chat" component={PrivateChat} io={io} />
         <Route exact path="/not-found" component={NotFound} />
       </Switch>
     </div>
