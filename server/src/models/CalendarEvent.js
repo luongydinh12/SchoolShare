@@ -21,6 +21,9 @@ const CalendarEventSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
+  tags: [{
+    type: String,
+  }]
 });
 var CalendarEvent = mongoose.model("calendarevents", CalendarEventSchema)
 module.exports = CalendarEvent

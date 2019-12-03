@@ -210,4 +210,16 @@ router.post('/delete', passport.authenticate('jwt', { session: false }),
     }
   )
 
+  router.get('/avatar', 
+    (req,res)=>{
+      const userId = req.query.user || undefined;
+
+      User.findById(userId, (err, u) => {
+        //console.log(u)
+        res.json({
+          avatar: u.avatar
+        })
+      })
+    }
+  )  
 module.exports = router;

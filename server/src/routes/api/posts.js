@@ -302,6 +302,27 @@ router.post('/likeComment', (req, res) => {
   .catch(err =>  console.log(err))
 })
 
+router.post('/unlikeComment', (req,res) => {
+  const commentId = req.body.commentId
+  const userId = req.body.userId
+
+  CommentLike.findOneAndDelete({user: userId, comment : commentId })
+  .then(like => {
+    console.log("Like to be remove is: "+ like)
+    console.log("Like to be remove is: "+ like._id)
+    Comment.findById({_id : commentId})
+    .then(comment=>{
+      comment.likes.remove(like._id)
+      comment.save();
+    })
+      res.send()
+  })
+  .catch(err => {
+    console.log(err)
+    res.sendStatus(404)
+  })
+})
+
 router.post('/saveThread', (req,res) => {
   const postId = req.body.postId
   const userId = req.body.userId
@@ -319,7 +340,25 @@ router.post('/saveThread', (req,res) => {
     console.log(err)
     res.sendStatus(404)
   })
+})
 
+router.post('/unsaveThread', (req,res) => {
+  const postId = req.body.postId
+  const userId = req.body.userId
+
+  Thread.findById({_id: postId})
+  .then(thread => {
+    console.log("Thread.save before deletion: "+ thread.saves);
+    console.log("UserID: "+userId)
+    thread.saves.remove(userId)
+    console.log("Thread.save after deletion: "+ thread.saves);
+    thread.save();
+    res.send(thread)
+  })
+  .catch(err => {
+    console.log(err)
+    res.sendStatus(404)
+  })
 })
 
 

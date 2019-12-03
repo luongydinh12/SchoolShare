@@ -33,18 +33,15 @@ router.get('/getallevents', (req, res) => {
 // @returns String and msg data(details)
 router.post('/newevent', (req, res) => {
   console.log({body: req.body})
-  //const { title, start,desc, allDay, user } = req.body
-  const title = req.body.title
-  const start = req.body.start
-  const desc = req.body.desc
-  const user = req.body.user
-  const allDay = req.body.allDay
+  const { title, start,desc, allDay, user, tags } = req.body
+
   const newEvent = new CalendarEvent({
     title: title,
     desc:desc,
     date:start,
     allDay:allDay,
-    user:user
+    user:user,
+    tags:tags
   })
 
   newEvent
@@ -92,10 +89,12 @@ router.post('/editevent', (req, res) => {
   const start = req.body.start
   const desc = req.body.desc
   const user = req.body.user
-  CalendarEvent.findOne({title: title, user: user, date: start}, (err, event) => {
+  const tags = req.body.tags
+  CalendarEvent.findOne({user: user, date: start}, (err, event) => {
     if(event) {
       event.title = title;
       event.desc = desc;
+      event.tags = tags;
       event.save()
       CalendarEvent.find({ user: user}).then(data => {
         res.send({data});})

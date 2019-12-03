@@ -8,7 +8,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import { makeStyles, useTheme } from '@material-ui/core/styles';
+import { makeStyles, useTheme, createMuiTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
@@ -21,19 +21,62 @@ import { connect } from 'react-redux';
 import { Link, Link as RouterLink } from 'react-router-dom';
 import { logoutUser } from "../../actions/authActions";
 import { EditProfileButton } from './NavBarButtons';
+import { red } from '@material-ui/core/colors';
+import { loadCSS } from 'fg-loadcss';
+import EventAvailableIcon from '@material-ui/icons/EventAvailable';
+import NavigationIcon from '@material-ui/icons/Navigation';
+import Fab from '@material-ui/core/Fab';
+import grey from '@material-ui/core/colors/grey';
+import GroupIcon from '@material-ui/icons/Group';
+import ForumIcon from '@material-ui/icons/Forum';
+import { deleteUser } from "../../actions/authActions";
+
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      light: '#757ce8',
+      main: '#ffffff',
+      dark: '#002884',
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: '#ff7961',
+      main: '#f44336',
+      dark: '#ba000d',
+      contrastText: '#000',
+    },
+  },
+});
+
 const drawerWidth = 240;
-// const options = [
-//   'EDIT PROFILE',
-//   'DELETE',
-//   'CALENDER',
-//   'LOG OUT',
-// ];
+
 
 const useStyles = makeStyles(theme => ({
+  margin: {
+    margin: theme.spacing(1),
+    color: grey[50],
+  },
+  button: {
+    margin: theme.spacing(1),
+    color: grey[50],
+  },
+  extendedIcon: {
+    marginRight: theme.spacing(1),
+    color: grey[50],
+  },
+  input: {
+    display: 'none',
+  },
   root: {
     display: 'flex',
     flexGrow: 1,
     paddingBottom: 150
+  },
+  iconHover: {
+    '&:hover': {
+      color: red[300],
+    },
   },
   appBar: {
     backgroundColor: "#2BB673",
@@ -89,22 +132,31 @@ const useStyles = makeStyles(theme => ({
     }),
     marginLeft: 0,
   },
+
 }));
 
 
-
 export default () => {
-  const theme = useTheme();
+
+
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
+  React.useEffect(() => {
+    loadCSS(
+      'https://use.fontawesome.com/releases/v5.1.0/css/all.css',
+      document.querySelector('#font-awesome-css'),
+    );
+  }, []);
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
   const classes = useStyles();
+
   return (
     <div className={classes.root}>
       <CssBaseline />
@@ -129,46 +181,47 @@ export default () => {
             <img width="200" alt="Logo" src="/images/logos/logo--white.png" />
           </RouterLink>
           <Typography variant="h6" className={classes.title}></Typography>
-          <Link to="/private-chat" className="btn waves-effect waves-light hoverable white" style={{
-            width: "150px",
-            borderRadius: "3px",
-            letterSpacing: "1.5px",
-            marginTop: "2rem",
-            marginBottom: "1.4rem",
-            color: "black"
-          }}>
-            Private Chat
-              </Link>
+
+          <IconButton
+            href="/calendar"
+            size='large'
+            color="inherit"
+            className={classes.button}
+            aria-label="calendar">
+            <EventAvailableIcon />
+          </IconButton>
+
+          <IconButton
+            href="/profilelist"
+            size='large'
+            color="inherit"
+            className={classes.button}
+            aria-label="group">
+            <GroupIcon />
+          </IconButton>
+
+          <IconButton
+            href="/private-chat"
+            size='large'
+            color="inherit"
+            className={classes.button}
+            aria-label="forum">
+            <ForumIcon />
+          </IconButton>
+
+          <Fab
+            href="/forum"
+            variant="extended"
+            size="small"
+            color="primary"
+            aria-label="add"
+            className={classes.margin}
+          >
+            <NavigationIcon className={classes.extendedIcon} />
+            Forum
+          </Fab>
 
 
-          <Link
-            to="/forum"
-            className="btn waves-effect waves-light hoverable blue accent-3"
-            style={{
-              width: "150px",
-              borderRadius: "3px",
-              letterSpacing: "1.5px",
-              marginTop: "2rem",
-              marginBottom: "1.4rem",
-              marginLeft: 16
-            }}
-          >
-            FORUM
-          </Link>
-          <Link
-            to="/calendar"
-            className="btn waves-effect waves-light hoverable blue accent-3"
-            style={{
-              width: "150px",
-              borderRadius: "3px",
-              letterSpacing: "1.5px",
-              marginTop: "2rem",
-              marginBottom: "1.4rem",
-              marginLeft: 16
-            }}
-          >
-            CALENDAR
-          </Link>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -185,37 +238,34 @@ export default () => {
             {theme.direction === "ltr" ? (
               <ChevronLeftIcon />
             ) : (
-              <ChevronRightIcon />
-            )}
+                <ChevronRightIcon />
+              )}
           </IconButton>
         </div>
         <Divider />
 
         <List>
-          
+
 
           <EditProfileButton />
 
-          <ListItem button key={"text1"}>
+           {/* <ListItem button key={"text1"}>
             <ListItemIcon>
-            <InboxIcon />
-              {/* <DeleteForeverIcon /> */}
+              <InboxIcon />
+                <deleteUserButton/>
             </ListItemIcon>
             <ListItemText primary={"Delete Account"} />
-          </ListItem>
+          </ListItem> 
+           */}
 
-
-          {/* <ListItem button key={"text2"}>
-            <ListItemIcon>
-            <InboxIcon />
-               <ExitToAppIcon /> 
-            </ListItemIcon>
-            <ListItemText primary={"Logout"} />
-          </ListItem> */}
+          
 
           <LogOutButton />
+          
+          <DeleteButton />
 
         </List>
+
         <Divider />
       </Drawer>
     </div>
@@ -224,26 +274,57 @@ export default () => {
 
 
 
+
 class LogOutButton extends Component {
   onLogoutClick = e => {
-      e.preventDefault()
-      this.props.logoutUser()
+    e.preventDefault()
+    this.props.logoutUser()
   }
   render() {
-      return (
-          <ListItem button key={"text1"} onClick={this.onLogoutClick}>
-              <ListItemIcon>
-                  <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Log Out"} />
-          </ListItem>
-      )
+    return (
+      <ListItem button key={"text1"} onClick={this.onLogoutClick}>
+        <ListItemIcon>
+          <InboxIcon />
+        </ListItemIcon>
+        <ListItemText primary={"Log Out"} />
+      </ListItem>
+
+      
+    )
   }
 }
 
 LogOutButton = connect(
   (state) => ({
-      auth: state.auth
+    auth: state.auth
   }),
   { logoutUser }
 )(LogOutButton)
+
+class DeleteButton extends Component{
+  onDeleteClick = e => {
+    if (window.confirm("Do you want to delete your account?")) {
+      e.preventDefault();
+      this.props.deleteUser();
+    }
+  }
+  render() {
+    return (
+      <ListItem button key={"text1"} onClick={this.onDeleteClick}>
+        <ListItemIcon>
+          <InboxIcon />
+        </ListItemIcon>
+        <ListItemText primary={"Delete"} />
+      </ListItem>
+
+    )
+  }
+}
+
+
+DeleteButton = connect(
+  (state) => ({
+    auth: state.auth
+  }),
+  { deleteUser }
+)(DeleteButton)
