@@ -67,6 +67,10 @@ io.of('/voiceChat').on('connection', (socket) => {
     socket.on('join', (msg) => {
         console.log('join', socket.id, msg.room)
         socket.join(msg.room)
+        io.of('/voiceChat').in(msg.room).clients((error, clients) => {
+            if (error) throw error
+            console.log(clients);
+        });
         if (!voiceOnlineList[msg.room]) {
             voiceOnlineList[msg.room] = {}
         }
@@ -75,18 +79,11 @@ io.of('/voiceChat').on('connection', (socket) => {
         console.log(`socket ${socket.id} joined room ${msg.room} `)
         socket.to(msg.room).emit('userConnect', { socketId: socket.id, profile: voiceOnlineList[msg.room][socket.id] })
     })
-    socket.on('leave', (data) => { 
+    socket.on('leave', (data) => {
         console.log('leave room ', socket.id, data)
-        console.log('leave volist',voiceOnlineList)
+        console.log('leave volist', voiceOnlineList)
         if (voiceOnlineList[data.room]) delete voiceOnlineList[data.room][socket.id]
-        // for (var room in voiceOnlineList) {
-        //     for (var socketid in voiceOnlineList[room]) {
-        //         if (socketid === socket.id) {
-        //             delete voiceOnlineList[room][socketid]
-        //             io.of('/voiceChat').to(room).emit('userDisconnect', socket.id)
-        //         }
-        //     } 
-        // }
+        socket.leave(data.room)
         console.log(voiceOnlineList[data.room])
     })
     socket.on('disconnect', () => {
