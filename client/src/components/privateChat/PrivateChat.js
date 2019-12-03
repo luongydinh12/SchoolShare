@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import { Switch } from 'react-router-dom'
 import { PropsRoute } from '../private-route/PrivateRoute'
 import Chat from './Chat'
 import ChatList from './ChatList'
-import VoiceChat from './VoiceChat'
-import { connect } from 'react-redux'
 
 class PrivateChat extends Component {
     render() {

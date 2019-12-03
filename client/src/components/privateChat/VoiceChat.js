@@ -1,6 +1,5 @@
-'use strict'
 import React, { Component } from 'react'
-import adapter from 'webrtc-adapter';
+import adapter from 'webrtc-adapter'
 
 class VoiceChat extends Component {
     state = {

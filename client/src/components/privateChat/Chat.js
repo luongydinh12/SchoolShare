@@ -1,12 +1,11 @@
+import Axios from 'axios'
+import M from 'materialize-css'
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import Axios from 'axios'
-import Spinner from "../common/Spinner"
-import M from 'materialize-css'
-import { ProfileListItemFragment } from '../profile/FriendsList'
 import { Link } from 'react-router-dom'
+import Spinner from "../common/Spinner"
+import { ProfileListItemFragment } from '../profile/FriendsList'
 import VoiceChat from './VoiceChat'
-import { isAbsolute } from 'path'
 class Chat extends Component {
     state = {
         chat: null,
