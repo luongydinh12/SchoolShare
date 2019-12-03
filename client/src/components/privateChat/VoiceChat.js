@@ -180,8 +180,6 @@ class VoiceChat extends Component {
     render() {
         return (
             <div style={this.props.style}>
-                {this.socket.id}
-
                 <audio id='audio'
                     autoPlay={true}
                 />

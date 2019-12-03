@@ -11,7 +11,7 @@ class Chat extends Component {
         chat: null,
         messages: null,
         messageInput: '',
-        friends: null,
+        friends: null, 
         checkedFriends: [],
         onlineList: []
     }
