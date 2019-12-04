@@ -193,9 +193,9 @@ Router.post('/addUsersToChat', auth, (req, res) => {
 
 Router.post('/leaveOrDelete', auth, (req, res) => {
     const tokenUser = JWT.decode(req.header("Authorization").split(' ')[1])
+    console.log(req.body)
     Profile.findById(req.body.profileId)
         .then((prof) => {
-            if (!prof.user.equals(tokenUser.id)) throw Error('wrong profileid')
             return GroupChat.findById(req.body.chat)
         })
         .then((chat) => {//if chat owner, delete
@@ -203,7 +203,9 @@ Router.post('/leaveOrDelete', auth, (req, res) => {
                 return GroupChat.remove({ _id: chat._id })
             }
             else {//else remove from members list
-                return GroupChat.members.pull(req.body.profileId)
+                console.log(chat)
+                chat.members.pull(req.body.profileId)
+                chat.save().then(() => chat)
             }
         }).then((c) => {
             res.send(c)

@@ -25,14 +25,19 @@ class CreateChat extends Component {
     }
     handleSubmit = (e) => {
         e.preventDefault()
-        Axios.post('/api/groupchat/create',
-            {
-                chatName: this.state.chatName,
-                chatDesc: this.state.chatDesc,
-                checkedFriends: this.state.checkedFriends
-            }).then((res) => {
-                if (this.props.cb) this.props.cb()
-            })
+        const { chatName, chatDesc, checkedFriends } = this.state
+        if (!(chatName.length === 0 || chatDesc.length === 0 || checkedFriends.length === 0)) {
+            console.log('submit')
+            Axios.post('/api/groupchat/create',
+                {
+                    chatName: chatName,
+                    chatDesc: chatDesc,
+                    checkedFriends: checkedFriends
+                }).then((res) => {
+                    M.Modal.getInstance(document.querySelector('.modal')).close()
+                    if (this.props.cb) this.props.cb()
+                })
+        }
     }
     handleCheckFriend = (e) => {
         const val = e.target.value
@@ -52,9 +57,9 @@ class CreateChat extends Component {
     }
     render() {
         const { friends } = this.state
-        if (friends&&friends.length>0) {
+        if (friends && friends.length > 0) {
             const list = friends.map((f) => {
-                return(<div className='row' key={f.friend._id}>
+                return (<div className='row' key={f.friend._id}>
                     <div className='col s10'>
                         <ProfileListItemFragment {...f} dontShowFriendButton={true} className='col s3' />
                     </div>
@@ -88,7 +93,7 @@ class CreateChat extends Component {
                         </ul>
                     </div>
                     <div className="modal-footer">
-                        <button className="modal-close waves-effect waves-red btn-flat" onClick={this.handleSubmit}>Submit</button>
+                        <button className="waves-effect waves-red btn-flat" onClick={this.handleSubmit}>Submit</button>
                     </div>
                 </div>
             </div>)

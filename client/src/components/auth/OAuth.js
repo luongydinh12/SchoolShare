@@ -3,6 +3,7 @@ import { oAuthLogin } from "../../actions/authActions"
 import { connect } from "react-redux";
 
 const local = "http://localhost"
+const real= 'h'
 // const socket = io("http://localhost:5050/")
 
 
@@ -37,7 +38,7 @@ export class OAuth extends Component {
     const top = (window.innerHeight / 2) - (height / 2)
     console.log(socket.id);
     this.sendSocketIO();
-    const url = local + `:5000/api/users/${provider}?socketId=${socket.id}`
+    const url = `schoolshare.me:5000/api/users/${provider}?socketId=${socket.id}`
     //const url = `http://SchoolShare.me:5000/api/users/google?socketId=${socket.id}`;
     return window.open(url, '',
       `toolbar=no, location=no, directories=no, status=no, menubar=no, 
