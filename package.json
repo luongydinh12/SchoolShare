@@ -12,7 +12,7 @@
   "author": "Dinh Luong",
   "license": "ISC",
   "dependencies": {
-    "chart.js": "^2.9.3",
+    "chart.js": "^2.9.4",
     "concurrently": "^4.1.2",
     "fg-loadcss": "^2.1.0",
     "multer": "^1.4.2",
