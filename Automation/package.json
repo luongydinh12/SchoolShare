@@ -12,6 +12,6 @@
     "faker": "^4.1.0"
   },
   "devDependencies": {
-    "nightwatch": "^1.2.4"
+    "nightwatch": "^1.7.13"
   }
 }
